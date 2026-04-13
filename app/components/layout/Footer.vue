@@ -53,7 +53,7 @@
 
       <div class="pt-12 flex flex-col md:row justify-between items-center gap-6">
         <div class="text-2xl font-black tracking-tighter uppercase">
-          DIGITAL EXCELLENT<span class="text-primary">.</span>
+          DIGITAL EXCELLENT
         </div>
         <p class="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">
           © 2026 DIGITAL EXCELLENT STUDIO. CRAFTED WITH PRECISION.

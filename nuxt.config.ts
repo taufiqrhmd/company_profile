@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
+    '@pinia/nuxt',
   ],
 
   vite: {

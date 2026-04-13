@@ -109,7 +109,6 @@
 </template>
 
 <script setup lang="ts">
-// Nuxt auto-imports BaseButton if it's in components/base/
 
 const handleJoinTeam = () => {
   console.log('Opening careers page...');

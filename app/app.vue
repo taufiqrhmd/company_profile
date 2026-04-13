@@ -31,7 +31,6 @@ const smoother = ref(null)
 const route = useRoute()
 const isAdminPage = computed(() => route.path.startsWith('/admin'))
 
-// Daftarkan Plugin
 if (process.client) {
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 }
@@ -42,6 +41,15 @@ useHead({
   }
 })
 
+useSeoMeta({
+  titleTemplate: (title) => title ? `${title} | Digital Excellent` : 'Digital Excellent Studio - Premium Web Engineer',
+  ogTitle: 'Digital Excellent Studio',
+  description: 'Freelance fullstack developer & frontend engineer spesialisasi Vue, Nuxt, dan High-Fidelity UI/UX.',
+  ogDescription: 'Premium Web Development & Interactive Design Studio.',
+  ogImage: '/og-image.jpg', // Pastikan file ini ada di folder public
+  twitterCard: 'summary_large_image',
+})
+
 onMounted(async () => {
   if (process.client && !isAdminPage.value) {
     if ('scrollRestoration' in history) {
@@ -50,7 +58,6 @@ onMounted(async () => {
 
     await nextTick()
     
-    // Delay sedikit lebih lama (200ms) untuk memastikan layout & page selesai render
     setTimeout(() => {
       try {
         smoother.value = ScrollSmoother.create({
@@ -76,19 +83,16 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Reset Global */
 html, body {
   margin: 0;
   padding: 0;
   min-height: 100%;
 }
 
-/* Landing Mode: Kunci body agar GSAP yang pegang kendali */
 body.landing-mode {
   overflow: hidden !important;
 }
 
-/* Admin Mode: Lepaskan semua kuncian */
 body.admin-mode {
   overflow: auto !important;
   height: auto !important;
