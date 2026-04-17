@@ -1,19 +1,20 @@
 <template>
-  <section id="about" class="py-32 bg-soft -mt-px dark:bg-darkBg/[.98] transition-colors duration-500 overflow-hidden">
-    <div class="container max-w-7xl mx-auto px-6">
+  <section id="about" class="py-20 md:py-28 bg-soft -mt-px dark:bg-darkBg/[.98] transition-colors duration-500 overflow-hidden">
+    <div class="container max-w-7xl mx-auto px-4 md:px-6">
 
-      <div class="grid lg:grid-cols-12 gap-12 border-b border-dark/10 dark:border-white/10 pb-20 mb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 border-b border-dark/10 dark:border-white/10 pb-16 md:pb-20 mb-16 md:mb-20">
         <div class="lg:col-span-8">
-          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">CORPORATE OVERVIEW</span>
+          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-primary">CORPORATE OVERVIEW</span>
           </div>
-          <h2
-            class="text-6xl md:text-8xl font-black text-dark dark:text-soft leading-[0.85] tracking-tighter uppercase mb-10">
+          
+          <h2 class="text-4xl sm:text-6xl md:text-8xl font-black text-dark dark:text-soft leading-[0.9] md:leading-[0.85] tracking-tighter uppercase mb-8 md:mb-10">
             A COLLECTIVE OF <br />
             <span class="text-primary italic">DIGITAL ARCHITECTS.</span>
           </h2>
-          <div class="grid md:grid-cols-2 gap-10">
-            <p class="text-lg text-dark/60 dark:text-soft/40 leading-relaxed font-medium">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+            <p class="text-base md:text-lg text-dark/60 dark:text-soft/40 leading-relaxed font-medium">
               Kami beroperasi di persimpangan antara estetika mewah dan fungsionalitas teknis. Setiap proyek adalah
               komitmen untuk melampaui standar industri.
             </p>
@@ -24,26 +25,26 @@
           </div>
         </div>
 
-        <div class="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-6">
+        <div class="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6">
           <div v-for="(stat, i) in stats" :key="i"
-            class="relative overflow-hidden p-8 bg-white dark:bg-darkCard border border-dark/5 dark:border-white/5 rounded-[2rem] group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
-            <div
-              class="absolute -right-4 -bottom-4 opacity-[0.03] dark:opacity-[0.05] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700">
-              <Icon :name="stat.icon" class="w-32 h-32 text-dark dark:text-soft" />
+            class="relative overflow-hidden p-6 md:p-8 bg-white dark:bg-darkCard border border-dark/5 dark:border-white/5 rounded-[1.5rem] md:rounded-[2rem] group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1"
+            :class="i === 2 ? 'col-span-2 lg:col-span-1' : ''" 
+          >
+            <div class="absolute -right-4 -bottom-4 opacity-[0.03] dark:opacity-[0.05] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-700">
+              <Icon :name="stat.icon" class="w-24 h-24 md:w-32 md:h-32 text-dark dark:text-soft" />
             </div>
 
             <div class="relative z-10">
               <div class="flex items-baseline gap-1">
-                <h4 class="text-5xl font-black text-primary leading-none tracking-tighter">{{ stat.value }}</h4>
+                <h4 class="text-3xl md:text-5xl font-black text-primary leading-none tracking-tighter">{{ stat.value }}</h4>
                 <span class="text-primary font-bold">+</span>
               </div>
 
-              <div class="w-12 h-1 bg-primary/10 mt-4 mb-2 rounded-full overflow-hidden">
+              <div class="w-10 h-1 bg-primary/10 mt-3 md:mt-4 mb-2 rounded-full overflow-hidden">
                 <div class="w-0 group-hover:w-full h-full bg-primary transition-all duration-1000 ease-out"></div>
               </div>
 
-              <p
-                class="text-[10px] font-black uppercase tracking-[0.2em] text-dark/40 dark:text-soft/40 group-hover:text-primary transition-colors">
+              <p class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-dark/40 dark:text-soft/40 group-hover:text-primary transition-colors">
                 {{ stat.label }}
               </p>
             </div>
@@ -51,55 +52,53 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
-        <div v-for="(value, i) in values" :key="i" class="space-y-6">
-          <div
-            class="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary font-black text-xs">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-24 md:mb-32">
+        <div v-for="(value, i) in values" :key="i" class="space-y-4 md:space-y-6">
+          <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary font-black text-xs">
             0{{ i + 1 }}
           </div>
-          <div class="space-y-3">
-            <h5 class="text-xl font-black text-dark dark:text-soft uppercase tracking-tight">{{ value.title }}</h5>
+          <div class="space-y-2 md:space-y-3">
+            <h5 class="text-lg md:text-xl font-black text-dark dark:text-soft uppercase tracking-tight">{{ value.title }}</h5>
             <p class="text-sm text-dark/60 dark:text-soft/40 leading-relaxed">{{ value.desc }}</p>
           </div>
         </div>
       </div>
 
-      <div class="space-y-16">
-        <div class="flex items-center justify-between">
-          <h3 class="text-2xl font-black text-dark dark:text-soft uppercase tracking-tighter">Strategic Leadership</h3>
-          <div class="flex-grow mx-10 h-px bg-dark/10 dark:bg-white/10 hidden md:block"></div>
+      <div class="space-y-12 md:space-y-16">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <h3 class="text-xl md:text-2xl font-black text-dark dark:text-soft uppercase tracking-tighter">Strategic Leadership</h3>
+          <div class="flex-grow mx-10 h-px bg-dark/10 dark:bg-white/10 hidden lg:block"></div>
           
           <BaseButton 
             variant="link" 
             size="sm" 
             icon="solar:users-group-two-rounded-bold"
+            class="!p-0"
             @click="handleJoinTeam"
           >
             Join The Team
           </BaseButton>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <div v-for="(member, i) in team" :key="i"
-            class="group relative overflow-hidden bg-white dark:bg-darkCard p-4 rounded-[2.5rem] border border-dark/5 dark:border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
-            <div class="aspect-square rounded-[2rem] overflow-hidden mb-6 bg-dark">
+            class="group relative overflow-hidden bg-white dark:bg-darkCard p-3 md:p-4 rounded-[2rem] md:rounded-[2.5rem] border border-dark/5 dark:border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
+            <div class="aspect-square rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-4 md:mb-6 bg-dark">
               <img :src="member.image"
-                class="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105" />
+                class="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105" 
+                loading="lazy" />
             </div>
 
-            <div class="text-center pb-4">
-              <h4
-                class="text-lg font-black text-dark dark:text-soft uppercase tracking-tighter group-hover:text-primary transition-colors">
+            <div class="text-center pb-2 md:pb-4">
+              <h4 class="text-base md:text-lg font-black text-dark dark:text-soft uppercase tracking-tighter group-hover:text-primary transition-colors">
                 {{ member.name }}
               </h4>
-              <p class="text-[9px] font-black uppercase tracking-[0.3em] text-dark/40 dark:text-soft/30 mt-1">
+              <p class="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-dark/40 dark:text-soft/30 mt-1">
                 {{ member.role }}
               </p>
             </div>
 
-            <div
-              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary transition-all duration-500 group-hover:w-full">
-            </div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary transition-all duration-500 group-hover:w-full"></div>
           </div>
         </div>
       </div>
@@ -109,7 +108,6 @@
 </template>
 
 <script setup lang="ts">
-
 const handleJoinTeam = () => {
   console.log('Opening careers page...');
 };

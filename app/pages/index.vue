@@ -12,6 +12,7 @@
     </section>
 
     <OurStory />
+    <Contact />
     <Footer />
   </div>
 </template>
@@ -22,5 +23,6 @@ import Expertise from '~/components/sections/Expertise.vue';
 import CaseStudies from '~/components/sections/CaseStudies.vue';
 import OurStory from '~/components/sections/OurStory.vue';
 import Footer from '~/components/layout/Footer.vue';
+import Contact from '~/components/sections/Contact.vue';
 
 </script>

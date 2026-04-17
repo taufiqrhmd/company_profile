@@ -8,7 +8,7 @@
 
     <template v-else>
       <ClientOnly>
-        <LayoutTopbar />
+        <LayoutTopbar v-if="!route.meta.hideTopbar" />
         <div id="smooth-wrapper">
           <div id="smooth-content">
             <NuxtLayout>
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { nextTick } from 'vue'
+import { nextTick, ref, computed, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
@@ -39,7 +39,7 @@ useHead({
   bodyAttrs: {
     class: computed(() => isAdminPage.value ? 'admin-mode' : 'landing-mode')
   }
-})
+});
 
 useSeoMeta({
   titleTemplate: (title) => title ? `${title} | Digital Excellent` : 'Digital Excellent Studio - Premium Web Engineer',
@@ -48,7 +48,29 @@ useSeoMeta({
   ogDescription: 'Premium Web Development & Interactive Design Studio.',
   ogImage: '/og-image.jpg', // Pastikan file ini ada di folder public
   twitterCard: 'summary_large_image',
-})
+});
+
+watch(() => route.fullPath, async () => {
+  if (process.client) {
+    // 1. Reset posisi scroll ke 0 secepat mungkin
+    if (smoother.value) {
+      smoother.value.scrollTop(0);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    // 2. Tunggu konten halaman baru selesai render
+    await nextTick();
+
+    // 3. Beri sedikit jeda agar ScrollSmoother menghitung ulang tinggi content
+    setTimeout(() => {
+      if (smoother.value) {
+        smoother.value.content(document.querySelector('#smooth-content'));
+        ScrollTrigger.refresh();
+      }
+    }, 100);
+  }
+});
 
 onMounted(async () => {
   if (process.client && !isAdminPage.value) {
@@ -67,6 +89,8 @@ onMounted(async () => {
           effects: true,
           normalizeScroll: true
         })
+
+        window.smoother = smoother.value;
         ScrollTrigger.refresh()
       } catch (e) {
         console.error("GSAP Init Error:", e)
@@ -78,6 +102,7 @@ onMounted(async () => {
 onUnmounted(() => {
   if (smoother.value) {
     smoother.value.kill()
+    window.smoother = null;
   }
 })
 </script>
