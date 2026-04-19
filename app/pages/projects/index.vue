@@ -9,12 +9,37 @@
       <div class="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]"></div>
     </div>
 
-    <div class="container max-w-7xl mx-auto px-6 relative z-10 pt-16 pb-40">
+    <div class="container max-w-7xl mx-auto px-4 relative z-10 pt-16 pb-40">
 
-      <header class="mb-32 md:mb-48">
-        <div class="inline-flex items-center gap-3 mb-8">
-          <span class="w-12 h-px bg-primary"></span>
-          <span class="text-[10px] font-black uppercase tracking-[0.5em] text-primary">The Complete Archive</span>
+      <header class="mb-32 md:mb-36">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
+          <div class="inline-flex items-center gap-4 group">
+            <div class="relative flex items-center">
+              <span class="w-12 h-[2px] bg-primary rounded-full relative z-10"></span>
+              <span
+                class="absolute inset-0 w-12 h-[2px] bg-primary blur-[4px] opacity-0 group-hover:opacity-100 dark:opacity-40 transition-opacity duration-700"></span>
+            </div>
+            <span
+              class="text-[10px] font-black uppercase tracking-[0.6em] text-primary/80 dark:text-primary transition-colors duration-700">
+              The Complete Archive
+            </span>
+          </div>
+
+          <div class="flex items-center gap-4 self-start md:self-center">
+            <button @click="toggleColorMode"
+              class="relative flex items-center gap-2 p-1.5 pr-4 bg-white dark:bg-soft/5 border border-dark/5 dark:border-soft/10 rounded-full shadow-sm hover:shadow-md transition-all duration-500 group"
+              aria-label="Toggle Theme">
+              <div
+                class="w-8 h-8 rounded-full bg-dark dark:bg-primary flex items-center justify-center text-primary dark:text-dark transition-all duration-500 group-hover:rotate-45">
+                <Icon v-if="colorMode.value === 'dark'" name="heroicons:sun-20-solid" class="w-4 h-4" />
+                <Icon v-else name="heroicons:moon-20-solid" class="w-4 h-4" />
+              </div>
+
+              <span class="text-[10px] font-black uppercase tracking-widest text-dark/60 dark:text-soft/60">
+                {{ colorMode.value === 'dark' ? 'Light mode' : 'Dark mode' }}
+              </span>
+            </button>
+          </div>
         </div>
         <h1 class="text-6xl md:text-9xl font-black text-dark dark:text-soft tracking-tighter uppercase leading-[0.85]">
           Full Story<br />
@@ -27,32 +52,57 @@
         </p>
       </header>
 
-      <div class="space-y-48 md:space-y-72">
+      <div class="space-y-32 md:space-y-40">
         <section v-for="(project, index) in allProjects" :key="project.title"
-          class="flex flex-col gap-16 md:gap-24 items-start"
+          class="flex flex-col gap-16 md:gap-24 items-start md:items-center"
           :class="index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'">
-          <div class="w-full md:w-[55%] sticky top-32">
+          <div class="w-full md:w-[55%]">
             <div class="relative group">
-              <div
-                class="absolute -inset-4 border border-primary/20 rounded-[3rem] translate-x-2 translate-y-2 -z-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-700">
+              <div class="absolute -inset-4 border border-primary/20 dark:border-primary/10 rounded-[3rem] 
+             translate-x-2 translate-y-2 -z-10 
+             group-hover:translate-x-0 group-hover:translate-y-0 
+             group-hover:bg-primary/[0.02] transition-all duration-700">
               </div>
 
-              <div class="relative overflow-hidden rounded-[2.5rem] bg-dark shadow-2xl">
-                <img :src="project.image" :alt="project.title"
-                  class="w-full aspect-[16/10] object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000"
-                  loading="lazy" />
+              <div
+                class="relative overflow-hidden rounded-[2.5rem] bg-dark dark:bg-[#111] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]">
+
+                <div class="absolute inset-0 bg-gradient-to-tr from-dark/20 to-transparent z-10 pointer-events-none">
+                </div>
+
+                <img :src="project.image" :alt="project.title" class="w-full aspect-[16/10] object-cover opacity-90 dark:opacity-80 
+               group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" loading="lazy" />
 
                 <div
-                  class="absolute bottom-8 right-8 px-6 py-3 bg-soft/10 backdrop-blur-2xl border border-soft/20 rounded-2xl">
-                  <p class="text-[9px] font-black text-soft uppercase tracking-widest mb-1 opacity-60">Success Metric
-                  </p>
-                  <p class="text-2xl font-black text-primary">{{ project.impact }} Increase</p>
+                  class="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-20
+               px-6 py-4 rounded-2xl
+               bg-white/10 dark:bg-dark/40 backdrop-blur-xl 
+               border border-white/20 dark:border-white/10
+               shadow-[0_8px_32px_0_rgba(0,0,0,0.2)]
+               transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+
+                  <div class="flex flex-col">
+                    <p class="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-1">
+                      Success Metric
+                    </p>
+                    <div class="flex items-baseline gap-1">
+                      <span class="text-2xl md:text-3xl font-black text-white leading-none">
+                        {{ project.impact }}
+                      </span>
+                      <span class="text-xs font-bold text-primary italic uppercase">Increase</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none
+                  bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%]">
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="w-full md:w-[45%] space-y-10">
+          <div class="w-full md:w-[60%] space-y-10">
             <div class="space-y-4">
               <div class="flex items-center gap-4 text-primary font-mono font-black italic text-2xl">
                 <span>0{{ index + 1 }}.</span>
@@ -68,12 +118,12 @@
               </p>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-4">
               <p class="text-xl md:text-2xl text-dark/80 dark:text-soft/70 leading-snug font-bold tracking-tight">
                 {{ project.description }}
               </p>
 
-              <div class="prose prose-sm dark:prose-invert text-dark/70 dark:text-soft/50 space-y-4">
+              <div class="prose prose-sm dark:prose-invert text-dark/70 dark:text-soft/50 space-y-2">
                 <p>
                   Proyek ini dimulai dengan tantangan utama dalam meningkatkan retensi pengguna dan efisiensi alur kerja
                   digital. Melalui fase riset mendalam, kami menemukan bahwa integrasi teknologi yang tepat
@@ -86,7 +136,7 @@
               </div>
             </div>
 
-            <div class="pt-10 border-t border-dark/10 dark:border-soft/10">
+            <div class="pt-6 border-t border-dark/30 dark:border-soft/30">
               <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-dark/40 dark:text-soft/40 mb-5">Tech
                 Stack & Tools</h4>
               <div class="flex flex-wrap gap-3">
@@ -100,7 +150,7 @@
         </section>
       </div>
 
-      <footer class="mt-64 text-center">
+      <footer class="mt-48 text-center">
         <div class="max-w-3xl mx-auto space-y-12">
           <h2 class="text-5xl md:text-8xl font-black text-dark dark:text-soft tracking-tighter leading-none uppercase">
             Start Your Own <span class="text-transparent custom-stroke">Story.</span>
@@ -119,6 +169,13 @@
 const { allProjects } = useProjects();
 const router = useRouter();
 const route = useRoute();
+
+const colorMode = useColorMode(); // Hook dari Nuxt Color Mode
+
+// Logic untuk switch mode
+const toggleColorMode = () => {
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+};
 
 definePageMeta({
   hideTopbar: true
@@ -165,15 +222,6 @@ const scrollToSection = (id: string) => {
 @media (max-width: 768px) {
   .custom-stroke {
     -webkit-text-stroke: 1px #D4AF37;
-  }
-}
-
-/* Sticky behavior logic for desktop */
-@media (min-width: 768px) {
-  .sticky {
-    position: sticky;
-    top: 8rem;
-    align-self: flex-start;
   }
 }
 

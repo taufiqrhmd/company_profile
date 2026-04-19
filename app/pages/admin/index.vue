@@ -9,7 +9,6 @@
       </div>
       <div class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
         <span class="flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
         </span>
         Auto-sync: <span class="text-green-500">Active</span>

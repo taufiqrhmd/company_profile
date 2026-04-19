@@ -28,7 +28,7 @@
               size="lg" 
               icon="solar:arrow-right-up-bold"
               class="w-full sm:w-auto shadow-xl shadow-primary/10"
-              @click="handleExplore"
+              @click="handleExplore('#portfolio', true)"
             >
               EXPLORE OUR WORKS
             </BaseButton>
@@ -72,6 +72,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+
+const isMenuOpen = ref(false);
+const router = useRouter();
+const route = useRoute();
 
 const activeIndex = ref(0);
 const heroImages = [
@@ -86,8 +91,35 @@ const nextSlide = () => {
   activeIndex.value = (activeIndex.value + 1) % heroImages.length; 
 };
 
-const handleExplore = () => {
-  console.log('Navigating to portfolio...');
+const handleExplore = async (path: string, isAnchor: boolean) => {
+  isMenuOpen.value = false;
+
+  if (isAnchor && path.startsWith('#')) {
+    // Jika kita tidak di halaman home, pindah ke home dulu
+    if (route.path !== '/') {
+      await router.push('/');
+      // Tunggu render selesai
+      setTimeout(() => {
+        scrollToSection(path);
+      }, 500);
+    } else {
+      scrollToSection(path);
+    }
+  } else {
+    router.push(path);
+  }
+};
+
+const scrollToSection = (id: string) => {
+  // Ambil instance GSAP dari window (kita akan set ini di app.vue)
+  const smoother = (window as any).smoother;
+  if (smoother) {
+    smoother.scrollTo(id, true, "top top");
+  } else {
+    // Fallback jika smoother belum siap
+    const el = document.querySelector(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
 };
 
 const getCardStyle = (index: number) => {
