@@ -7,7 +7,13 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
+    '@nuxtjs/supabase'
   ],
+
+  supabase: {
+    redirect: false,
+    types: "~/types/database.types.ts",
+  },
 
   vite: {
     optimizeDeps: {

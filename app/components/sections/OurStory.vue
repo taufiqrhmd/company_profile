@@ -24,8 +24,8 @@
               komitmen untuk melampaui standar industri.
             </p>
             <p class="text-sm text-dark/50 dark:text-soft/50 leading-relaxed">
-              Didirikan dengan visi untuk membawa presisi tingkat tinggi ke dunia digital, kami telah bertransformasi
-              menjadi mitra strategis bagi brand yang mengutamakan kualitas di atas segalanya.
+              Didirikan dengan prinsip presisi tinggi, kami hadir sebagai mitra strategis bagi perusahaan yang mengutamakan kualitas tanpa kompromi. 
+              Kami membangun infrastruktur digital yang kokoh untuk masa depan bisnis Anda.
             </p>
           </div>
         </div>
@@ -152,9 +152,9 @@ const scrollToSection = (id: string) => {
 };
 
 const stats = [
-  { value: '120', label: 'Partnerships', icon: 'heroicons:briefcase' },
-  { value: '08', label: 'Industry Awards', icon: 'heroicons:trophy' },
-  { value: '250', label: 'Digital Solutions', icon: 'heroicons:cpu-chip' },
+  { value: '120', label: 'Trusted Partners', icon: 'heroicons:briefcase' },
+  { value: '08', label: 'Strategic Honors', icon: 'heroicons:trophy' },
+  { value: '250', label: 'Project Excellence', icon: 'heroicons:cpu-chip' },
 ];
 
 const values = [

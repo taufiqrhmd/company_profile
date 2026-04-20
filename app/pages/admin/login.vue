@@ -58,34 +58,42 @@ definePageMeta({
   middleware: ['auth']
 })
 
+const supabase = useSupabaseClient()
 const form = reactive({ username: '', password: '' })
 const isLoading = ref(false)
-const authToken = useCookie('auth_token', {
-  maxAge: 60 * 60 * 24,
-  path: '/'
-})
+const authToken = useCookie('auth_token')
 
 const handleLogin = async () => {
-  if (!form.username || !form.password) {
-    alert('Username dan Password wajib diisi.')
-    return
-  }
+  if (!form.username || !form.password) return alert('Isi semua field!')
 
   isLoading.value = true
   
-  // Simulasi login
-  setTimeout(() => {
-    const targetUser = 'admin'
-    const targetPass = 'admin123'
+  try {
+    // 1. Cari user di tabel admin_accounts berdasarkan username
+    const { data: user, error } = await supabase
+      .from('admin_accounts')
+      .select('*')
+      .eq('username', form.username)
+      .single()
 
-    if (form.username === targetUser && form.password === targetPass) {
-      authToken.value = 'secret-token-123'
-      navigateTo('/admin', { replace: true })
-    } else {
-      alert('Username atau Password salah.')
+    if (error || !user) {
+      throw new Error('Username tidak ditemukan.')
     }
 
+    // 2. Verifikasi Password (Sederhana untuk sekarang)
+    // Idealnya menggunakan library bcrypt jika di Server Side
+    if (user.password_hash === form.password) {
+      // 3. Set Cookie dan Arahkan ke Admin
+      authToken.value = 'token-' + btoa(user.username) // Buat token sederhana
+      navigateTo('/admin', { replace: true })
+    } else {
+      alert('Password salah!')
+    }
+
+  } catch (err) {
+    alert(err.message)
+  } finally {
     isLoading.value = false
-  }, 1000)
+  }
 }
 </script>

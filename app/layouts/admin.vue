@@ -15,10 +15,15 @@
 
         <div class="flex items-center gap-4">
           <div class="text-right">
-            <p class="text-[11px] font-bold text-slate-900 leading-none">M. Taufiq</p>
-            <p class="text-[9px] text-primary font-bold uppercase tracking-tighter">Admin Account</p>
+            <p class="text-[11px] font-bold text-slate-900 leading-none">
+              {{ adminData?.full_name || 'Loading...' }}
+            </p>
+            <p class="text-[9px] text-primary font-bold uppercase tracking-tighter">
+              Admin Account
+            </p>
           </div>
-          <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+          <div
+            class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
             <Icon name="solar:user-bold" class="w-5 h-5" />
           </div>
         </div>
@@ -34,16 +39,40 @@
 <script setup>
 const route = useRoute()
 const isMobileMenuOpen = ref(false)
+const supabase = useSupabaseClient()
+const authToken = useCookie('auth_token')
+
+const { data: adminData } = await useAsyncData('admin-profile', async () => {
+  if (!authToken.value) return null
+
+  // Dekode username dari token (menghapus prefix 'token-')
+  const base64Part = authToken.value.replace('token-', '')
+  const usernameFromToken = atob(base64Part)
+
+  const { data } = await supabase
+    .from('admin_accounts')
+    .select('full_name')
+    .eq('username', usernameFromToken)
+    .single()
+
+  return data
+})
 
 // Tutup sidebar otomatis saat route berubah (untuk mobile)
 watch(() => route.path, () => { isMobileMenuOpen.value = false })
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #E2E8F0;
   border-radius: 10px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D4A32E; }
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #D4A32E;
+}
 </style>

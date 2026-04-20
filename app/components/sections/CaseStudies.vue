@@ -18,7 +18,7 @@
 
         <p
           class="max-w-[280px] text-xs md:text-sm text-dark/40 dark:text-soft/40 italic leading-relaxed border-l-2 border-primary/30 pl-4 md:border-none md:pl-0">
-          Kami memadukan data-driven strategy dengan desain artistik untuk hasil yang terukur.
+          Analisis mendalam dan eksekusi artistik yang menghasilkan dampak pertumbuhan nyata bagi klien kami.
         </p>
       </div>
 
@@ -49,7 +49,7 @@
               </p>
               <p
                 class="text-[8px] uppercase tracking-widest text-dark group-hover:text-primary dark:text-soft transition-colors mt-1">
-                Growth Impact
+                {{ project.impactLabel }}
               </p>
             </div>
 
@@ -82,9 +82,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import type { Project } from '~/composables/useProjects';
+
 const activeHover = ref<number | null>(null);
-const { allProjects } = useProjects();
-const projects = allProjects.slice(0, 4);
+const { allProjects } = await useProjects();
+const projects = computed((): Project[] => {
+  return (allProjects.value || []).slice(0, 4);
+});
 const router = useRouter();
 
 const handleSeeProjects = () => {

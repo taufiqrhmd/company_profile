@@ -9,16 +9,16 @@
           <div class="space-y-4">
             <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
               <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Pioneering Digital Future</span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Exclusive Digital Partner</span>
             </div>
 
             <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-dark dark:text-white leading-[0.9] tracking-tighter">
-              BEYOND <br />
-              <span class="text-primary">EXCELLENT.</span>
+              DEFINING <br />
+              <span class="text-primary">DIGITAL ELEGANCE.</span>
             </h1>
 
             <p class="max-w-md mx-auto lg:mx-0 text-base md:text-lg text-dark/60 dark:text-white/50 leading-relaxed italic border-l-4 border-primary pl-6">
-              "Digital Excellent menghadirkan simfoni antara teknologi mutakhir dan estetika premium untuk visi bisnis Anda."
+              "Digital Excellent menghadirkan perpaduan sempurna antara inovasi teknologi dan presisi desain untuk mewujudkan visi bisnis yang prestisius."
             </p>
           </div>
 
@@ -30,7 +30,7 @@
               class="w-full sm:w-auto shadow-xl shadow-primary/10"
               @click="handleExplore('#portfolio', true)"
             >
-              EXPLORE OUR WORKS
+              VIEW OUR PORTFOLIO
             </BaseButton>
 
             <div class="flex -space-x-3 md:-space-x-4">
