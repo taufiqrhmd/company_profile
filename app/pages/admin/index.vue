@@ -67,8 +67,7 @@
   </div>
 </template>
 
-<script setup>
-// 1. Import Chart.js essentials
+<script lang="ts" setup>
 import { Line } from 'vue-chartjs'
 import { 
   Chart as ChartJS, 
@@ -79,10 +78,12 @@ import {
   Title, 
   Tooltip, 
   Legend, 
-  Filler 
+  Filler,
+  type ChartOptions,
+  type ChartData
 } from 'chart.js'
 
-// 2. Register Chart.js components
+// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 definePageMeta({
@@ -90,38 +91,47 @@ definePageMeta({
   middleware: ['auth'] 
 })
 
-const loaded = ref(false)
+// Types & Interfaces
+interface StatItem {
+  title: string
+  value: string
+  icon: string
+  trend: string
+}
 
-// 3. Define Stats Data
-const stats = [
+// State
+const loaded = ref<boolean>(false)
+
+// Stats Data
+const stats: StatItem[] = [
   { title: 'Total Visits', value: '12,840', icon: 'solar:users-group-rounded-linear', trend: '+14%' },
   { title: 'Project Views', value: '3,420', icon: 'solar:eye-linear', trend: '+8%' },
   { title: 'Inquiries', value: '124', icon: 'solar:letter-linear', trend: '+2%' },
   { title: 'Server Load', value: '24%', icon: 'solar:cpu-linear', trend: 'Stable' },
 ]
 
-// 4. Chart Data Configuration
-const chartData = {
+// Chart Data Configuration
+const chartData: ChartData<'line'> = {
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [{
     label: 'Visitors',
     data: [120, 190, 150, 280, 220, 310, 420],
-    borderColor: '#D4A32E', // Warna primary kamu
+    borderColor: '#D4A32E', 
     backgroundColor: 'rgba(212, 163, 46, 0.1)',
     fill: true,
-    tension: 0.4, // Membuat garis jadi melengkung (smooth)
+    tension: 0.4, 
     pointRadius: 4,
     pointBackgroundColor: '#D4A32E',
     borderWidth: 3
   }]
 }
 
-// 5. Chart Options Configuration
-const chartOptions = {
+// Chart Options Configuration (Fixed with Explicit Type)
+const chartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: false }, // Kita sembunyikan legend agar lebih minimalis
+    legend: { display: false }, 
     tooltip: {
       backgroundColor: '#0F172A',
       titleFont: { size: 10, weight: 'bold' },
@@ -133,13 +143,13 @@ const chartOptions = {
   },
   scales: {
     y: {
-      display: false, // Sembunyikan garis Y agar elegan
+      display: false, 
       grid: { display: false }
     },
     x: {
       grid: { display: false },
       ticks: {
-        font: { size: 10, weight: '600' },
+        font: { size: 10, weight: 600 },
         color: '#94A3B8'
       }
     }

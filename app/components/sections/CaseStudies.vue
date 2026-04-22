@@ -49,7 +49,7 @@
               </p>
               <p
                 class="text-[8px] uppercase tracking-widest text-dark group-hover:text-primary dark:text-soft transition-colors mt-1">
-                {{ project.impactLabel }}
+                {{ project.impact_label }}
               </p>
             </div>
 

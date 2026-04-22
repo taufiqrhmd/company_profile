@@ -1,5 +1,10 @@
 <template>
   <div class="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-6 font-sans">
+    <Toaster position="top-center" richColors :toastOptions="{
+      style: { borderRadius: '1rem' },
+      class: 'shadow-lg border-0',
+    }" />
+
     <div class="w-full max-w-md space-y-6">
       <div class="text-center space-y-2">
         <h1 class="text-3xl font-black uppercase tracking-tight text-slate-900">
@@ -14,32 +19,23 @@
             <label class="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1">
               Username
             </label>
-            <input 
-              v-model="form.username" 
-              type="text"
+            <input v-model="form.username" type="text"
               class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-400"
-              placeholder="Masukkan username" 
-            />
+              placeholder="Masukkan username" />
           </div>
 
           <div class="space-y-1.5">
             <label class="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1">
               Password
             </label>
-            <input 
-              v-model="form.password" 
-              type="password"
+            <input v-model="form.password" type="password"
               class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-400"
-              placeholder="••••••••" 
-            />
+              placeholder="••••••••" />
           </div>
 
-          <button 
-            type="submit" 
-            :disabled="isLoading"
-            class="w-full p-4 bg-primary text-white rounded-xl font-bold hover:brightness-105 disabled:opacity-50 transition-all flex justify-center items-center gap-2 shadow-md shadow-primary/20 mt-2"
-          >
-            <span v-if="isLoading" class="animate-spin text-lg">◌</span>
+          <button type="submit" :disabled="isLoading"
+            class="w-full p-4 bg-primary text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-all flex justify-center items-center gap-2 shadow-md mt-2">
+            <span v-if="isLoading" class="animate-spin">◌</span>
             {{ isLoading ? 'Sedang memproses...' : 'Masuk ke Dashboard' }}
           </button>
         </form>
@@ -52,46 +48,70 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
+// Import toast dan Toaster component
+import { Toaster, toast } from 'vue-sonner'
+import 'vue-sonner/style.css'
+
 definePageMeta({
   layout: false,
   middleware: ['auth']
 })
 
-const supabase = useSupabaseClient()
-const form = reactive({ username: '', password: '' })
-const isLoading = ref(false)
-const authToken = useCookie('auth_token')
+// Definisikan tipe data untuk user dari database
+interface AdminAccount {
+  username: string;
+  password: string;
+}
 
-const handleLogin = async () => {
-  if (!form.username || !form.password) return alert('Isi semua field!')
+const supabase = useSupabaseClient()
+const isLoading = ref<boolean>(false)
+const authToken = useCookie<string | null>('auth_token')
+
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const handleLogin = async (): Promise<void> => {
+  if (!form.username || !form.password) {
+    toast.warning('Peringatan', { description: 'Harap isi semua field.' })
+    return
+  }
 
   isLoading.value = true
-  
+
   try {
-    // 1. Cari user di tabel admin_accounts berdasarkan username
-    const { data: user, error } = await supabase
+    // Gunakan as any terlebih dahulu untuk memecah rujukan 'never'
+    const { data, error } = await supabase
       .from('admin_accounts')
       .select('*')
       .eq('username', form.username)
       .single()
 
-    if (error || !user) {
+    if (error || !data) {
       throw new Error('Username tidak ditemukan.')
     }
 
-    // 2. Verifikasi Password (Sederhana untuk sekarang)
-    // Idealnya menggunakan library bcrypt jika di Server Side
-    if (user.password_hash === form.password) {
-      // 3. Set Cookie dan Arahkan ke Admin
-      authToken.value = 'token-' + btoa(user.username) // Buat token sederhana
-      navigateTo('/admin', { replace: true })
+    const user = data as unknown as AdminAccount
+
+    if (user.password === form.password) {
+      authToken.value = 'token-' + btoa(user.username)
+
+      toast.success('Berhasil Masuk', {
+        description: `Selamat datang kembali, ${user.username}!`
+      })
+
+      setTimeout(() => {
+        navigateTo('/admin', { replace: true })
+      }, 1000)
+
     } else {
-      alert('Password salah!')
+      toast.error('Gagal Login', { description: 'Username atau Password salah.' })
     }
 
-  } catch (err) {
-    alert(err.message)
+  } catch (err: any) {
+    toast.error('Terjadi Kesalahan', { description: err.message })
   } finally {
     isLoading.value = false
   }

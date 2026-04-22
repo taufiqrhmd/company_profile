@@ -114,24 +114,24 @@
               </h2>
               <p
                 class="text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/5 inline-block px-3 py-1 rounded">
-                {{ project.category }}
+              <p
+                class="text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/5 inline-block px-3 py-1 rounded">
+                {{ project.project_details?.category || 'General Project' }}
+              </p>
               </p>
             </div>
 
             <div class="space-y-4">
               <p class="text-xl md:text-2xl text-dark/80 dark:text-soft/70 leading-snug font-bold tracking-tight">
-                {{ project.description }}
+                {{ project.project_details?.description }}
               </p>
 
               <div class="prose prose-sm dark:prose-invert text-dark/70 dark:text-soft/50 space-y-2">
                 <p>
-                  Proyek ini dimulai dengan tantangan utama dalam meningkatkan retensi pengguna dan efisiensi alur kerja
-                  digital. Melalui fase riset mendalam, kami menemukan bahwa integrasi teknologi yang tepat
-                  dikombinasikan dengan UI yang intuitif adalah kunci utama kesuksesan.
+                  {{ project.project_details?.full_story_1 }}
                 </p>
                 <p>
-                  Hasil akhirnya bukan sekadar produk yang fungsional, melainkan sebuah ekosistem digital yang mampu
-                  beradaptasi dengan pertumbuhan bisnis klien di masa depan.
+                  {{ project.project_details?.full_story_2 }}
                 </p>
               </div>
             </div>
@@ -140,7 +140,7 @@
               <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-dark/40 dark:text-soft/40 mb-5">Tech
                 Stack & Tools</h4>
               <div class="flex flex-wrap gap-3">
-                <span v-for="tech in project.tech" :key="tech"
+                <span v-for="tech in project.project_details?.tech_stack" :key="tech"
                   class="px-5 py-2 bg-white dark:bg-soft/5 border border-dark/5 dark:border-soft/10 rounded-xl text-[11px] font-black text-dark/60 dark:text-soft/50 shadow-sm">
                   {{ tech }}
                 </span>
@@ -166,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-const { allProjects } = useProjects();
+const { allProjects } = await useProjects();
 const router = useRouter();
 const route = useRoute();
 

@@ -41,7 +41,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 definePageMeta({ layout: 'admin' })
 
 const services = ref([

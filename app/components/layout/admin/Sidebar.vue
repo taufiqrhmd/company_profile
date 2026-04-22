@@ -16,7 +16,7 @@
       <NuxtLink 
         v-for="item in menuItems" :key="item.path" :to="item.path"
         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group"
-        :class="route.path === item.path ? 'bg-primary text-black font-bold' : 'text-slate-400 hover:bg-white/5 hover:text-white'"
+        :class="route.path === item.path ? 'bg-primary text-soft font-bold' : 'text-slate-400 hover:bg-white/5 hover:text-white'"
       >
         <Icon :name="item.icon" class="w-5 h-5" />
         <span class="text-xs uppercase tracking-wider">{{ item.name }}</span>
@@ -32,7 +32,7 @@
   </aside>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const route = useRoute()
 defineProps(['isOpen'])
 

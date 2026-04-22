@@ -21,17 +21,19 @@
   </div>
 </template>
 
-<script setup>
-import { nextTick, ref, computed, watch } from 'vue'
+<script lang="ts" setup>
+import { nextTick, ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 
-const smoother = ref(null)
+// Tipe data untuk ScrollSmoother agar TS tidak komplain
+const smoother = ref < ScrollSmoother | null > (null)
 const route = useRoute()
 const isAdminPage = computed(() => route.path.startsWith('/admin'))
 
-if (process.client) {
+// Register plugin hanya sekali di level client
+if (import.meta.client) {
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
 }
 
@@ -46,69 +48,96 @@ useSeoMeta({
   ogTitle: 'Digital Excellent Studio',
   description: 'Freelance fullstack developer & frontend engineer spesialisasi Vue, Nuxt, dan High-Fidelity UI/UX.',
   ogDescription: 'Premium Web Development & Interactive Design Studio.',
-  ogImage: '/og-image.jpg', // Pastikan file ini ada di folder public
+  ogImage: '/og-image.jpg',
   twitterCard: 'summary_large_image',
 });
 
-watch(() => route.fullPath, async () => {
-  if (process.client) {
-    // 1. Reset posisi scroll ke 0 secepat mungkin
-    if (smoother.value) {
-      smoother.value.scrollTop(0);
-    } else {
-      window.scrollTo(0, 0);
-    }
+// Fungsi inisialisasi Smoother agar bisa dipanggil berulang
+const initSmoother = () => {
+  if (!import.meta.client || isAdminPage.value) return
 
-    // 2. Tunggu konten halaman baru selesai render
-    await nextTick();
-
-    // 3. Beri sedikit jeda agar ScrollSmoother menghitung ulang tinggi content
-    setTimeout(() => {
-      if (smoother.value) {
-        smoother.value.content(document.querySelector('#smooth-content'));
-        ScrollTrigger.refresh();
-      }
-    }, 100);
+  // Kill smoother lama jika ada sebelum membuat yang baru
+  if (smoother.value) {
+    smoother.value.kill()
   }
-});
+
+  try {
+    smoother.value = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 1.5,
+      effects: true,
+      normalizeScroll: { allowNestedScroll: true } // Lebih aman untuk elemen modal/scrollable
+    })
+
+      // Masukkan ke window untuk akses global (gunakan type casting)
+      ; (window as any).smoother = smoother.value
+    ScrollTrigger.refresh()
+  } catch (e) {
+    console.error("GSAP Init Error:", e)
+  }
+}
+
+// Watcher untuk handle route change
+watch(() => route.fullPath, async () => {
+  if (!import.meta.client) return
+
+  // 1. Jika pindah ke admin, matikan smoother
+  if (isAdminPage.value) {
+    if (smoother.value) {
+      smoother.value.kill()
+      smoother.value = null
+        ; (window as any).smoother = null
+    }
+    return
+  }
+
+  // 2. Reset scroll posisi
+  if (smoother.value) {
+    smoother.value.scrollTop(0)
+  } else {
+    window.scrollTo(0, 0)
+  }
+
+  // 3. Re-init atau refresh setelah DOM update
+  await nextTick()
+
+  // Jika smoother belum ada (misal balik dari admin ke landing)
+  if (!smoother.value && !isAdminPage.value) {
+    initSmoother()
+  } else if (smoother.value) {
+    // Jika sudah ada, cukup refresh perhitungan tinggi content
+    setTimeout(() => {
+      ScrollTrigger.refresh()
+    }, 100)
+  }
+})
 
 onMounted(async () => {
-  if (process.client && !isAdminPage.value) {
+  if (import.meta.client) {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual'
     }
 
     await nextTick()
-    
+    // Beri jeda sedikit lebih lama di awal untuk memastikan layout selesai
     setTimeout(() => {
-      try {
-        smoother.value = ScrollSmoother.create({
-          wrapper: '#smooth-wrapper',
-          content: '#smooth-content',
-          smooth: 1.5,
-          effects: true,
-          normalizeScroll: true
-        })
-
-        window.smoother = smoother.value;
-        ScrollTrigger.refresh()
-      } catch (e) {
-        console.error("GSAP Init Error:", e)
-      }
-    }, 200)
+      initSmoother()
+    }, 300)
   }
 })
 
 onUnmounted(() => {
   if (smoother.value) {
     smoother.value.kill()
-    window.smoother = null;
+      ; (window as any).smoother = null
   }
 })
 </script>
 
 <style>
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   min-height: 100%;

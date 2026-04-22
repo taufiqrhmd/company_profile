@@ -16,7 +16,7 @@
         <div class="flex items-center gap-4">
           <div class="text-right">
             <p class="text-[11px] font-bold text-slate-900 leading-none">
-              {{ adminData?.full_name || 'Loading...' }}
+              {{ adminUser?.full_name || 'Loading...' }}
             </p>
             <p class="text-[9px] text-primary font-bold uppercase tracking-tighter">
               Admin Account
@@ -39,24 +39,8 @@
 <script setup>
 const route = useRoute()
 const isMobileMenuOpen = ref(false)
-const supabase = useSupabaseClient()
-const authToken = useCookie('auth_token')
 
-const { data: adminData } = await useAsyncData('admin-profile', async () => {
-  if (!authToken.value) return null
-
-  // Dekode username dari token (menghapus prefix 'token-')
-  const base64Part = authToken.value.replace('token-', '')
-  const usernameFromToken = atob(base64Part)
-
-  const { data } = await supabase
-    .from('admin_accounts')
-    .select('full_name')
-    .eq('username', usernameFromToken)
-    .single()
-
-  return data
-})
+const adminUser = useState('adminUser')
 
 // Tutup sidebar otomatis saat route berubah (untuk mobile)
 watch(() => route.path, () => { isMobileMenuOpen.value = false })
