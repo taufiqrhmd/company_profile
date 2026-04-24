@@ -30,6 +30,7 @@
           <thead>
             <tr class="bg-slate-50/50 border-b border-slate-100">
               <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Project & Asset</th>
+              <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Category</th>
               <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Impact Metric
               </th>
               <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Action</th>
@@ -59,6 +60,12 @@
                     </p>
                   </div>
                 </div>
+              </td>
+              <td class="p-8">
+                <span
+                  class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
+                  {{ project.project_details?.[0]?.category || 'No Category' }}
+                </span>
               </td>
               <td class="p-8">
                 <div class="flex flex-col items-center">
@@ -107,15 +114,17 @@
             <div class="p-10 pt-4 overflow-y-auto custom-scrollbar">
               <div class="grid grid-cols-2 gap-6 pb-4">
                 <div class="space-y-2 col-span-2">
-                  <label class="label-style">Project Title</label>
-                  <input v-model="formData.title" type="text" class="form-input" placeholder="Lumina Retail">
+                  <label for="project_title" class="label-style">Project Title</label>
+                  <input id="project_title" name="title" v-model="formData.title" type="text" class="form-input"
+                    placeholder="Lumina Retail">
                 </div>
                 <div class="space-y-2 col-span-2 sm:col-span-1">
-                  <label class="label-style">Category</label>
-                  <input v-model="formData.category" type="text" class="form-input" placeholder="E-commerce">
+                  <label for="project_category" class="label-style">Category</label>
+                  <input id="project_category" name="category" v-model="formData.category" type="text"
+                    class="form-input" placeholder="E-commerce">
                 </div>
                 <div class="space-y-4 col-span-2">
-                  <label class="label-style">Icon Selection</label>
+                  <label for="project_icon" class="label-style">Icon Selection</label>
                   <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
                     <button v-for="icon in iconPresets" :key="icon.value" type="button"
                       @click="formData.icon = icon.value"
@@ -124,30 +133,58 @@
                     </button>
                   </div>
                 </div>
-                <div class="space-y-2">
-                  <label class="label-style">Impact Metric</label>
-                  <input v-model="formData.impact" type="text" class="form-input" placeholder="+140%">
+                <div class="space-y-2 col-span-2">
+                  <label for="project_thumbnail" class="label-style">Project Thumbnail</label>
+                  <div
+                    class="flex items-center gap-6 p-6 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50/50">
+                    <div class="w-32 h-20 rounded-2xl overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
+                      <img v-if="imagePreview || formData.image" :src="imagePreview || formData.image"
+                        class="w-full h-full object-cover" />
+                      <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
+                        <Icon name="solar:gallery-bold" class="w-8 h-8" />
+                      </div>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                      <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Format: JPG, PNG, WEBP
+                        (Max 2MB)</p>
+                      <input id="thumbnail_upload" name="thumbnail" type="file" ref="fileInput"
+                        @change="handleFileChange" accept="image/*" class="hidden" />
+                      <button @click="fileInput?.click()" type="button"
+                        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
+                        Choose Image
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div class="space-y-2">
-                  <label class="label-style">Impact Label</label>
-                  <input v-model="formData.impact_label" type="text" class="form-input" placeholder="Growth">
+                  <label for="project_impact" class="label-style">Impact Metric</label>
+                  <input id="project_impact" v-model="formData.impact" type="text" class="form-input"
+                    placeholder="+140%">
+                </div>
+                <div class="space-y-2">
+                  <label for="project_impact_label" class="label-style">Impact Label</label>
+                  <input id="project_impact_label" v-model="formData.impact_label" type="text" class="form-input"
+                    placeholder="Growth">
                 </div>
                 <div class="space-y-2 col-span-2">
-                  <label class="label-style">Description</label>
-                  <textarea v-model="formData.description" rows="3" class="form-input py-4"></textarea>
+                  <label for="project_description" class="label-style">Description</label>
+                  <textarea id="project_description" v-model="formData.description" rows="3"
+                    class="form-input py-4"></textarea>
                 </div>
                 <div class="space-y-2 col-span-2">
-                  <label class="label-style">Full Story Paragraph 1</label>
-                  <textarea v-model="formData.full_story_1" rows="3" class="form-input py-4"></textarea>
+                  <label for="project_full_story_1" class="label-style">Full Story Paragraph 1</label>
+                  <textarea id="project_full_story_1" v-model="formData.full_story_1" rows="3"
+                    class="form-input py-4"></textarea>
                 </div>
 
                 <div class="space-y-2 col-span-2">
-                  <label class="label-style">Full Story Paragraph 2</label>
-                  <textarea v-model="formData.full_story_2" rows="3" class="form-input py-4"></textarea>
+                  <label for="project_full_story_2" class="label-style">Full Story Paragraph 2</label>
+                  <textarea id="project_full_story_2" v-model="formData.full_story_2" rows="3"
+                    class="form-input py-4"></textarea>
                 </div>
                 <div class="space-y-2 col-span-2">
-                  <label class="label-style">Tech Stack (pisahkan dengan koma)</label>
-                  <input :value="formData.tech_stack.join(', ')"
+                  <label for="project_tech_stack" class="label-style">Tech Stack (pisahkan dengan koma)</label>
+                  <input id="project_tech_stack" :value="formData.tech_stack.join(', ')"
                     @input="formData.tech_stack = ($event.target as HTMLInputElement).value.split(',').map(s => s.trim())"
                     type="text" class="form-input" placeholder="Nuxt 3, Tailwind, Supabase">
                 </div>
@@ -172,6 +209,9 @@ import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: 'admin' })
 const supabase = useSupabaseClient<any>()
+const fileInput = ref<HTMLInputElement | null>(null)
+const selectedFile = ref<File | null>(null)
+const imagePreview = ref<string>('')
 
 interface ProjectForm {
   id?: string | number
@@ -220,12 +260,9 @@ const iconPresets = [
 const fetchProjects = async () => {
   isLoading.value = true
   try {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*, project_details(*)')
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
+    // Memanggil Server API Route kita
+    const data = await $fetch('/api/projects')
+    console.log('Data dari API:', data)
     projects.value = data || []
   } catch (e: any) {
     toast.error('Error fetching projects', { description: e.message })
@@ -234,34 +271,83 @@ const fetchProjects = async () => {
   }
 }
 
+const handleFileChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    selectedFile.value = file
+    imagePreview.value = URL.createObjectURL(file) // Untuk preview instan
+  }
+}
+
+const uploadImage = async (file: File) => {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Math.random()}.${fileExt}`
+  const filePath = `uploads/${fileName}`
+
+  // 1. Upload ke Storage
+  const { data, error } = await supabase.storage
+    .from('project-assets')
+    .upload(filePath, file)
+
+  if (error) throw error
+
+  // 2. Ambil Public URL
+  const { data: publicUrl } = supabase.storage
+    .from('project-assets')
+    .getPublicUrl(filePath)
+
+  return publicUrl.publicUrl
+}
+
 const openModal = (project: any = null) => {
   isEditMode.value = !!project
+  resetForm() 
+
   if (project) {
-    Object.assign(formData, project)
-    if (project.project_details) {
-      formData.category = project.project_details.category
-      formData.description = project.project_details.description
-      formData.full_story_1 = project.project_details.full_story_1
-      formData.full_story_2 = project.project_details.full_story_2
-      formData.tech_stack = project.project_details.tech_stack || []
+    // 1. Data Utama
+    formData.id = project.id
+    formData.title = project.title
+    formData.impact = project.impact
+    formData.impact_label = project.impact_label
+    formData.icon = project.icon
+    formData.image = project.image
+
+    // 2. Data Detail (Handling Array dari Supabase)
+    const detailArray = project.project_details
+    // Kita ambil index [0] karena di log konsol Anda datanya ada di dalam array
+    const detail = Array.isArray(detailArray) ? detailArray[0] : detailArray
+
+    if (detail) {
+      formData.category = detail.category || ''
+      formData.description = detail.description || ''
+      formData.full_story_1 = detail.full_story_1 || ''
+      formData.full_story_2 = detail.full_story_2 || ''
+      formData.tech_stack = Array.isArray(detail.tech_stack) ? detail.tech_stack : []
     }
-  } else {
-    resetForm()
+    
+    imagePreview.value = project.image
   }
   isModalOpen.value = true
 }
 
 const resetForm = () => {
+  // Gunakan Object.assign agar reaktifitas tetap terjaga
   Object.assign(formData, {
     id: undefined,
     title: '',
-    category: '',
     impact: '',
-    impactLabel: '',
-    description: '',
+    impact_label: '',
     icon: 'heroicons:cube',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop',
+    category: '',
+    description: '',
+    full_story_1: '',
+    full_story_2: '',
+    tech_stack: []
   })
+  selectedFile.value = null
+  imagePreview.value = ''
 }
 
 const saveProject = async () => {
@@ -269,42 +355,49 @@ const saveProject = async () => {
   isSubmitting.value = true
 
   try {
-    const mainData = {
-      title: formData.title,
-      impact: formData.impact,
-      impact_label: formData.impact_label,
-      icon: formData.icon,
-      image: formData.image
+    let imageUrl = formData.image
+
+    if (selectedFile.value) {
+      toast.info('Uploading image...')
+      imageUrl = await uploadImage(selectedFile.value)
     }
 
-    let projectId = formData.id
+    const payload = {
+      mainData: {
+        title: formData.title,
+        impact: formData.impact,
+        impact_label: formData.impact_label,
+        icon: formData.icon,
+        image: imageUrl
+      },
+      detailData: {
+        category: formData.category,
+        description: formData.description,
+        full_story_1: formData.full_story_1,
+        full_story_2: formData.full_story_2,
+        tech_stack: formData.tech_stack
+      }
+    }
 
-    if (isEditMode.value && projectId) {
-      await supabase.from('projects').update(mainData).eq('id', projectId)
+    if (isEditMode.value && formData.id) {
+
+      await $fetch(`/api/projects/${formData.id}`, {
+        method: 'PUT',
+        body: payload
+      })
     } else {
-      const { data, error } = await supabase.from('projects').insert([mainData]).select().single()
-      if (error) throw error
-      projectId = data.id
+      // MENGGUNAKAN SERVER API UNTUK INSERT
+      await $fetch('/api/projects/create', {
+        method: 'POST',
+        body: payload
+      })
     }
 
-    const detailData = {
-      project_id: projectId,
-      category: formData.category,
-      description: formData.description,
-      full_story_1: formData.full_story_1,
-      full_story_2: formData.full_story_2,
-      tech_stack: formData.tech_stack
-    }
-
-    const { error: detailError } = await supabase
-      .from('project_details')
-      .upsert([detailData], { onConflict: 'project_id' })
-
-    if (detailError) throw detailError
-
-    toast.success('Project berhasil disimpan')
-    await fetchProjects()
+    toast.success('Project berhasil dipublish!')
+    selectedFile.value = null
+    imagePreview.value = ''
     isModalOpen.value = false
+    await fetchProjects()
   } catch (e: any) {
     toast.error(e.message)
   } finally {
@@ -312,14 +405,55 @@ const saveProject = async () => {
   }
 }
 
-const handleDelete = async (id: string | number | undefined) => {
-  if (!id || !confirm('Delete this project permanently?')) return
+const handleDelete = (id: string | number | undefined) => {
+  console.log("Handle Delete Muncul")
+  if (!id) {
+    console.error("ID tidak ditemukan");
+    return;
+  }
 
+  toast.warning('Hapus project ini?', {
+    description: 'Tindakan ini tidak dapat dibatalkan.',
+    duration: 5000, // Jangan gunakan Infinity agar tidak nyangkut jika ada error
+    action: {
+      label: 'Hapus Sekarang',
+      onClick: () => {
+        // Langsung panggil fungsi eksekusi
+        executeDelete(id);
+      }
+    },
+  })
+}
+
+// Gunakan async function agar hoisting lebih aman
+const executeDelete = async (id: string | number) => {
+  console.log('Memulai proses eksekusi hapus untuk ID:', id);
+  const deleteToast = toast.loading('Sedang menghapus...');
+  
   try {
-    const { error } = await supabase.from('projects').delete().eq('id', id)
-    if (error) throw error
-    await fetchProjects()
+    const projectToDelete = projects.value.find(p => p.id === id);
+    
+    // 1. Hapus Storage jika ada
+    if (projectToDelete?.image) {
+      // Pastikan URL parsing benar
+      const urlParts = projectToDelete.image.split('project-assets/');
+      if (urlParts.length > 1) {
+        const filePath = urlParts[1];
+        await supabase.storage.from('project-assets').remove([filePath]);
+      }
+    }
+
+    // 2. Panggil API
+    // Pastikan path API sesuai dengan struktur folder Nuxt Anda
+    await $fetch(`/api/projects/${id}`, { 
+      method: 'DELETE' 
+    });
+    
+    toast.success('Project berhasil dihapus', { id: deleteToast });
+    await fetchProjects(); 
   } catch (e: any) {
+    console.error('Error detail:', e);
+    toast.error('Gagal: ' + (e.data?.message || e.message), { id: deleteToast });
   }
 }
 

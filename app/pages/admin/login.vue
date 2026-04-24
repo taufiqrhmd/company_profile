@@ -49,7 +49,6 @@
 </template>
 
 <script lang="ts" setup>
-// Import toast dan Toaster component
 import { Toaster, toast } from 'vue-sonner'
 import 'vue-sonner/style.css'
 
@@ -58,15 +57,23 @@ definePageMeta({
   middleware: ['auth']
 })
 
-// Definisikan tipe data untuk user dari database
+// Update interface agar menyertakan role
 interface AdminAccount {
   username: string;
   password: string;
+  full_name: string;
+  role: 'super_admin' | 'editor';
 }
 
 const supabase = useSupabaseClient()
 const isLoading = ref<boolean>(false)
-const authToken = useCookie<string | null>('auth_token')
+const authToken = useCookie<string | null>('auth_token', {
+  maxAge: 60 * 60 * 24, // 1 hari
+  path: '/'
+})
+
+// Ambil state global agar bisa langsung diisi
+const adminUser = useState<any>('adminUser')
 
 const form = reactive({
   username: '',
@@ -82,7 +89,6 @@ const handleLogin = async (): Promise<void> => {
   isLoading.value = true
 
   try {
-    // Gunakan as any terlebih dahulu untuk memecah rujukan 'never'
     const { data, error } = await supabase
       .from('admin_accounts')
       .select('*')
@@ -90,21 +96,31 @@ const handleLogin = async (): Promise<void> => {
       .single()
 
     if (error || !data) {
-      throw new Error('Username tidak ditemukan.')
+      throw new Error('Akun tidak ditemukan.')
     }
 
-    const user = data as unknown as AdminAccount
+    const user = data as AdminAccount
 
+    // Validasi Password
     if (user.password === form.password) {
+      // 1. Simpan Cookie untuk persistence (Middleware)
       authToken.value = 'token-' + btoa(user.username)
 
+      // 2. Simpan ke State Global (Agar Sidebar & Header langsung update)
+      adminUser.value = {
+        username: user.username,
+        full_name: user.full_name,
+        role: user.role
+      }
+
       toast.success('Berhasil Masuk', {
-        description: `Selamat datang kembali, ${user.username}!`
+        description: `Selamat datang kembali, ${user.full_name}!`
       })
 
+      // Beri sedikit delay agar toast terlihat
       setTimeout(() => {
         navigateTo('/admin', { replace: true })
-      }, 1000)
+      }, 800)
 
     } else {
       toast.error('Gagal Login', { description: 'Username atau Password salah.' })

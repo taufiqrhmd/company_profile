@@ -1,5 +1,6 @@
 <template>
   <div class="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-hidden">
+    <Toaster position="top-center" richColors :expand="true" :style="{ zIndex: 9999 }" />
     <LayoutAdminSidebar :isOpen="isMobileMenuOpen" @close="isMobileMenuOpen = false" />
 
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -19,7 +20,7 @@
               {{ adminUser?.full_name || 'Loading...' }}
             </p>
             <p class="text-[9px] text-primary font-bold uppercase tracking-tighter">
-              Admin Account
+              {{ adminUser?.role?.replace('_', ' ') || 'Account' }}
             </p>
           </div>
           <div
@@ -37,12 +38,12 @@
 </template>
 
 <script setup>
+import { Toaster } from 'vue-sonner'
 const route = useRoute()
 const isMobileMenuOpen = ref(false)
 
 const adminUser = useState('adminUser')
 
-// Tutup sidebar otomatis saat route berubah (untuk mobile)
 watch(() => route.path, () => { isMobileMenuOpen.value = false })
 </script>
 

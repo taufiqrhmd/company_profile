@@ -10,6 +10,17 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
 
+  runtimeConfig: {
+    // Variabel di sini hanya tersedia di SISI SERVER
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+
+    public: {
+      // Variabel di dalam public tersedia di SISI SERVER & CLIENT
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
+    }
+  },
+
   supabase: {
     redirect: false,
     types: "~/types/database.types.ts",
