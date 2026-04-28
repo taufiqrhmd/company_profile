@@ -24,69 +24,80 @@
       </div>
     </div>
 
-    <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+    <div class="bg-white border border-slate-200 rounded-[1.5rem] overflow-hidden shadow-sm">
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full border-separate border-spacing-0">
           <thead>
-            <tr class="bg-slate-50/50 border-b border-slate-100">
-              <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Project & Asset</th>
-              <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Category</th>
-              <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Impact Metric
-              </th>
-              <th class="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Action</th>
+            <tr class="bg-slate-50/50">
+              <th class="th-style text-center w-16">No</th>
+              <th class="th-style">Project & Asset</th>
+              <th class="th-style text-center">Category</th>
+              <th class="th-style text-center">Impact Metric</th>
+              <th class="th-style text-right">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            <tr v-if="isLoading" v-for="i in 3" :key="i" class="animate-pulse">
-              <td colspan="3" class="p-8 bg-slate-50/20 h-24"></td>
-            </tr>
-            <tr v-else v-for="(project, index) in projects" :key="project.id"
-              class="hover:bg-slate-50/50 transition-colors group">
-              <td class="p-8">
-                <div class="flex items-center gap-6">
-                  <span class="text-xs font-black text-primary italic">{{ formatIndex(index) }}</span>
-                  <div class="relative w-20 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                    <img :src="project.image" :alt="project.title" class="w-full h-full object-cover">
-                  </div>
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <Icon :name="project.icon || 'heroicons:cube'" class="w-4 h-4 text-primary" />
-                      <p class="text-lg font-black uppercase italic tracking-tight text-slate-900 leading-none">
-                        {{ project.title }}
-                      </p>
-                    </div>
-                    <p class="text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-2">
-                      {{ project.category }}
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td class="p-8">
+            <tr v-for="(project, index) in projects" :key="project.id"
+              class="hover:bg-slate-50/80 transition-all duration-300 group">
+
+              <td class="p-6 text-center">
                 <span
-                  class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
-                  {{ project.project_details?.[0]?.category || 'No Category' }}
+                  class="text-[11px] font-black text-slate-300 group-hover:text-primary transition-colors tabular-nums">
+                  {{ formatIndex(index) }}
                 </span>
               </td>
-              <td class="p-8">
-                <div class="flex flex-col items-center">
+
+              <td class="p-6">
+                <div class="flex items-center gap-5">
                   <div
-                    class="inline-flex items-center gap-2 px-4 py-1.5 bg-green-50 rounded-full border border-green-100">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-black uppercase text-green-600 tracking-widest">
-                      {{ project.impact }}
-                    </span>
+                    class="relative w-24 h-16 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm shrink-0">
+                    <img :src="project.image" :alt="project.title"
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                   </div>
-                  <p class="text-[8px] text-slate-400 uppercase font-bold mt-2 italic">{{ project.impactLabel }}</p>
+                  <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                      <Icon :name="project.icon || 'heroicons:cube'" class="w-4 h-4 text-primary" />
+                      <h3 class="text-[13px] font-black uppercase italic tracking-tight text-slate-800">
+                        {{ project.title }}
+                      </h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                        ID: {{ project.id?.toString().slice(0, 8) }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </td>
-              <td class="p-8 text-right">
-                <div class="flex justify-end gap-2">
+
+              <td class="p-6 text-center">
+                <span
+                  class="inline-flex px-4 py-1.5 bg-slate-100 text-slate-500 rounded-xl text-[9px] font-black uppercase tracking-[0.1em] group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  {{ project.project_details?.category || 'General' }}
+                </span>
+              </td>
+
+              <td class="p-6">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="px-3 py-1 bg-green-50 text-green-600 rounded-lg border border-green-100 flex items-center gap-2 mb-1">
+                    <div class="w-1 h-1 bg-green-500 rounded-full"></div>
+                    <span class="text-[11px] font-black">{{ project.impact }}</span>
+                  </div>
+                  <span class="text-[8px] text-slate-400 font-bold uppercase tracking-tighter italic">
+                    {{ project.impact_label }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="p-6 pr-4 text-right">
+                <div class="flex justify-end gap-1">
                   <button @click="openModal(project)"
-                    class="p-3 text-slate-300 hover:text-primary transition-all hover:bg-primary/5 rounded-xl">
+                    class="action-btn group/btn hover:text-primary hover:bg-primary/5">
                     <Icon name="solar:pen-new-square-bold" class="w-6 h-6" />
                   </button>
                   <button @click="handleDelete(project.id)"
-                    class="p-3 text-slate-300 hover:text-red-500 transition-all hover:bg-red-50 rounded-xl">
+                    class="action-btn group/btn hover:text-red-500 hover:bg-red-50">
                     <Icon name="solar:trash-bin-trash-bold" class="w-6 h-6" />
                   </button>
                 </div>
@@ -302,7 +313,7 @@ const uploadImage = async (file: File) => {
 
 const openModal = (project: any = null) => {
   isEditMode.value = !!project
-  resetForm() 
+  resetForm()
 
   if (project) {
     // 1. Data Utama
@@ -325,7 +336,7 @@ const openModal = (project: any = null) => {
       formData.full_story_2 = detail.full_story_2 || ''
       formData.tech_stack = Array.isArray(detail.tech_stack) ? detail.tech_stack : []
     }
-    
+
     imagePreview.value = project.image
   }
   isModalOpen.value = true
@@ -429,10 +440,10 @@ const handleDelete = (id: string | number | undefined) => {
 const executeDelete = async (id: string | number) => {
   console.log('Memulai proses eksekusi hapus untuk ID:', id);
   const deleteToast = toast.loading('Sedang menghapus...');
-  
+
   try {
     const projectToDelete = projects.value.find(p => p.id === id);
-    
+
     // 1. Hapus Storage jika ada
     if (projectToDelete?.image) {
       // Pastikan URL parsing benar
@@ -445,12 +456,12 @@ const executeDelete = async (id: string | number) => {
 
     // 2. Panggil API
     // Pastikan path API sesuai dengan struktur folder Nuxt Anda
-    await $fetch(`/api/projects/${id}`, { 
-      method: 'DELETE' 
+    await $fetch(`/api/projects/${id}`, {
+      method: 'DELETE'
     });
-    
+
     toast.success('Project berhasil dihapus', { id: deleteToast });
-    await fetchProjects(); 
+    await fetchProjects();
   } catch (e: any) {
     console.error('Error detail:', e);
     toast.error('Gagal: ' + (e.data?.message || e.message), { id: deleteToast });
@@ -510,5 +521,18 @@ onMounted(fetchProjects)
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-slate-200 rounded-full;
+}
+
+.th-style {
+  @apply p-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 align-middle;
+}
+
+.action-btn {
+  @apply p-2.5 text-slate-300 rounded-xl transition-all duration-200;
+}
+
+/* Memperbaiki perataan vertikal seluruh sel */
+td {
+  @apply align-middle;
 }
 </style>
