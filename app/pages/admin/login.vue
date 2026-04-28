@@ -57,15 +57,6 @@ definePageMeta({
   middleware: ['auth']
 })
 
-// Update interface agar menyertakan role
-interface AdminAccount {
-  username: string;
-  password: string;
-  full_name: string;
-  role: 'super_admin' | 'editor';
-}
-
-const supabase = useSupabaseClient()
 const isLoading = ref<boolean>(false)
 const authToken = useCookie<string | null>('auth_token', {
   maxAge: 60 * 60 * 24, // 1 hari
@@ -81,53 +72,50 @@ const form = reactive({
 })
 
 const handleLogin = async (): Promise<void> => {
+  // 1. Validasi Input Dasar
   if (!form.username || !form.password) {
     toast.warning('Peringatan', { description: 'Harap isi semua field.' })
     return
   }
-
   isLoading.value = true
 
   try {
-    const { data, error } = await supabase
-      .from('admin_accounts')
-      .select('*')
-      .eq('username', form.username)
-      .single()
-
-    if (error || !data) {
-      throw new Error('Akun tidak ditemukan.')
-    }
-
-    const user = data as AdminAccount
-
-    // Validasi Password
-    if (user.password === form.password) {
-      // 1. Simpan Cookie untuk persistence (Middleware)
-      authToken.value = 'token-' + btoa(user.username)
-
-      // 2. Simpan ke State Global (Agar Sidebar & Header langsung update)
-      adminUser.value = {
-        username: user.username,
-        full_name: user.full_name,
-        role: user.role
+    // 2. Memanggil API Server Internal (/server/api/auth/login.post.ts)
+    // $fetch secara otomatis mengenali method POST berdasarkan nama file atau opsi
+    const response = await $fetch('/api/auth/login', {
+      method: 'POST',
+      body: {
+        username: form.username,
+        password: form.password
       }
+    })
+
+    // 3. Jika Berhasil
+    if (response.success) {
+      // Simpan cookie token yang dikirim dari server
+      authToken.value = response.token
+
+      // Simpan data user ke global state (tanpa password)
+      adminUser.value = response.user
 
       toast.success('Berhasil Masuk', {
-        description: `Selamat datang kembali, ${user.full_name}!`
+        description: `Selamat datang kembali, ${response.user.full_name}!`
       })
 
-      // Beri sedikit delay agar toast terlihat
+      // Redirect ke dashboard
       setTimeout(() => {
         navigateTo('/admin', { replace: true })
       }, 800)
-
-    } else {
-      toast.error('Gagal Login', { description: 'Username atau Password salah.' })
     }
 
   } catch (err: any) {
-    toast.error('Terjadi Kesalahan', { description: err.message })
+    // 4. Menangani Error dari Server
+    // Nuxt $fetch melempar error yang berisi data dari 'createError' di server
+    const errorMessage = err.data?.statusMessage || 'Username atau Password salah.'
+    
+    toast.error('Gagal Login', { 
+      description: errorMessage 
+    })
   } finally {
     isLoading.value = false
   }

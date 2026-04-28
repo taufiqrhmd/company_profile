@@ -22,17 +22,46 @@
     </nav>
 
     <div class="p-4 mt-auto border-t border-white/5">
-      <button @click="handleLogout"
+      <button @click="isLogoutModalOpen = true"
         class="flex items-center gap-3 px-4 py-3 w-full text-slate-500 hover:text-red-400 transition-colors group">
         <Icon name="solar:logout-3-bold" class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
         <span class="text-xs font-bold uppercase tracking-widest">Sign Out</span>
       </button>
     </div>
   </aside>
+  
+  <Transition name="fade">
+    <div v-if="isLogoutModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="isLogoutModalOpen = false"></div>
+      
+      <div class="relative bg-[#16191E] border border-white/10 p-6 rounded-2xl max-w-sm w-full shadow-2xl">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icon name="solar:danger-triangle-bold" class="w-8 h-8" />
+          </div>
+          <h3 class="text-white font-bold text-lg mb-2">Confirm Sign Out</h3>
+          <p class="text-slate-400 text-sm mb-6">Are you sure you want to log out? You will need to login again to access the dashboard.</p>
+          
+          <div class="flex gap-3">
+            <button @click="isLogoutModalOpen = false" 
+              class="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-white text-sm font-medium hover:bg-white/10 transition-colors">
+              Cancel
+            </button>
+            <button @click="handleLogout" 
+              class="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors">
+              Yes, Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
+import { toast } from 'vue-sonner'
 const route = useRoute()
+const isLogoutModalOpen = ref(false)
 defineProps(['isOpen'])
 defineEmits(['close'])
 
@@ -79,9 +108,23 @@ const handleLogout = () => {
   const authToken = useCookie('auth_token')
   const userState = useState('adminUser')
 
+  // 1. Tutup modal segera
+  isLogoutModalOpen.value = false
+
+  // 2. Hapus session
   authToken.value = null
-  userState.value = null // Bersihkan state saat logout
-  navigateTo('/admin/login')
+  userState.value = null 
+
+  // 3. Picu Toast Sukses
+  toast.success('Successfully logged out', {
+    description: 'See you again soon!',
+    duration: 2000,
+  })
+
+  // 4. Redirect dengan sedikit delay agar user sempat melihat toast
+  setTimeout(() => {
+    navigateTo('/admin/login')
+  }, 1000)
 }
 
 onMounted(async () => {

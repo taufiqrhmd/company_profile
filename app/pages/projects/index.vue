@@ -114,10 +114,7 @@
               </h2>
               <p
                 class="text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/5 inline-block px-3 py-1 rounded">
-              <p
-                class="text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/5 inline-block px-3 py-1 rounded">
                 {{ project.project_details?.category || 'General Project' }}
-              </p>
               </p>
             </div>
 
