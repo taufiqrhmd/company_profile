@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { data, error } = await client
     .from("services")
     .select('*') // Mengambil relasi project_details
-    .order("id", { ascending: false });
+    .order("id", { ascending: true });
 
   if (error) throw createError({ statusCode: 500, message: error.message });
   return data;
