@@ -13,6 +13,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    jwtSecret: process.env.JWT_SECRET,
 
     public: {
       supabaseUrl: process.env.SUPABASE_URL,

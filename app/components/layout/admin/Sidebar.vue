@@ -29,25 +29,26 @@
       </button>
     </div>
   </aside>
-  
+
   <Transition name="fade">
     <div v-if="isLogoutModalOpen" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="isLogoutModalOpen = false"></div>
-      
+
       <div class="relative bg-[#16191E] border border-white/10 p-6 rounded-2xl max-w-sm w-full shadow-2xl">
         <div class="text-center">
           <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="solar:danger-triangle-bold" class="w-8 h-8" />
           </div>
           <h3 class="text-white font-bold text-lg mb-2">Confirm Sign Out</h3>
-          <p class="text-slate-400 text-sm mb-6">Are you sure you want to log out? You will need to login again to access the dashboard.</p>
-          
+          <p class="text-slate-400 text-sm mb-6">Are you sure you want to log out? You will need to login again to
+            access the dashboard.</p>
+
           <div class="flex gap-3">
-            <button @click="isLogoutModalOpen = false" 
+            <button @click="isLogoutModalOpen = false"
               class="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-white text-sm font-medium hover:bg-white/10 transition-colors">
               Cancel
             </button>
-            <button @click="handleLogout" 
+            <button @click="handleLogout"
               class="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors">
               Yes, Sign Out
             </button>
@@ -98,33 +99,38 @@ const menuItems = [
 // Filter menu berdasarkan role user
 const filteredMenu = computed(() => {
   if (!adminUser.value || !adminUser.value.role) return []
-  
-  return menuItems.filter(item => 
+
+  return menuItems.filter(item =>
     item.roles.includes(adminUser.value.role)
   )
 })
 
-const handleLogout = () => {
-  const authToken = useCookie('auth_token')
-  const userState = useState('adminUser')
+const handleLogout = async () => {
+  // 1. Tutup modal/UI jika ada
+  if (isLogoutModalOpen) isLogoutModalOpen.value = false
 
-  // 1. Tutup modal segera
-  isLogoutModalOpen.value = false
+  try {
+    // 2. Panggil API agar server menghapus HttpOnly cookie
+    await $fetch('/api/auth/logout', { method: 'POST' })
 
-  // 2. Hapus session
-  authToken.value = null
-  userState.value = null 
+    // 3. Bersihkan state global di client
+    const adminUser = useState<any>('adminUser')
+    adminUser.value = null
 
-  // 3. Picu Toast Sukses
-  toast.success('Successfully logged out', {
-    description: 'See you again soon!',
-    duration: 2000,
-  })
+    // 4. Berikan feedback sukses
+    toast.success('Berhasil Keluar', {
+      description: 'Sesi Anda telah berakhir.'
+    })
 
-  // 4. Redirect dengan sedikit delay agar user sempat melihat toast
-  setTimeout(() => {
-    navigateTo('/admin/login')
-  }, 1000)
+    // 5. Redirect ke halaman login admin
+    setTimeout(() => {
+      navigateTo('/admin/login', { replace: true })
+    }, 1000)
+
+  } catch (err) {
+    console.error('Logout error:', err)
+    toast.error('Gagal Logout', { description: 'Terjadi kesalahan pada server.' })
+  }
 }
 
 onMounted(async () => {
@@ -135,13 +141,13 @@ onMounted(async () => {
   if (token.value && !adminUser.value) {
     const base64Content = token.value.replace('token-', '')
     const username = atob(base64Content)
-    
+
     const { data } = await supabase
       .from('admin_accounts')
       .select('*')
       .eq('username', username)
       .single()
-      
+
     if (data) adminUser.value = data
   }
 })

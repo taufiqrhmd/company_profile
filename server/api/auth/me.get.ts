@@ -1,3 +1,4 @@
+// server/api/auth/me.get.ts
 import { jwtVerify, JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
 
@@ -13,20 +14,22 @@ export default defineEventHandler(async (event) => {
   if (!token) return null;
 
   try {
-    // 1. Verifikasi apakah token asli atau buatan hacker
-    const secret = new TextEncoder().encode(config.jwtSecret || 'secret-key-anda-yang-sangat-panjang');
+    // Gunakan secret yang sama persis dengan login.post
+    const secret = new TextEncoder().encode(config.jwtSecret);
     const { payload } = await jwtVerify(token, secret) as { payload: AdminPayload };
 
-    // 2. Ambil data terbaru dari DB berdasarkan ID di token
     const client = serverSupabaseServiceRole(event);
-    const { data: user } = await client
+    const { data: user, error } = await client
       .from("admin_accounts")
       .select("id, username, full_name, role")
       .eq("id", payload.id)
       .single();
 
+    if (error || !user) return null;
+
     return user;
   } catch (e) {
+    // Jika token expired atau dimanipulasi, return null agar middleware menangani logout
     return null;
   }
 });
