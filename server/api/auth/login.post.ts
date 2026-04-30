@@ -1,41 +1,46 @@
 // server/api/auth/login.post.ts
-import { serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseServiceRole } from "#supabase/server";
+import { SignJWT } from "jose";
 
-interface AdminAccount {
-  username: string
-  password: string
-  full_name: string
-  role: string
-}
+import type { AdminAccount } from "../../../types/index"; 
+import type { Database } from "../../../types/database.types";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const client = await serverSupabaseClient(event)
+  const body = await readBody(event);
+  
+  const client = serverSupabaseServiceRole<Database>(event);
+  const config = useRuntimeConfig();
 
-  // Ambil data dengan memberitahu tipe kembaliannya
   const { data, error } = await client
-    .from('admin_accounts')
-    .select('*')
-    .eq('username', body.username)
-    .single()
+    .from("admin_accounts")
+    .select("*")
+    .eq("username", body.username)
+    .single();
 
-  // Cast data ke interface yang kita buat
-  const user = data as AdminAccount | null
+    const user = data as AdminAccount | null;
 
   if (error || !user) {
-    throw createError({ statusCode: 401, statusMessage: 'Akun tidak ditemukan' })
+    throw createError({ statusCode: 401, statusMessage: "Kredensial salah" });
   }
 
+  // 2. Verifikasi Password 
   if (user.password !== body.password) {
-    throw createError({ statusCode: 401, statusMessage: 'Password salah' })
+    throw createError({ statusCode: 401, statusMessage: "Kredensial salah" });
   }
 
-  // Hapus password sebelum dikirim ke frontend
-  const { password, ...safeUser } = user
-  
+  // 3. Buat JWT
+  const secret = new TextEncoder().encode(config.jwtSecret || 'secret-key-anda-yang-sangat-panjang');
+  const token = await new SignJWT({ 
+    id: user.id, 
+    role: user.role // TypeScript sudah tahu user.role ada dan bertipe string | null
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("2h")
+    .sign(secret);
+
   return {
     success: true,
-    user: safeUser,
-    token: `token-${Buffer.from(user.username).toString('base64')}`
-  }
-})
+    token: token
+  };
+});

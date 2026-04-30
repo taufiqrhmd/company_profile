@@ -1,44 +1,39 @@
+// middleware/auth.ts
 export default defineNuxtRouteMiddleware(async (to) => {
   const token = useCookie('auth_token')
   const adminUser = useState<any>('adminUser')
-  const supabase = useSupabaseClient()
+  const loginPath = '/admin/login'
+  const dashboardPath = '/admin'
 
-  // 1. Proteksi Halaman: Jika akses /admin tapi tidak ada token
-  if (!token.value && to.path.startsWith('/admin') && to.path !== '/admin/login') {
-    return navigateTo('/admin/login')
+  // KONDISI 1: User tidak punya token dan mencoba akses area admin
+  if (!token.value && to.path.startsWith('/admin')) {
+    // PENTING: Hanya redirect jika belum berada di loginPath
+    if (to.path !== loginPath) {
+      return navigateTo(loginPath)
+    }
+    // Jika sudah di loginPath, biarkan saja (stop middleware)
+    return 
   }
 
-  // 2. REHYDRATION LOGIC: Jika ada token tapi state adminUser kosong (kasus Reload F5)
+  // KONDISI 2: Rehydration (Refresh F5)
   if (token.value && !adminUser.value) {
     try {
-      // Ambil kembali username dari base64 token
-      const base64Content = token.value.replace('token-', '')
-      const username = atob(base64Content)
-
-      // Tarik ulang data user dari database
-      const { data, error } = await supabase
-        .from('admin_accounts')
-        .select('username, full_name, role')
-        .eq('username', username)
-        .single()
-
-      if (data) {
-        // Isi kembali state global agar Sidebar & Header langsung muncul datanya
-        adminUser.value = data
+      const user = await $fetch('/api/auth/me')
+      if (user) {
+        adminUser.value = user
       } else {
-        // Jika data tidak ditemukan (token tidak valid), bersihkan semuanya
+        // Token tidak valid/expired
         token.value = null
-        return navigateTo('/admin/login')
+        if (to.path !== loginPath) return navigateTo(loginPath)
       }
     } catch (e) {
-      // Jika terjadi error saat decode base64 atau fetch
       token.value = null
-      return navigateTo('/admin/login')
+      if (to.path !== loginPath) return navigateTo(loginPath)
     }
   }
 
-  // 3. Jika sudah login tapi mencoba akses halaman login lagi
-  if (token.value && to.path === '/admin/login') {
-    return navigateTo('/admin')
+  // KONDISI 3: User sudah login tapi coba buka halaman login lagi
+  if (token.value && to.path === loginPath) {
+    return navigateTo(dashboardPath)
   }
 })

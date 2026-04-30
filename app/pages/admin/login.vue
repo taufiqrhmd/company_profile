@@ -72,16 +72,15 @@ const form = reactive({
 })
 
 const handleLogin = async (): Promise<void> => {
-  // 1. Validasi Input Dasar
   if (!form.username || !form.password) {
     toast.warning('Peringatan', { description: 'Harap isi semua field.' })
     return
   }
+  
   isLoading.value = true
 
   try {
-    // 2. Memanggil API Server Internal (/server/api/auth/login.post.ts)
-    // $fetch secara otomatis mengenali method POST berdasarkan nama file atau opsi
+    // 1. Ambil Token saja dari Login API
     const response = await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
@@ -90,32 +89,30 @@ const handleLogin = async (): Promise<void> => {
       }
     })
 
-    // 3. Jika Berhasil
     if (response.success) {
-      // Simpan cookie token yang dikirim dari server
+      // 2. Simpan token ke cookie
       authToken.value = response.token
 
-      // Simpan data user ke global state (tanpa password)
-      adminUser.value = response.user
+      // 3. Ambil data user secara terpisah menggunakan token tersebut
+      // Ini lebih aman karena data user divalidasi ulang oleh server
+      const userData = await $fetch('/api/auth/me')
+      
+      if (userData) {
+        adminUser.value = userData
 
-      toast.success('Berhasil Masuk', {
-        description: `Selamat datang kembali, ${response.user.full_name}!`
-      })
+        toast.success('Berhasil Masuk', {
+          description: `Selamat datang kembali, ${userData.full_name}!`
+        })
 
-      // Redirect ke dashboard
-      setTimeout(() => {
-        navigateTo('/admin', { replace: true })
-      }, 800)
+        setTimeout(() => {
+          navigateTo('/admin', { replace: true })
+        }, 800)
+      }
     }
 
   } catch (err: any) {
-    // 4. Menangani Error dari Server
-    // Nuxt $fetch melempar error yang berisi data dari 'createError' di server
     const errorMessage = err.data?.statusMessage || 'Username atau Password salah.'
-    
-    toast.error('Gagal Login', { 
-      description: errorMessage 
-    })
+    toast.error('Gagal Login', { description: errorMessage })
   } finally {
     isLoading.value = false
   }

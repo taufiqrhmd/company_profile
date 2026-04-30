@@ -1,26 +1,10 @@
 // composables/useProjects.ts
-
-export interface Project {
-  id: string;
-  title: string;
-  impact: string;
-  impact_label: string; // Sesuai nama kolom di DB (snake_case)
-  icon: string;
-  image: string;
-  // Data dari tabel detail akan masuk ke properti ini sebagai objek
-  project_details: {
-    category: string;
-    description: string;
-    full_story_1: string;
-    full_story_2: string;
-    tech_stack: string[];
-  } | null;
-}
+import type { ProjectWithDetails } from "../../types/index"; 
+import type { Database } from "../../types/database.types";
 
 export const useProjects = async () => {
-  const client = useSupabaseClient();
+  const client = useSupabaseClient<Database>()
 
-  // Menggunakan useAsyncData untuk mengambil data terpusat
   const { data: allProjects, error, refresh } = await useAsyncData(
     'projects-archive',
     async () => {
@@ -40,8 +24,8 @@ export const useProjects = async () => {
 
       if (error) throw error;
       
-      // Kita casting sebagai Project[] agar TS mengenali properti project_details
-      return data as unknown as Project[];
+      // Gunakan tipe ProjectWithDetails[] yang sudah kita buat di types/index.ts
+      return data as ProjectWithDetails[];
     }
   );
 

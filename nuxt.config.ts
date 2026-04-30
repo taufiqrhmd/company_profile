@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { resolve } from 'path'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -11,11 +12,9 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
-    // Variabel di sini hanya tersedia di SISI SERVER
     supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
 
     public: {
-      // Variabel di dalam public tersedia di SISI SERVER & CLIENT
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SUPABASE_KEY,
     }
@@ -23,7 +22,7 @@ export default defineNuxtConfig({
 
   supabase: {
     redirect: false,
-    types: "~/types/database.types.ts",
+    types: resolve(__dirname, './types/database.types.ts'),
   },
 
   vite: {
@@ -34,6 +33,7 @@ export default defineNuxtConfig({
         'gsap',
         'gsap/ScrollTrigger',
         'gsap/ScrollSmoother',
+        'vue-sonner',
       ]
     }
   },
