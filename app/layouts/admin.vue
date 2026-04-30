@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-hidden">
     <Toaster position="top-center" richColors :expand="true" :style="{ zIndex: 9999 }" />
-    <LayoutAdminSidebar :isOpen="isMobileMenuOpen" @close="isMobileMenuOpen = false" />
+    <Sidebar :isOpen="isMobileMenuOpen" @close="isMobileMenuOpen = false" />
 
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
       <header class="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 lg:px-8 shrink-0">
@@ -23,10 +23,10 @@
               {{ adminUser?.role?.replace('_', ' ') || 'Account' }}
             </p>
           </div>
-          <div
-            class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
-            <Icon name="solar:user-bold" class="w-5 h-5" />
-          </div>
+          <button @click="isProfileOpen = true"
+            class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 hover:border-primary hover:text-primary transition-all duration-300 group">
+            <Icon name="solar:user-bold" class="w-5 h-5 group-hover:scale-110 transition-transform" />
+          </button>
         </div>
       </header>
 
@@ -34,13 +34,17 @@
         <slot />
       </div>
     </main>
+    <ProfileModal v-model="isProfileOpen" :user="adminUser" />
   </div>
 </template>
 
 <script setup>
 import { Toaster } from 'vue-sonner'
+import ProfileModal from '~/components/layout/admin/ProfileModal.vue'
+import Sidebar from '~/components/layout/admin/Sidebar.vue'
 const route = useRoute()
 const isMobileMenuOpen = ref(false)
+const isProfileOpen = ref(false)
 
 const adminUser = useState('adminUser')
 

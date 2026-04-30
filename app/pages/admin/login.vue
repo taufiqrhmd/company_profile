@@ -76,11 +76,10 @@ const handleLogin = async (): Promise<void> => {
     toast.warning('Peringatan', { description: 'Harap isi semua field.' })
     return
   }
-  
+
   isLoading.value = true
 
   try {
-    // 1. Ambil Token saja dari Login API
     const response = await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
@@ -90,24 +89,14 @@ const handleLogin = async (): Promise<void> => {
     })
 
     if (response.success) {
-      // 2. Simpan token ke cookie
-      authToken.value = response.token
+      adminUser.value = response.user
 
-      // 3. Ambil data user secara terpisah menggunakan token tersebut
-      // Ini lebih aman karena data user divalidasi ulang oleh server
-      const userData = await $fetch('/api/auth/me')
-      
-      if (userData) {
-        adminUser.value = userData
+      toast.success('Berhasil Masuk', {
+        description: `Selamat datang kembali, ${response.user.full_name}!`
+      })
 
-        toast.success('Berhasil Masuk', {
-          description: `Selamat datang kembali, ${userData.full_name}!`
-        })
-
-        setTimeout(() => {
-          navigateTo('/admin', { replace: true })
-        }, 800)
-      }
+      console.log('Navigating to admin...')
+      await navigateTo('/admin')
     }
 
   } catch (err: any) {
