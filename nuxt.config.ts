@@ -35,6 +35,9 @@ export default defineNuxtConfig({
         'gsap/ScrollTrigger',
         'gsap/ScrollSmoother',
         'vue-sonner',
+        '@vueuse/core',
+        'vue-chartjs',
+        'chart.js',
       ]
     }
   },

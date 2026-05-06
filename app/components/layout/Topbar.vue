@@ -108,10 +108,14 @@ const toggleColorMode = () => {
 
 const handleNav = async (path: string, isAnchor: boolean) => {
   isMenuOpen.value = false;
+  // Memastikan scroll aktif kembali jika sebelumnya terkunci oleh mobile menu
+  document.body.style.overflow = 'auto'; 
+
   if (isAnchor && path.startsWith('#')) {
     if (route.path !== '/') {
       await router.push('/');
-      setTimeout(() => scrollToSection(path), 500);
+      // Beri jeda lebih lama sedikit untuk memastikan DOM selesai dimuat
+      setTimeout(() => scrollToSection(path), 200);
     } else {
       scrollToSection(path);
     }
@@ -122,7 +126,18 @@ const handleNav = async (path: string, isAnchor: boolean) => {
 
 const scrollToSection = (id: string) => {
   const el = document.querySelector(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  if (el) {
+    const offset = 80;
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = el.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
 };
 </script>
 

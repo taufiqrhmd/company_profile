@@ -49,7 +49,7 @@
             </div>
 
             <div class="w-12 h-12 md:w-16 md:h-16 rounded-full border border-dark/10 dark:border-soft/10 flex items-center justify-center dark:text-soft group-hover:border-dark/20 group-hover:bg-dark group-hover:text-soft dark:group-hover:bg-soft dark:group-hover:text-primary transition-all duration-500">
-              <Icon :name="project.icon" class="w-5 h-5 md:w-6 md:h-6" />
+              <Icon :name="project.icon ?? 'solar:gallery-bold'" class="w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
 
@@ -57,7 +57,7 @@
             class="hidden lg:block absolute left-1/2 top-1/2 -translate-y-1/2 w-64 aspect-[3/4] pointer-events-none opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-700 delay-75 z-50"
             :style="{ transform: `translate(-50%, -50%) rotate(${index % 2 === 0 ? '5deg' : '-5deg'})` }">
             <div class="relative w-full h-full rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border-4 border-soft dark:border-darkCard">
-              <img :src="project.image" class="w-full h-full object-cover" loading="lazy" />
+              <img :src="project.image ?? 'undefined'" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
         </div>
