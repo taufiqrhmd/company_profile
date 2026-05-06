@@ -70,7 +70,7 @@
                 <div class="absolute inset-0 bg-gradient-to-tr from-dark/20 to-transparent z-10 pointer-events-none">
                 </div>
 
-                <img :src="project.image" :alt="project.title" class="w-full aspect-[16/10] object-cover opacity-90 dark:opacity-80 
+                <img :src="project.image ?? 'undefined'" :alt="project.title" class="w-full aspect-[16/10] object-cover opacity-90 dark:opacity-80 
                group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" loading="lazy" />
 
                 <div
@@ -146,30 +146,14 @@
           </div>
         </section>
       </div>
-
-      <footer class="mt-48 text-center">
-        <div class="max-w-3xl mx-auto space-y-12">
-          <h2 class="text-5xl md:text-8xl font-black text-dark dark:text-soft tracking-tighter leading-none uppercase">
-            Start Your Own <span class="text-transparent custom-stroke">Story.</span>
-          </h2>
-          <BaseButton variant="primary" size="xl" rounded="full" icon="solar:magic-stick-3-bold"
-            @click="handleNav('#contact', true)" class="mx-auto">
-            Get In Touch
-          </BaseButton>
-        </div>
-      </footer>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 const { allProjects } = await useProjects();
-const router = useRouter();
-const route = useRoute();
+const colorMode = useColorMode(); 
 
-const colorMode = useColorMode(); // Hook dari Nuxt Color Mode
-
-// Logic untuk switch mode
 const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
 };
@@ -181,34 +165,6 @@ definePageMeta({
 useHead({
   title: 'All Projects — Digital Excellent Studio',
 });
-
-// Fungsi untuk navigasi antar halaman & anchor scroll
-const handleNav = async (path: string, isAnchor: boolean) => {
-  if (isAnchor && path.startsWith('#')) {
-    // Jika user sedang tidak di Home, balik ke Home dulu
-    if (route.path !== '/') {
-      await router.push('/');
-      // Beri jeda sedikit agar DOM Home ter-render sebelum scroll
-      setTimeout(() => {
-        scrollToSection(path);
-      }, 100);
-    } else {
-      scrollToSection(path);
-    }
-  } else {
-    router.push(path);
-  }
-};
-
-const scrollToSection = (id: string) => {
-  const smoother = (window as any).smoother;
-  if (smoother) {
-    smoother.scrollTo(id, true, "top top");
-  } else {
-    const el = document.querySelector(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }
-};
 </script>
 
 <style scoped>

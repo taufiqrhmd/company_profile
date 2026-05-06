@@ -1,24 +1,24 @@
 // server/api/projects/[id].put.ts
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  const body = await readBody(event)
-  const client = useServerSupabase()
+  const { mainData, detailData } = await readBody(event)
+  const supabase = useServerSupabase()
 
-  // 1. Update data utama
-  const { error: pError } = await client
+  // 1. Update Tabel Utama (projects)
+  const { error: mainError } = await supabase
     .from('projects')
-    .update(body.mainData)
+    .update(mainData) 
     .eq('id', id)
-    
-  if (pError) throw createError({ statusCode: 500, message: pError.message })
 
-  // 2. Update data detail
-  const { error: dError } = await client
+  if (mainError) throw createError({ statusCode: 500, message: mainError.message })
+
+  // 2. Update Tabel Detail (project_details)
+  const { error: detailError } = await supabase
     .from('project_details')
-    .update(body.detailData)
-    .eq('project_id', id) // Menggunakan .eq() bukan upsert
-  
-  if (dError) throw createError({ statusCode: 500, message: dError.message })
+    .update(detailData)
+    .eq('project_id', id) // Sesuaikan nama kolom foreign key Anda
+
+  if (detailError) throw createError({ statusCode: 500, message: detailError.message })
 
   return { success: true }
 })
