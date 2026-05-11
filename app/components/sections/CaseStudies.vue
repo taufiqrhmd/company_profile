@@ -25,7 +25,7 @@
         <div v-for="(project, index) in projects" :key="index" @mouseenter="activeHover = index"
           @mouseleave="activeHover = null"
           class="project-item reveal-up-stagger group relative py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between border-b border-dark/10 dark:border-soft/10 cursor-pointer transition-all duration-500 hover:md:px-8"
-          :style="{ '--delay': `${(index + 1) * 150}ms` }">
+          :style="{ '--delay': `${(index + 1) * 150}ms` }" @click="handleProjectClick(project)">
 
           <div class="flex items-center gap-4 md:gap-6 relative z-10">
             <span
@@ -48,7 +48,7 @@
               </p>
             </div>
 
-            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full border border-dark/10 dark:border-soft/10 flex items-center justify-center dark:text-soft group-hover:border-dark/20 group-hover:bg-dark group-hover:text-soft dark:group-hover:bg-soft dark:group-hover:text-primary transition-all duration-500">
+            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full border border-dark/10 dark:border-soft/10 flex items-center justify-center flex-shrink-0 dark:text-soft group-hover:border-dark/20 group-hover:bg-dark group-hover:text-soft dark:group-hover:bg-soft dark:group-hover:text-primary transition-all duration-500">
               <Icon :name="project.icon ?? 'solar:gallery-bold'" class="w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>
@@ -78,7 +78,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const activeHover = ref<number | null>(null);
-const { allProjects } = await useProjects();
+const { allProjects, incrementViews } = await useProjects();
 const projects = computed(() => {
   return (allProjects.value || []).slice(0, 4);
 });
@@ -110,6 +110,12 @@ const handleSeeProjects = () => {
     window.scrollTo(0, 0);
   }
   router.push('/projects');
+};
+
+const handleProjectClick = async (project: any) => {
+  incrementViews(project.id);
+  const target = project.slug || project.id;
+  router.push(`/projects/${target}`);
 };
 </script>
 

@@ -65,10 +65,17 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { Toaster } from 'vue-sonner'
 const route = useRoute()
 const colorMode = useColorMode()
+const token = useCookie('auth_token')
+
+interface AdminUser {
+  full_name: string;
+  role: string;
+  username: string;
+}
 
 const isMobileMenuOpen = ref(false)
 const isProfileOpen = ref(false)
@@ -77,9 +84,21 @@ const isSidebarCollapsed = ref(false) // State untuk dikirim ke sidebar
 const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
 };
-
-const adminUser = useState('adminUser')
+const adminUser = useState<AdminUser | null>('adminUser', () => null)
 watch(() => route.path, () => { isMobileMenuOpen.value = false })
+await callOnce(async () => {
+  if (token.value && !adminUser.value) {
+    try {
+      const user = await $fetch('/api/auth/me', {
+        // Sekarang "as" sudah valid karena sudah di dalam lingkungan TS
+        headers: useRequestHeaders(['cookie']) as Record<string, string>
+      })
+      adminUser.value = user
+    } catch (e) {
+      console.error('Layout Admin: Gagal fetch user', e)
+    }
+  }
+})
 </script>
 
 <style scoped>

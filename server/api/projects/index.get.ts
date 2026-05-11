@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
       project_details (*)
     `,
     ) // Mengambil relasi project_details
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
 
   if (error) throw createError({ statusCode: 500, message: error.message });
   return data;

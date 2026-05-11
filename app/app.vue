@@ -8,6 +8,7 @@
 
     <template v-else>
       <ClientOnly>
+        <Toaster position="top-center" richColors :expand="true" :style="{ zIndex: 9999 }" />
         <LayoutTopbar v-if="!route.meta.hideTopbar" />
         <div id="smooth-wrapper">
           <div id="smooth-content">
@@ -26,9 +27,10 @@ import { nextTick, ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
+import { Toaster } from 'vue-sonner'
 
 // Tipe data untuk ScrollSmoother agar TS tidak komplain
-const smoother = ref < ScrollSmoother | null > (null)
+const smoother = ref<ScrollSmoother | null>(null)
 const route = useRoute()
 const isAdminPage = computed(() => route.path.startsWith('/admin'))
 
@@ -165,5 +167,11 @@ body.admin-mode {
   width: 100%;
   position: relative;
   overflow: visible;
+}
+
+[data-sonner-toaster] {
+  z-index: 999999 !important;
+  /* Paksa ke paling depan */
+  position: fixed !important;
 }
 </style>
