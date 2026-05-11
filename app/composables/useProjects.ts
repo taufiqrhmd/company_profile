@@ -20,18 +20,30 @@ export const useProjects = async () => {
             tech_stack
           )
         `)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
-      
-      // Gunakan tipe ProjectWithDetails[] yang sudah kita buat di types/index.ts
       return data as ProjectWithDetails[];
     }
   );
 
+  // Fungsi untuk menambah views
+  const incrementViews = async (projectId: string | number) => {
+    try {
+      // Kita memanggil fungsi SQL 'increment_views' di Supabase
+      const { error } = await (client as any).rpc('increment_project_views', { 
+        row_id: projectId 
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error incrementing views:', err);
+    }
+  };
+
   return { 
     allProjects, 
     error, 
-    refresh 
+    refresh,
+    incrementViews
   };
 };

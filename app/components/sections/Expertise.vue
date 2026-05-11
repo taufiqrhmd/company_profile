@@ -16,7 +16,7 @@
         </div>
 
         <p class="reveal-right max-w-xs text-dark/50 dark:text-soft/40 text-sm leading-relaxed italic border-l-2 lg:border-l-0 lg:border-r-2 border-primary pl-6 lg:pl-0 lg:pr-6 text-left lg:text-right">
-          Kami mengkurasi solusi digital yang tidak hanya berfungsi secara teknis, tetapi juga memperkuat kredibilitas brand Anda.
+          We curate digital solutions that not only work technically, but also strengthen your brand's credibility.
         </p>
       </div>
 
@@ -123,5 +123,4 @@ onMounted(() => {
   transform: translate(0, 0);
 }
 
-/* Overlay hover tetap menggunakan CSS yang sudah ada di template */
 </style>

@@ -92,7 +92,7 @@ import { toast } from 'vue-sonner';
 interface AdminUser {
   role: string;
   username: string;
-  // tambahkan field lain jika perlu
+  full_name?: string;
 }
 
 const route = useRoute()
@@ -114,9 +114,10 @@ const menuItems = [
 ]
 
 const filteredMenu = computed(() => {
-  // Gunakan optional chaining (?.) untuk menghindari error jika null
-  if (!adminUser.value?.role) return []
-  return menuItems.filter(item => item.roles.includes(adminUser.value!.role))
+  const user = adminUser.value
+  if (!user || !user.role) return []
+  
+  return menuItems.filter(item => item.roles.includes(user.role))
 })
 
 const handleLogout = async () => {
@@ -124,9 +125,6 @@ const handleLogout = async () => {
 
   try {
     await $fetch('/api/auth/logout', { method: 'POST' })
-
-    // 3. Cukup akses adminUser yang sudah didefinisikan di atas
-    // Tidak perlu deklarasi ulang 'const adminUser = ...' di dalam fungsi
     adminUser.value = null
 
     toast.success('Berhasil Keluar')
@@ -138,21 +136,7 @@ const handleLogout = async () => {
   }
 }
 
-onMounted(async () => {
-  const adminUser = useState<AdminUser | null>('adminUser')
-  const token = useCookie<string | null>('auth_token')
-  const supabase = useSupabaseClient()
-
-  if (token.value && !adminUser.value) {
-    try {
-      const base64Content = token.value.replace('token-', '')
-      const username = atob(base64Content)
-      const { data,error } = await supabase.from('admin_accounts').select('*').eq('username', username).single()
-      if (error) throw error
-      if (data) adminUser.value = data as AdminUser
-    } catch (e) {
-      console.error("Auth sync error", e)
-    }
-  }
+onMounted(() => {
+  console.log("Sidebar mounted with role:", adminUser.value?.role)
 })
 </script>

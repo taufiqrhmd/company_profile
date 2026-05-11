@@ -12,6 +12,14 @@
     <div class="container max-w-7xl mx-auto px-4 relative z-10 pt-16 pb-40">
 
       <header class="mb-32 md:mb-36">
+        <div class="mb-12">
+          <NuxtLink to="/"
+            class="inline-flex items-center gap-2 text-primary text-xs font-black uppercase tracking-widest mb-8 group">
+            <Icon name="solar:arrow-left-bold" class="group-hover:-translate-x-1 transition-transform" />
+            Back to Home
+          </NuxtLink>
+        </div>
+
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
           <div class="inline-flex items-center gap-4 group">
             <div class="relative flex items-center">
@@ -47,14 +55,14 @@
         </h1>
         <p
           class="mt-10 text-dark/40 dark:text-soft/40 max-w-xl text-sm md:text-base leading-relaxed italic border-l-2 border-primary pl-6">
-          Kami percaya setiap pixel memiliki cerita dan setiap baris kode memiliki tujuan.
-          Berikut adalah dokumentasi lengkap dari visi yang kami wujudkan menjadi solusi digital.
+          We believe every pixel has a story and every line of code has a purpose. Here's a complete documentation of
+          the vision we've transformed into a digital solution.
         </p>
       </header>
 
       <div class="space-y-32 md:space-y-40">
         <section v-for="(project, index) in allProjects" :key="project.title"
-          class="flex flex-col gap-16 md:gap-24 items-start md:items-center"
+          class="flex flex-col gap-16 md:gap-24 items-start md:items-center" @click="handleProjectClick(project.id)"
           :class="index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'">
           <div class="w-full md:w-[55%]">
             <div class="relative group">
@@ -151,11 +159,18 @@
 </template>
 
 <script setup lang="ts">
-const { allProjects } = await useProjects();
-const colorMode = useColorMode(); 
+const router = useRouter();
+const { allProjects, incrementViews } = await useProjects();
+const colorMode = useColorMode();
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+};
+
+const handleProjectClick = (projectId: string) => {
+  incrementViews(projectId);
+
+  router.push(`/projects/${projectId}`);
 };
 
 definePageMeta({
