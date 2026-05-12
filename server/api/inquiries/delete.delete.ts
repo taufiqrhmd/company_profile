@@ -1,20 +1,17 @@
-import { serverSupabaseServiceRole } from '#supabase/server' // Gunakan Service Role
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  
-  // Menggunakan Service Role untuk bypass RLS
   const client = serverSupabaseServiceRole(event)
 
-  const { data, error } = await client
+  const { error } = await client
     .from('inquiries')
-    .update({ status: body.status })
+    .delete()
     .eq('id', body.id)
-    .select()
 
   if (error) {
     throw createError({ statusCode: 500, statusMessage: error.message })
   }
 
-  return { success: true, data }
+  return { success: true }
 })

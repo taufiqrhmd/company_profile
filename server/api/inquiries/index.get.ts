@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   let dbQuery = supabaseAdmin
     .from('inquiries')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
 
   // Terapkan filter jika bukan 'All'
   if (statusFilter && statusFilter !== 'All') {

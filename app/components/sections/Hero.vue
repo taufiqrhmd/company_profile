@@ -141,7 +141,7 @@ const scrollToSection = (id: string) => {
 <style scoped>
 .reveal-up, .reveal-left, .reveal-right {
   opacity: 0;
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--delay, 0ms);
   will-change: transform, opacity;
 }
