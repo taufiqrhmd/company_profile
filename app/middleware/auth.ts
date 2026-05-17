@@ -1,5 +1,4 @@
 // middleware/auth.ts
-// middleware/auth.ts
 export default defineNuxtRouteMiddleware(async (to) => {
   const token = useCookie('auth_token')
   const adminUser = useState<any>('adminUser')

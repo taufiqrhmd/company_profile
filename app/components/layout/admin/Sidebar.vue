@@ -107,7 +107,7 @@ defineEmits(['close', 'update:isCollapsed'])
 const adminUser = useState<AdminUser | null>('adminUser')
 
 const menuItems = [
-  { name: 'Dashboard', path: '/admin', icon: 'solar:widget-5-linear', roles: ['super_admin', 'editor'] },
+  { name: 'Dashboard', path: '/admin', icon: 'solar:widget-5-linear', roles: ['super_admin'] },
   { name: 'Projects', path: '/admin/projects', icon: 'solar:folder-linear', roles: ['editor'] },
   { name: 'Services', path: '/admin/services', icon: 'solar:clapperboard-edit-linear', roles: ['editor'] },
   { name: 'Messages', path: '/admin/messages', icon: 'solar:letter-linear', roles: ['super_admin'] },

@@ -4,11 +4,10 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
         <h2
-          class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter italic uppercase transition-colors">
-          Client <span class="text-primary underline decoration-4 underline-offset-4">Inquiries</span>
+          class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase transition-colors">
+          Client Inquiries
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Kelola pesan masuk dan prospek
-          kolaborasi.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 transition-colors">Manage incoming messages and collaboration leads.</p>
       </div>
       <div
         class="px-4 py-2 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-lg text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 transition-colors">
@@ -20,7 +19,7 @@
       <!-- Sidebar Filters -->
       <div class="lg:col-span-1 space-y-4">
         <div
-          class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-[2rem] shadow-sm transition-colors">
+          class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl shadow-sm transition-colors">
           <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Filters</p>
           <div class="space-y-2">
             <button v-for="status in ['All', 'Unread', 'Archived']" :key="status" @click="currentFilter = status"
@@ -50,7 +49,7 @@
 
         <!-- List -->
         <div v-else v-for="msg in messages" :key="msg.id"
-          class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-[2rem] hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden"
+          class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden"
           @click="openMessage(msg)">
           <!-- Unread Indicator Line -->
           <div v-if="msg.status === 'unread'"
