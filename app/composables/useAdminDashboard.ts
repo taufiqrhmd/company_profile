@@ -4,7 +4,6 @@ export const useAdminDashboard = () => {
     unreadMessages: 0,
     totalProjects: 0,
     totalViews: 0,
-    archivedMessages: 0
   })
 
   const fetchDashboardData = async () => {
@@ -16,7 +15,6 @@ export const useAdminDashboard = () => {
         unreadMessages: data.unread || 0,
         totalProjects: data.totalProjects || 0,
         totalViews: data.views || 0,
-        archivedMessages: data.archived || 0
       }
       
       console.log('Stats Updated:', rawStats.value)
