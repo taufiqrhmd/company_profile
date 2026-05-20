@@ -31,8 +31,9 @@
             </div>
           </div>
 
-          <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-primary transition-colors duration-300 shadow-lg shadow-slate-200">
-            Update Profile
+          <!-- Loading State pada tombol (Opsional tapi disarankan) -->
+          <button type="submit" :disabled="loading" class="w-full py-4 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-primary transition-colors duration-300 shadow-lg shadow-slate-200 disabled:opacity-50">
+            {{ loading ? 'Updating...' : 'Update Profile' }}
           </button>
         </form>
       </div>
@@ -41,16 +42,50 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue'
+import { toast } from 'vue-sonner'
+
 const props = defineProps(['modelValue', 'user'])
-defineEmits(['update:modelValue'])
+// Daftarkan emit untuk 'submit' atau 'update' ke parent component
+const emit = defineEmits(['update:modelValue', 'submit'])
+
+const loading = ref(false)
 
 const form = ref({
   full_name: props.user?.full_name || '',
   password: ''
 })
 
-const handleUpdate = () => {
-  // Logic update profile (gunakan bcryptjs untuk password di server-side)
-  console.log('Updating...', form.value)
+watch(() => props.user, (newUser) => {
+  if (newUser) {
+    form.value.full_name = newUser.full_name || ''
+  }
+}, { deep: true })
+
+const handleUpdate = async () => {
+  if (!form.value.full_name.trim()) {
+    toast.error('Full name cannot be empty.')
+    return
+  }
+  loading.value = true
+
+  try {
+    const payload: any = {
+      full_name: form.value.full_name
+    }
+
+    if (form.value.password.trim()) {
+      payload.password = form.value.password
+    }
+
+    emit('submit', payload)
+ 
+    form.value.password = ''
+
+  } catch (error) {
+    console.error('Failed to update profile:', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>

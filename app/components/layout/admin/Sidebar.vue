@@ -25,7 +25,7 @@
 
     <nav class="flex-1 px-3 space-y-1 mt-6 overflow-x-hidden custom-scrollbar">
       <NuxtLink v-for="item in filteredMenu" :key="item.path" :to="item.path"
-        class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 group relative whitespace-nowrap"
+        class="flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 group relative whitespace-nowrap"
         :class="route.path === item.path
           ? 'bg-primary text-black font-bold shadow-lg shadow-primary/10'
           : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'">
@@ -107,7 +107,7 @@ defineEmits(['close', 'update:isCollapsed'])
 const adminUser = useState<AdminUser | null>('adminUser')
 
 const menuItems = [
-  { name: 'Dashboard', path: '/admin', icon: 'solar:widget-5-linear', roles: ['super_admin', 'editor'] },
+  { name: 'Dashboard', path: '/admin', icon: 'solar:widget-5-linear', roles: ['super_admin'] },
   { name: 'Projects', path: '/admin/projects', icon: 'solar:folder-linear', roles: ['editor'] },
   { name: 'Services', path: '/admin/services', icon: 'solar:clapperboard-edit-linear', roles: ['editor'] },
   { name: 'Messages', path: '/admin/messages', icon: 'solar:letter-linear', roles: ['super_admin'] },

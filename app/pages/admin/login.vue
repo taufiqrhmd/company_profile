@@ -80,7 +80,7 @@ const handleLogin = async (): Promise<void> => {
   isLoading.value = true
 
   try {
-    const response = await $fetch('/api/auth/login', {
+    const response = await $fetch<any>('/api/auth/login', {
       method: 'POST',
       body: {
         username: form.username,
@@ -89,14 +89,24 @@ const handleLogin = async (): Promise<void> => {
     })
 
     if (response.success) {
+      authToken.value = response.token
       adminUser.value = response.user
 
       toast.success('Berhasil Masuk', {
         description: `Selamat datang kembali, ${response.user.full_name}!`
       })
 
-      console.log('Navigating to admin...')
-      await navigateTo('/admin')
+      const userRole = response.user.role
+      console.log(`Navigating based on role: ${userRole}`)
+
+      if (userRole === 'super_admin') {
+        await navigateTo('/admin')
+      } else if (userRole === 'editor') {
+        await navigateTo('/admin/projects')
+      } else {
+        // Antisipasi jika ada role lain atau fallback
+        await navigateTo('/admin') 
+      }
     }
 
   } catch (err: any) {

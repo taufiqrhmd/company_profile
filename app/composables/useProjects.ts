@@ -2,10 +2,11 @@
 import type { ProjectWithDetails } from "../../types/index"; 
 import type { Database } from "../../types/database.types";
 
-export const useProjects = async () => {
+export const useProjects = () => {
   const client = useSupabaseClient<Database>()
 
-  const { data: allProjects, error, refresh } = await useAsyncData(
+  // useAsyncData tidak perlu diawali await di luar fungsi, Nuxt akan mengembalikan Ref secara reaktif
+  const { data: allProjects, error, refresh } = useAsyncData(
     'projects-archive',
     async () => {
       const { data, error } = await client
@@ -23,18 +24,29 @@ export const useProjects = async () => {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
+      
+      // Mengembalikan data dengan casting ke tipe custom milikmu
       return data as ProjectWithDetails[];
     }
   );
 
-  // Fungsi untuk menambah views
-  const incrementViews = async (projectId: string | number) => {
+  // Mengunci parameter ke string (karena ID di tabel adalah UUID string)
+  const incrementViews = async (projectId: string) => {
     try {
-      // Kita memanggil fungsi SQL 'increment_views' di Supabase
-      const { error } = await (client as any).rpc('increment_project_views', { 
+      // Memanggil RPC secara native dengan type-safety dari Database
+      const { error } = await client.rpc('increment_project_views', { 
         row_id: projectId 
       });
+      
       if (error) throw error;
+      
+      // Opsional: Jika ingin angka views di halaman detail langsung berubah secara realtime tanpa reload
+      if (allProjects.value) {
+        const project = allProjects.value.find(p => p.id === projectId);
+        if (project) {
+          project.views = (project.views || 0) + 1;
+        }
+      }
     } catch (err) {
       console.error('Error incrementing views:', err);
     }

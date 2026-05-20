@@ -1,20 +1,16 @@
-// server/api/inquiries/stats.get.ts
-import { serverSupabaseServiceRole } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server';
+import type { InquiryStats } from "../../../types/dashboard";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<InquiryStats> => {
   const client = serverSupabaseServiceRole(event)
 
-  // Ambil hitungan secara paralel agar cepat
-  const [unread, archived, projects] = await Promise.all([
+  const [unread, archived] = await Promise.all([
     client.from('inquiries').select('*', { count: 'exact', head: true }).eq('status', 'unread'),
-    client.from('inquiries').select('*', { count: 'exact', head: true }).eq('status', 'archived'),
-    client.from('projects').select('*', { count: 'exact', head: true })
+    client.from('inquiries').select('*', { count: 'exact', head: true }).eq('status', 'archived')
   ])
 
   return {
     unread: unread.count || 0,
-    archived: archived.count || 0,
-    totalProjects: projects.count || 0,
-    views: 0 // Tambahkan logic views jika ada
+    archived: archived.count || 0
   }
 })

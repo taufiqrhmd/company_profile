@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
 
     return user;
   } catch (e) {
-    // Jika token expired atau dimanipulasi, return null agar middleware menangani logout
     return null;
   }
 });
