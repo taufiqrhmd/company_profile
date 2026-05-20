@@ -3,14 +3,13 @@
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h2 class="text-3xl font-black italic uppercase tracking-tighter text-slate-900 dark:text-white">
-          Project <span class="text-primary">Vault</span>
+        <h2 class="text-3xl font-black uppercase tracking-tighter text-slate-900 dark:text-white">
+          Project Vault
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Kelola karya digital dan metrik dampak sistem secara
-          presisi.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage digital works and system impact metrics with precision.</p>
       </div>
       <button @click="openModal()"
-        class="bg-primary text-white px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+        class="bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary/20">
         Add New Project
       </button>
     </div>
@@ -18,7 +17,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div v-for="stat in ['Total', 'High Impact', 'Archived']" :key="stat"
-        class="p-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2.5rem] shadow-sm transition-colors">
+        class="p-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm transition-colors">
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{{ stat }}
           Projects</p>
         <p class="text-4xl font-black italic dark:text-white">
@@ -30,7 +29,7 @@
 
     <!-- Table Section -->
     <div
-      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[1.5rem] overflow-hidden shadow-sm transition-colors">
+      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm transition-colors">
       <div class="overflow-x-auto">
         <table class="w-full border-separate border-spacing-0">
           <thead>
@@ -117,7 +116,7 @@
         <div v-if="isModalOpen"
           class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm p-4">
           <div
-            class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
+            class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
             <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-50 dark:border-slate-800">
               <h3 class="text-2xl font-black italic uppercase tracking-tighter dark:text-white">
                 {{ isEditMode ? 'Edit' : 'Create' }} <span class="text-primary">Project</span>
@@ -200,7 +199,6 @@
                   <label class="label-style">Tech Stack</label>
                   <input v-model="techStackInput" type="text" class="form-input"
                     placeholder="Contoh: Nuxt 3, Tailwind CSS, Laravel">
-                  type="text" class="form-input" placeholder="Nuxt 3, Tailwind, Supabase">
                 </div>
               </div>
             </div>
@@ -447,11 +445,11 @@ onMounted(fetchProjects)
 }
 
 .btn-primary {
-  @apply flex-1 px-8 py-4 rounded-2xl bg-primary font-black text-white uppercase text-[10px] tracking-widest hover:scale-[1.02] transition-all disabled:opacity-50 shadow-lg shadow-primary/20;
+  @apply flex-1 px-8 py-4 rounded-xl bg-primary font-black text-white uppercase text-[10px] tracking-widest hover:scale-[1.02] transition-all disabled:opacity-50 shadow-lg shadow-primary/20;
 }
 
 .btn-secondary {
-  @apply flex-1 px-8 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors;
+  @apply flex-1 px-8 py-4 rounded-xl border border-slate-200 dark:border-slate-700 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors;
 }
 
 .th-style {

@@ -78,7 +78,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const activeHover = ref<number | null>(null);
-const { allProjects, incrementViews } = await useProjects();
+const { allProjects } = useProjects();
 const projects = computed(() => {
   return (allProjects.value || []).slice(0, 4);
 });
@@ -113,7 +113,6 @@ const handleSeeProjects = () => {
 };
 
 const handleProjectClick = async (project: any) => {
-  incrementViews(project.id);
   const target = project.slug || project.id;
   router.push(`/projects/${target}`);
 };

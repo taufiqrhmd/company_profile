@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const { allProjects, incrementViews } = await useProjects();
+const { allProjects, incrementViews } = useProjects();
 
 const project = computed(() => {
   return allProjects.value?.find(p => p.id === route.params.id || p.id.toString() === route.params.id);
@@ -82,13 +82,13 @@ useHead({
   title: project.value ? `${project.value.title} — Digital Excellent Studio` : 'Project Detail',
 });
 
-onMounted(() => {
+onMounted(async () => {
   const projectId = route.params.id;
   const storageKey = `viewed_project_${projectId}`;
 
   // Cek apakah user sudah melihat proyek ini dalam sesi browser saat ini
   if (!sessionStorage.getItem(storageKey)) {
-    incrementViews(Number(projectId));
+    await incrementViews(projectId as string);
     
     // Tandai bahwa proyek ini sudah dihitung view-nya untuk sesi ini
     sessionStorage.setItem(storageKey, 'true');

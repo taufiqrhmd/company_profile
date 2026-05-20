@@ -1,6 +1,8 @@
-// composables/useAdminDashboard.ts
+import { ref } from 'vue'
+import type { DashboardStats, InquiryStats, ProjectStats } from '../../types/dashboard'
+
 export const useAdminDashboard = () => {
-  const rawStats = ref({
+  const rawStats = ref<DashboardStats>({
     unreadMessages: 0,
     totalProjects: 0,
     totalViews: 0,
@@ -8,13 +10,16 @@ export const useAdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // Kita panggil API internal agar bypass RLS via server-side logic
-      const data = await $fetch('/api/inquiries/stats') as any
+      // Menembak kedua API internal secara paralel dengan tipe data yang ketat
+      const [inquiryData, projectData] = await Promise.all([
+        $fetch<InquiryStats>('/api/inquiries/stats'),
+        $fetch<ProjectStats>('/api/projects/stats')
+      ])
       
       rawStats.value = {
-        unreadMessages: data.unread || 0,
-        totalProjects: data.totalProjects || 0,
-        totalViews: data.views || 0,
+        unreadMessages: inquiryData.unread,
+        totalProjects: projectData.totalProjects,
+        totalViews: projectData.totalViews,
       }
       
       console.log('Stats Updated:', rawStats.value)

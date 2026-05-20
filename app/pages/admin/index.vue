@@ -81,7 +81,8 @@
 
 <script lang="ts" setup>
 import { onUnmounted, onMounted, computed, ref } from 'vue'
-import { Line } from 'vue-chartjs' // Menggunakan komponen Line kembali
+import { Line } from 'vue-chartjs' 
+import type { RealtimeChannel } from '@supabase/supabase-js'
 
 definePageMeta({ layout: 'admin', middleware: ['auth'] })
 
@@ -90,7 +91,7 @@ const { rawStats, fetchDashboardData } = useAdminDashboard()
 const { chartData, chartOptions } = useAdminChart()
 const loaded = ref(false)
 
-let dashboardChannel: any = null
+let dashboardChannel: RealtimeChannel | null = null
 
 const stats = computed(() => [
   {
@@ -151,9 +152,14 @@ onUnmounted(() => {
 })
 
 onMounted(async () => {
-  await fetchDashboardData()
-  subscribeRealtime()
-  setTimeout(() => loaded.value = true, 300)
+  try {
+    await fetchDashboardData()
+    subscribeRealtime()
+  } catch (error) {
+    console.error('Failed to initialize dashboard stats:', error)
+  } finally {
+    loaded.value = true
+  }
 })
 </script>
 
