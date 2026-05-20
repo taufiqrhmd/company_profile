@@ -60,13 +60,13 @@
         </div>
       </main>
 
-      <LayoutAdminProfileModal v-model="isProfileOpen" :user="adminUser" />
+      <LayoutAdminProfileModal v-model="isProfileOpen" :user="adminUser" @submit="handleProfileUpdate"/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Toaster } from 'vue-sonner'
+import { Toaster, toast } from 'vue-sonner'
 const route = useRoute()
 const colorMode = useColorMode()
 const token = useCookie('auth_token')
@@ -85,15 +85,48 @@ const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
 };
 const adminUser = useState<AdminUser | null>('adminUser', () => null)
+
+const handleProfileUpdate = async (formData: { full_name: string; password?: string }) => {
+  // Tampilkan loading toast
+  const toastId = toast.loading('Memperbarui profil...')
+
+  try {
+    // Tembak endpoint API update profile Anda
+    const response = await $fetch('/api/auth/update-profile', {
+      method: 'PUT',
+      body: formData,
+      headers: useRequestHeaders(['cookie']) as Record<string, string>
+    })
+
+    // 1. Perbarui state adminUser lokal agar UI header langsung berubah
+    if (adminUser.value) {
+      adminUser.value.full_name = formData.full_name
+    }
+
+    // 2. Berikan notifikasi sukses
+    toast.success('Profil berhasil diperbarui!', { id: toastId })
+
+    // 3. Tutup modal setelah sukses
+    isProfileOpen.value = false
+
+  } catch (error: any) {
+    console.error('Gagal memperbarui profil:', error)
+    
+    // Ambil pesan error dari backend jika ada
+    const errorMessage = error.data?.message || 'Gagal memperbarui profil. Silakan coba lagi.'
+    toast.error(errorMessage, { id: toastId })
+  }
+}
+
 watch(() => route.path, () => { isMobileMenuOpen.value = false })
+
 await callOnce(async () => {
   if (token.value && !adminUser.value) {
     try {
       const user = await $fetch('/api/auth/me', {
-        // Sekarang "as" sudah valid karena sudah di dalam lingkungan TS
         headers: useRequestHeaders(['cookie']) as Record<string, string>
       })
-      adminUser.value = user
+      adminUser.value = user as AdminUser
     } catch (e) {
       console.error('Layout Admin: Gagal fetch user', e)
     }
