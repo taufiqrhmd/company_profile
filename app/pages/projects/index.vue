@@ -160,7 +160,7 @@
 
 <script setup lang="ts">
 const router = useRouter();
-const { allProjects, incrementViews } = await useProjects();
+const { allProjects } = useProjects();
 const colorMode = useColorMode();
 
 const toggleColorMode = () => {
@@ -168,8 +168,6 @@ const toggleColorMode = () => {
 };
 
 const handleProjectClick = (projectId: string) => {
-  incrementViews(projectId);
-
   router.push(`/projects/${projectId}`);
 };
 

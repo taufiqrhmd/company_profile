@@ -1,5 +1,6 @@
 <template>
   <div :class="isAdminPage ? 'admin-mode' : 'landing-mode'">
+    <SplashScreen v-if="!isAdminPage" @loaded="onSplashLoaded" />
     <template v-if="isAdminPage">
       <NuxtLayout>
         <NuxtPage />
@@ -33,6 +34,7 @@ import { Toaster } from 'vue-sonner'
 const smoother = ref<ScrollSmoother | null>(null)
 const route = useRoute()
 const isAdminPage = computed(() => route.path.startsWith('/admin'))
+const isSplashDone = ref(false)
 
 // Register plugin hanya sekali di level client
 if (import.meta.client) {
@@ -56,7 +58,7 @@ useSeoMeta({
 
 // Fungsi inisialisasi Smoother agar bisa dipanggil berulang
 const initSmoother = () => {
-  if (!import.meta.client || isAdminPage.value) return
+  if (!import.meta.client || isAdminPage.value || !isSplashDone.value) return
 
   // Kill smoother lama jika ada sebelum membuat yang baru
   if (smoother.value) {
@@ -80,35 +82,42 @@ const initSmoother = () => {
   }
 }
 
+const onSplashLoaded = () => {
+  isSplashDone.value = true
+  
+  // Beri sedikit jeda agar DOM benar-benar stabil pasca-splash, lalu init smoother
+  nextTick(() => {
+    setTimeout(() => {
+      initSmoother()
+    }, 100)
+  })
+}
+
 // Watcher untuk handle route change
 watch(() => route.fullPath, async () => {
   if (!import.meta.client) return
 
-  // 1. Jika pindah ke admin, matikan smoother
   if (isAdminPage.value) {
     if (smoother.value) {
       smoother.value.kill()
       smoother.value = null
-        ; (window as any).smoother = null
+      ;(window as any).smoother = null
     }
     return
   }
 
-  // 2. Reset scroll posisi
   if (smoother.value) {
     smoother.value.scrollTop(0)
   } else {
     window.scrollTo(0, 0)
   }
 
-  // 3. Re-init atau refresh setelah DOM update
   await nextTick()
 
-  // Jika smoother belum ada (misal balik dari admin ke landing)
-  if (!smoother.value && !isAdminPage.value) {
+  // Pastikan splash sudah beres sebelum re-init saat ganti route
+  if (!smoother.value && !isAdminPage.value && isSplashDone.value) {
     initSmoother()
   } else if (smoother.value) {
-    // Jika sudah ada, cukup refresh perhitungan tinggi content
     setTimeout(() => {
       ScrollTrigger.refresh()
     }, 100)
@@ -120,12 +129,6 @@ onMounted(async () => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual'
     }
-
-    await nextTick()
-    // Beri jeda sedikit lebih lama di awal untuk memastikan layout selesai
-    setTimeout(() => {
-      initSmoother()
-    }, 300)
   }
 })
 

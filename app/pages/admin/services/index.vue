@@ -2,10 +2,10 @@
   <div class="max-w-6xl mx-auto space-y-8 transition-colors duration-300">
     <div class="flex justify-between items-center">
       <div>
-        <h2 class="text-3xl font-black italic uppercase tracking-tighter dark:text-white">
-          Studio <span class="text-primary">Services</span>
+        <h2 class="text-3xl font-black uppercase tracking-tighter dark:text-white">
+          Studio Services
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Kelola layanan utama yang ditampilkan di landing page.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage the main services displayed on the landing page.</p>
       </div>
       <button @click="fetchServices" class="p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
         <Icon name="solar:refresh-linear" :class="{ 'animate-spin': isLoading }" class="w-6 h-6" />
