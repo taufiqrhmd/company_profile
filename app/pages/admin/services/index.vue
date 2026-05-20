@@ -14,7 +14,7 @@
 
     <div v-if="services.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div v-for="(service, index) in services" :key="service.id"
-        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2.5rem] p-8 relative group hover:border-primary/50 transition-all shadow-sm">
+        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-8 relative group hover:border-primary/50 transition-all shadow-sm">
 
         <div class="flex justify-between items-start mb-8">
           <span class="text-xs font-black text-primary italic">0{{ index + 1 }} //</span>
@@ -56,12 +56,12 @@
             @click="isEditModalOpen = false"></div>
 
           <div
-            class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] max-w-lg w-full shadow-2xl">
+            class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-xl max-w-lg w-full shadow-2xl">
             <div class="flex justify-between items-center mb-8">
               <h3 class="text-slate-900 dark:text-white font-black uppercase italic text-2xl tracking-tighter">
                 Update <span class="text-primary">Service</span>
               </h3>
-              <button @click="isEditModalOpen = false" class="text-slate-400 hover:text-white">
+              <button @click="isEditModalOpen = false" class="text-black hover:text-slate-400">
                 <Icon name="solar:close-circle-linear" class="w-6 h-6" />
               </button>
             </div>
