@@ -186,7 +186,14 @@ const handleNav = async (path: string, isAnchor: boolean) => {
 
 const scrollToSection = (id: string) => {
   const el = document.querySelector(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  if (el) {
+    const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - 80; // Adjust for fixed header height
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
 };
 
 const stats = computed(() => [

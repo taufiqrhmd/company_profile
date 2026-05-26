@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (error || !user) {
     throw createError({
       statusCode: 401,
-      statusMessage: "User Tidak Ditemukan",
+      statusMessage: "User Not Found",
     });
   }
 
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const isPasswordValid = await bcrypt.compare(body.password, user.password);
 
   if (!isPasswordValid) {
-    throw createError({ statusCode: 401, statusMessage: "Password Salah" });
+    throw createError({ statusCode: 401, statusMessage: "Invalid Password" });
   }
 
   const jwtSecret = config.jwtSecret;
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 500,
       statusMessage:
-        "Konfigurasi Server Salah: JWT Secret belum dikonfigurasi.",
+        "Incorrect Server Configuration: JWT Secret is not configured.",
     });
   }
 

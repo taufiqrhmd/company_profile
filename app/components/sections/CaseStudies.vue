@@ -48,7 +48,7 @@
               </p>
             </div>
 
-            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full border border-dark/10 dark:border-soft/10 flex items-center justify-center flex-shrink-0 dark:text-soft group-hover:border-dark/20 group-hover:bg-dark group-hover:text-soft dark:group-hover:bg-soft dark:group-hover:text-primary transition-all duration-500">
+            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full border border-dark/10 dark:border-soft/10 flex items-center justify-center flex-shrink-0 bg-primary dark:text-soft group-hover:border-dark/20 group-hover:bg-dark group-hover:text-primary dark:group-hover:bg-soft dark:group-hover:text-primary transition-all duration-500">
               <Icon :name="project.icon ?? 'solar:gallery-bold'" class="w-5 h-5 md:w-6 md:h-6" />
             </div>
           </div>

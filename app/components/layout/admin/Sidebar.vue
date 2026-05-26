@@ -66,18 +66,17 @@
             class="w-20 h-20 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
             <Icon name="solar:danger-triangle-bold-duotone" class="w-10 h-10" />
           </div>
-          <h3 class="text-slate-900 dark:text-white font-bold text-xl mb-2">Konfirmasi Keluar</h3>
-          <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Apakah Anda yakin ingin keluar? Sesi Anda akan
-            berakhir sekarang.</p>
+          <h3 class="text-slate-900 dark:text-white font-bold text-xl mb-2">Confirm Exit</h3>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Are you sure you want to exit? Your session will end now.</p>
 
           <div class="flex gap-3">
             <button @click="isLogoutModalOpen = false"
               class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
-              Batal
+              Cancel
             </button>
             <button @click="handleLogout"
               class="flex-1 px-4 py-3 rounded-2xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-shadow hover:shadow-lg hover:shadow-red-200">
-              Ya, Keluar
+              Yes, Exit
             </button>
           </div>
         </div>
@@ -127,12 +126,12 @@ const handleLogout = async () => {
     await $fetch('/api/auth/logout', { method: 'POST' })
     adminUser.value = null
 
-    toast.success('Berhasil Keluar')
+    toast.success('Successful Exit')
     setTimeout(() => {
       navigateTo('/admin/login', { replace: true })
     }, 1000)
   } catch (err: unknown) {
-    toast.error('Gagal Logout')
+    toast.error('Failed to Logout')
   }
 }
 

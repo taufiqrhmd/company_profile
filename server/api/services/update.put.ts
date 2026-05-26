@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   if (!body.id) {
     throw createError({ 
       statusCode: 400, 
-      statusMessage: 'ID layanan wajib disertakan' 
+      statusMessage: 'Service ID is mandatory' 
     })
   }
 
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
   if (!data || data.length === 0) {
     return { 
       success: false, 
-      message: `Tidak ada baris dengan ID ${body.id} yang ditemukan.` 
+      message: `No rows with ID ${body.id} were found.` 
     }
   }
 

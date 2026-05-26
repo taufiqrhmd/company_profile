@@ -35,7 +35,7 @@
           <thead>
             <tr class="bg-slate-50/50 dark:bg-slate-900/50">
               <th class="th-style text-center w-16">No</th>
-              <th class="th-style">Project & Asset</th>
+              <th class="th-style">Asset & Porject Name</th>
               <th class="th-style text-center">Category</th>
               <th class="th-style text-center">Impact Metric</th>
               <th class="th-style text-right">Action</th>

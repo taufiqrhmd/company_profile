@@ -66,6 +66,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue'
 import { Toaster, toast } from 'vue-sonner'
 const route = useRoute()
 const colorMode = useColorMode()
@@ -87,33 +88,26 @@ const toggleColorMode = () => {
 const adminUser = useState<AdminUser | null>('adminUser', () => null)
 
 const handleProfileUpdate = async (formData: { full_name: string; password?: string }) => {
-  // Tampilkan loading toast
   const toastId = toast.loading('Memperbarui profil...')
 
   try {
-    // Tembak endpoint API update profile Anda
-    const response = await $fetch('/api/auth/update-profile', {
+    // Tembak endpoint API update profile
+    const response = await $fetch<any>('/api/auth/update-profile', {
       method: 'PUT',
       body: formData,
       headers: useRequestHeaders(['cookie']) as Record<string, string>
     })
 
-    // 1. Perbarui state adminUser lokal agar UI header langsung berubah
     if (adminUser.value) {
-      adminUser.value.full_name = formData.full_name
+      adminUser.value.full_name = response?.user?.full_name || response?.full_name || formData.full_name
     }
 
-    // 2. Berikan notifikasi sukses
-    toast.success('Profil berhasil diperbarui!', { id: toastId })
-
-    // 3. Tutup modal setelah sukses
+    toast.success('Profile updated successfully!', { id: toastId })
     isProfileOpen.value = false
 
   } catch (error: any) {
-    console.error('Gagal memperbarui profil:', error)
-    
-    // Ambil pesan error dari backend jika ada
-    const errorMessage = error.data?.message || 'Gagal memperbarui profil. Silakan coba lagi.'
+    console.error('Failed to update profile:', error)
+    const errorMessage = error.data?.message || 'Failed to update profile. Please try again.'
     toast.error(errorMessage, { id: toastId })
   }
 }
@@ -128,7 +122,7 @@ await callOnce(async () => {
       })
       adminUser.value = user as AdminUser
     } catch (e) {
-      console.error('Layout Admin: Gagal fetch user', e)
+      console.error('Layout Admin: Failed to fetch user', e)
     }
   }
 })

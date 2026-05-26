@@ -49,13 +49,8 @@
                 {{ service.description }}
               </p>
             </div>
-
-            <div class="pt-6 md:pt-8 border-t border-dark/5 dark:border-white/5 group-hover:border-dark/10">
-              <BaseButton variant="outline" size="sm" icon="heroicons:arrow-right-circle-20-solid"
-                class="!px-4 group-hover:!border-dark group-hover:!text-dark">
-                Methodology
-              </BaseButton>
-            </div>
+            
+            <div class="border-t-2 border-primary group-hover:border-dark/20 dark:group-hover:border-soft/40 transition-colors duration-500"></div>
           </div>
         </div>
       </div>
