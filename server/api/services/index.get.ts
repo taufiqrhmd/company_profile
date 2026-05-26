@@ -1,4 +1,4 @@
-// server/api/projects/index.get.ts
+// server/api/services/index.get.ts
 import { useServerSupabase } from "~~/server/utils/supabase";
 
 export default defineEventHandler(async (event) => {
@@ -9,5 +9,5 @@ export default defineEventHandler(async (event) => {
     .order("id", { ascending: true });
 
   if (error) throw createError({ statusCode: 500, message: error.message });
-  return data;
+  return data || [];
 });

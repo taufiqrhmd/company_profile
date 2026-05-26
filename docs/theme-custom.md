@@ -7,7 +7,7 @@ Aplikasi ini menggunakan skema warna kustom premium berbasis aksen **Gold** & **
 ## 📊 Palet Warna Utama
 
 | Kegunaan | Nama Variabel | Kode Warna |
-| :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- |
 | **Aksen Utama** | `primary` | `#D4AF37` | 
 | **Hover / Sorotan** | `accent` | `#FFD700` | 
 | **Teks / Elemen Gelap** | `dark` | `#1C1C1C` | 

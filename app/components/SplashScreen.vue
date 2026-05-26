@@ -3,16 +3,28 @@
   <div 
     v-if="isVisible" 
     ref="splashRef" 
-    class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-neutral-950 text-white"
+    class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-neutral-950 text-white select-none"
   >
-    <!-- Ganti dengan Logo / Animasi Anda -->
-    <div class="overflow-hidden mb-4">
-      <h1 ref="titleRef" class="text-3xl font-bold tracking-wider translate-y-[100%]">
-        DIGITAL EXCELLENT
-      </h1>
-    </div>
-    <div class="w-32 h-[2px] bg-neutral-800 rounded-full overflow-hidden">
-      <div ref="progressRef" class="w-0 h-full bg-primary"></div>
+    <!-- Kontainer Konten Utama -->
+    <div ref="contentRef" class="flex flex-col items-center text-center px-6 opacity-0">
+      
+      <!-- Subtitle Atas (Khas Brand Premium) -->
+      <span class="text-[10px] tracking-[0.4em] text-neutral-500 uppercase mb-3 font-medium">
+        Welcome to
+      </span>
+
+      <!-- Judul Utama dengan Masking & Efek Huruf Renggang -->
+      <div class="overflow-hidden mb-6">
+        <h1 ref="titleRef" class="text-2xl md:text-4xl font-extralight tracking-[0.25em] text-neutral-100 uppercase leading-none">
+          Digital <span class="font-medium text-amber-400/90">Excellent</span>
+        </h1>
+      </div>
+
+      <!-- Progress Bar Minimalis (Tipis & Elegan) -->
+      <div class="w-24 h-[1px] bg-neutral-800/60 relative overflow-hidden">
+        <div ref="progressRef" class="absolute left-0 top-0 w-0 h-full bg-gradient-to-r from-amber-500 to-amber-300"></div>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -23,29 +35,67 @@ import { gsap } from 'gsap'
 
 const emit = defineEmits(['loaded'])
 const isVisible = ref(true)
+
 const splashRef = ref<HTMLElement | null>(null)
+const contentRef = ref<HTMLElement | null>(null)
 const titleRef = ref<HTMLElement | null>(null)
 const progressRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   if (!import.meta.client) return
 
+  // Timeline Utama dengan easing yang sangat smooth (Custom Power4/Expo)
   const tl = gsap.timeline({
     onComplete: () => {
       isVisible.value = false
-      emit('loaded') // Beritahu app.vue bahwa splash screen selesai
+      emit('loaded')
     }
   })
 
-  // 1. Animasi teks muncul & progress bar jalan
-  tl.to(titleRef.value, { y: 0, duration: 0.8, ease: 'power3.out' })
-    .to(progressRef.value, { width: '100%', duration: 1.5, ease: 'power2.inOut' }, '-=0.5')
-    
-  // 2. Animasi Splash Screen keluar (Slide up / Fade out)
-  tl.to(splashRef.value, {
-    yPercent: -100, // Geser ke atas
-    duration: 0.8,
-    ease: 'power4.inOut'
+  // Set initial state untuk animasi masuk (Y sedikit turun & blur)
+  gsap.set(titleRef.value, { y: 30, filter: 'blur(5px)' })
+
+  // 1. Konten muncul secara halus (Fade In & Unblur)
+  tl.to(contentRef.value, {
+    opacity: 1,
+    duration: 0.6,
+    ease: 'power2.out'
   })
+  
+  // 2. Teks naik ke atas dengan efek unblur (Cinematic Reveal)
+  .to(titleRef.value, {
+    y: 0,
+    filter: 'blur(0px)',
+    duration: 1.2,
+    ease: 'expo.out'
+  }, '-=0.3')
+
+  // 3. Progress bar berjalan tipis & elegan
+  .to(progressRef.value, {
+    width: '100%',
+    duration: 1.8,
+    ease: 'power3.inOut'
+  }, '-=0.8')
+
+  // 4. Efek Keluar Premium: Konten mengecil + Splash memudar (Fade Out)
+  .to(contentRef.value, {
+    scale: 0.95,
+    opacity: 0,
+    duration: 0.6,
+    ease: 'power2.in'
+  }, '+=0.2') // beri sedikit jeda sebelum screen hilang
+  
+  .to(splashRef.value, {
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out'
+  }, '-=0.3')
 })
 </script>
+
+<style scoped>
+/* Menghilangkan kedipan layout saat inisialisasi GSAP */
+.font-extralight {
+  font-weight: 200;
+}
+</style>

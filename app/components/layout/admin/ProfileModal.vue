@@ -16,7 +16,7 @@
         <form @submit.prevent="handleUpdate" class="space-y-6">
           <div class="space-y-1">
             <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-            <input v-model="form.full_name" type="text" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-bold" />
+            <input v-model="form.full_name" type="text" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-bold text-dark" />
           </div>
 
           <div class="space-y-1">
@@ -52,15 +52,26 @@ const emit = defineEmits(['update:modelValue', 'submit'])
 const loading = ref(false)
 
 const form = ref({
-  full_name: props.user?.full_name || '',
+  full_name: '',
   password: ''
 })
 
-watch(() => props.user, (newUser) => {
-  if (newUser) {
-    form.value.full_name = newUser.full_name || ''
+const syncFormData = () => {
+  if (props.user) {
+    form.value.full_name = props.user.full_name || ''
   }
-}, { deep: true })
+}
+
+watch(() => props.user, () => {
+  syncFormData()
+}, { deep: true, immediate: true })
+
+watch(() => props.modelValue, (isOpen) => {
+  if (isOpen) {
+    syncFormData()
+    form.value.password = '' // Reset field password saat modal dibuka kembali
+  }
+})
 
 const handleUpdate = async () => {
   if (!form.value.full_name.trim()) {
@@ -79,9 +90,7 @@ const handleUpdate = async () => {
     }
 
     emit('submit', payload)
- 
     form.value.password = ''
-
   } catch (error) {
     console.error('Failed to update profile:', error)
   } finally {

@@ -73,7 +73,7 @@ const form = reactive({
 
 const handleLogin = async (): Promise<void> => {
   if (!form.username || !form.password) {
-    toast.warning('Peringatan', { description: 'Harap isi semua field.' })
+    toast.warning('Warning', { description: 'Please fill in all fields.' })
     return
   }
 
@@ -92,8 +92,8 @@ const handleLogin = async (): Promise<void> => {
       authToken.value = response.token
       adminUser.value = response.user
 
-      toast.success('Berhasil Masuk', {
-        description: `Selamat datang kembali, ${response.user.full_name}!`
+      toast.success('Login Successfully', {
+        description: `Welcome back, ${response.user.full_name}!`
       })
 
       const userRole = response.user.role
@@ -110,8 +110,8 @@ const handleLogin = async (): Promise<void> => {
     }
 
   } catch (err: any) {
-    const errorMessage = err.data?.statusMessage || 'Username atau Password salah.'
-    toast.error('Gagal Login', { description: errorMessage })
+    const errorMessage = err.data?.statusMessage || 'Invalid Username or Password.'
+    toast.error('Login Failed', { description: errorMessage })
   } finally {
     isLoading.value = false
   }

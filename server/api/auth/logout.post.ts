@@ -6,6 +6,6 @@ export default defineEventHandler((event) => {
 
   return { 
     success: true,
-    message: 'Token deleted' 
+    message: 'Token Deleted' 
   }
 })
