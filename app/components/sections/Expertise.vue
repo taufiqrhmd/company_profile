@@ -23,7 +23,7 @@
       <div v-if="!pending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         <div v-for="(service, index) in services" 
           :key="service.id"
-          class="service-card-reveal group relative h-[480px] sm:h-[520px] overflow-hidden rounded-[2rem] bg-white dark:bg-[#0F0F0F] border border-dark/5 dark:border-white/5 transition-all duration-700 hover:-translate-y-4 shadow-xl shadow-transparent hover:shadow-primary/10"
+          class="service-card-reveal group relative h-[480px] sm:h-[520px] overflow-hidden rounded-[2rem] bg-white dark:bg-[#0F0F0F] border border-dark/5 dark:border-white/5 transition-all duration-700 hover:-translate-y-4 shadow-xl shadow-primary/5"
           :style="{ '--delay': `${index * 150}ms` }"
         >
           <div class="absolute inset-0 bg-primary translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"></div>

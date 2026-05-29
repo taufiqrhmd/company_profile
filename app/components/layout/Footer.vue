@@ -11,10 +11,21 @@
         <div v-for="(section, title) in footerLinks" :key="title" class="space-y-5 md:space-y-6">
           <h4 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-primary">{{ title }}</h4>
           <div class="flex flex-col gap-2.5">
-            <a v-for="link in section" :key="link" href="#" 
-               class="text-white/40 text-[10px] md:text-xs hover:text-primary transition-colors tracking-widest uppercase leading-loose">
-              {{ link }}
-            </a>
+            
+            <template v-if="title === 'Inspiration' || title === 'Socials'">
+              <a v-for="link in section" :key="link" href="#" 
+                 class="text-white/40 text-[10px] md:text-xs hover:text-primary transition-colors tracking-widest uppercase leading-loose">
+                {{ link }}
+              </a>
+            </template>
+
+            <template v-else>
+              <span v-for="link in section" :key="link" 
+                 class="text-white/40 text-[10px] md:text-xs tracking-widest uppercase leading-loose cursor-default">
+                {{ link }}
+              </span>
+            </template>
+
           </div>
         </div>
       </div>
@@ -33,9 +44,9 @@
 
 <script setup lang="ts">
 const footerLinks = {
-  "The Studio": ["Equity Tower, 40th Floor", "SCBD, Jakarta Selatan", "Indonesia"],
+  "The Studio": ["Equity Tower, 25th Floor", "SCBD, Jakarta Selatan", "Indonesia"],
   "Contact Us": ["hello@digitalexcellent.com", "+62 (21) 1234 567"],
   "Inspiration": ["Portfolio", "Services", "Our Story", "Careers"],
-  "Socials": ["Instagram", "LinkedIn", "Behance", "Dribbble"]
+  "Socials": ["Instagram", "LinkedIn", "Twitter", "Dribbble"]
 };
 </script>

@@ -31,7 +31,7 @@
 
         <div class="lg:col-span-5">
           <form @submit.prevent="handleSubmit" novalidate
-            class="reveal-right p-8 md:p-10 rounded-[2.5rem] bg-white dark:bg-darkCard border border-dark/[0.08] dark:border-soft/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-5"
+            class="reveal-right p-8 md:p-10 rounded-[2.5rem] text-dark dark:text-soft bg-white dark:bg-darkCard border border-dark/[0.08] dark:border-soft/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] space-y-5"
             style="--delay: 300ms">
 
             <div class="space-y-4">
@@ -74,7 +74,7 @@
             </div>
 
             <button type="submit" :disabled="isSubmitting"
-              class="group w-full flex items-center justify-between p-2 pl-6 rounded-xl bg-dark dark:bg-primary text-soft dark:text-dark dark:hover:bg-soft transition-all duration-500 disabled:opacity-50">
+              class="group w-full flex items-center justify-between p-2 pl-6 rounded-xl bg-dark dark:bg-primary text-soft dark:text-dark transition-all duration-500 disabled:opacity-50">
               <span class="text-[10px] font-black uppercase tracking-[0.2em]">
                 {{ isSubmitting ? 'Sending Message...' : 'Send Inquiry' }}
               </span>
