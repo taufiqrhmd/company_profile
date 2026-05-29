@@ -11,7 +11,7 @@
         <div class="lg:col-span-6 space-y-6 md:space-y-8 text-center lg:text-left">
           <div class="space-y-4">
             <div class="reveal-up inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-              <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span class="w-2 h-2 rounded-full bg-primary"></span>
               <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Exclusive Digital Partner</span>
             </div>
 
