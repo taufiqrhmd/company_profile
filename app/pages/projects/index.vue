@@ -12,7 +12,7 @@
     <div class="container max-w-7xl mx-auto px-4 relative z-10 pt-16 pb-40">
 
       <header class="mb-32 md:mb-36">
-        <div class="mb-12">
+        <div class="mb-2">
           <NuxtLink to="/"
             class="inline-flex items-center gap-2 text-primary text-xs font-black uppercase tracking-widest mb-8 group">
             <Icon name="solar:arrow-left-bold" class="group-hover:-translate-x-1 transition-transform" />

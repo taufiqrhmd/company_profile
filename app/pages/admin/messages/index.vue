@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-8">
+  <div class="max-w-7xl mx-auto space-y-8">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
@@ -42,7 +42,7 @@
 
         <!-- Empty State -->
         <div v-else-if="messages.length === 0"
-          class="text-center py-20 bg-white dark:bg-[#16191E] rounded-[2rem] border border-dashed border-slate-200 dark:border-white/10 transition-colors">
+          class="text-center py-20 bg-white dark:bg-[#16191E] rounded-xl border border-dashed border-slate-200 dark:border-white/10 transition-colors">
           <Icon name="solar:letter-unread-linear" class="w-12 h-12 text-slate-200 dark:text-slate-800 mb-4" />
           <p class="text-xs text-slate-400 italic font-medium">No messages found in "{{ currentFilter }}" category.</p>
         </div>

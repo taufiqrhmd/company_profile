@@ -1,3 +1,4 @@
+import { ref, computed } from 'vue'
 import { 
   Chart as ChartJS, 
   CategoryScale, 
@@ -13,34 +14,45 @@ import {
 } from 'chart.js'
 
 export const useAdminChart = () => {
-  // Register komponen untuk Grafik Garis (Line) + Filler untuk efek area di bawah garis
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
   const colorMode = useColorMode()
+  
+  // State aktif untuk melacak filter hari (30 atau 7)
+  const activeDays = ref<30 | 7>(30)
 
-  // Generate otomatis label tanggal 1-30 untuk simulasi 1 bulan full
-  const generateMonthlyLabels = () => {
-    return Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`)
-  }
-
-  // Simulasi data visitor selama 30 hari
+  // Master data 30 hari penuh
   const monthlyData = [
-    120, 150, 190, 140, 220, 280, 250, 310, 420, 380, 
+    120, 100, 90, 140, 220, 280, 250, 310, 420, 380, 
     410, 490, 460, 520, 580, 610, 550, 590, 680, 720, 
     700, 740, 810, 790, 850, 920, 890, 950, 1050, 1200
   ]
 
+  // Potong labels secara dinamis berdasarkan state activeDays (mengambil data paling akhir)
+  const filteredLabels = computed(() => {
+    return Array.from({ length: activeDays.value }, (_, i) => {
+      // Jika filter 7 hari, ambil label 7 hari terakhir dari total 30 hari (Hari 24 s/d 30)
+      const dayNumber = (30 - activeDays.value) + (i + 1)
+      return `Day ${dayNumber}`
+    })
+  })
+
+  // Potong dataset angka secara dinamis berdasarkan state activeDays
+  const filteredData = computed(() => {
+    return monthlyData.slice(-activeDays.value)
+  })
+
   const chartData = computed<ChartData<'line'>>(() => ({
-    labels: generateMonthlyLabels(),
+    labels: filteredLabels.value,
     datasets: [{
       label: 'Unique Visitors',
-      data: monthlyData,
+      data: filteredData.value,
       borderColor: '#D4A32E', 
       backgroundColor: colorMode.value === 'dark' ? 'rgba(212, 163, 46, 0.03)' : 'rgba(212, 163, 46, 0.08)',
       fill: true,
-      tension: 0.35, // Membuat lekukan grafik lebih halus dan melengkung alami
-      pointRadius: 3,
-      pointHoverRadius: 6,
+      tension: 0.35,
+      pointRadius: activeDays.value === 7 ? 5 : 3, // Perbesar titik koordinat jika datanya sedikit (7 hari)
+      pointHoverRadius: 7,
       pointBackgroundColor: '#D4A32E',
       borderWidth: 3
     }]
@@ -81,13 +93,14 @@ export const useAdminChart = () => {
           color: colorMode.value === 'dark' ? '#64748B' : '#94A3B8',
           maxRotation: 0,
           autoSkip: true,
-          maxTicksLimit: 15 // Membatasi jumlah teks tanggal agar tidak tumpang tindih saat di-scroll
+          maxTicksLimit: activeDays.value === 7 ? 7 : 15
         }
       }
     }
   }))
 
   return {
+    activeDays, // Kembalikan variabel ini agar bisa dibaca/diubah di file Vue
     chartData,
     chartOptions
   }
