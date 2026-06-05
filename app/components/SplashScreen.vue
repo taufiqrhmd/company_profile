@@ -1,30 +1,24 @@
-<!-- components/SplashScreen.vue -->
 <template>
-  <div 
-    v-if="isVisible" 
-    ref="splashRef" 
-    class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-neutral-950 text-white select-none"
-  >
-    <!-- Kontainer Konten Utama -->
+  <div v-if="isVisible" ref="splashRef"
+    class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-neutral-950 text-white select-none">
     <div ref="contentRef" class="flex flex-col items-center text-center px-6 opacity-0">
-      
-      <!-- Subtitle Atas (Khas Brand Premium) -->
-      <span class="text-[10px] tracking-[0.4em] text-neutral-500 uppercase mb-3 font-medium">
+
+      <span class="text-[12px] tracking-[0.4em] text-neutral-500 uppercase mb-3 font-medium">
         Welcome to
       </span>
 
-      <!-- Judul Utama dengan Masking & Efek Huruf Renggang -->
       <div class="overflow-hidden mb-6">
-        <h1 ref="titleRef" class="text-2xl md:text-4xl font-extralight tracking-[0.25em] text-neutral-100 uppercase leading-none">
+        <h1 ref="titleRef"
+          class="text-2xl md:text-4xl font-light tracking-[0.25em] text-neutral-100 uppercase leading-none">
           Digital <span class="font-medium text-amber-400/90">Excellent</span>
         </h1>
       </div>
 
-      <!-- Progress Bar Minimalis (Tipis & Elegan) -->
-      <div class="w-24 h-[1px] bg-neutral-800/60 relative overflow-hidden">
-        <div ref="progressRef" class="absolute left-0 top-0 w-0 h-full bg-gradient-to-r from-amber-500 to-amber-300"></div>
+      <div class="w-40 h-[2px] bg-neutral-800/60 relative overflow-hidden">
+        <div ref="progressRef" class="absolute left-0 top-0 w-0 h-full bg-gradient-to-r from-amber-500 to-amber-300">
+        </div>
       </div>
-      
+
     </div>
   </div>
 </template>
@@ -61,41 +55,35 @@ onMounted(() => {
     duration: 0.6,
     ease: 'power2.out'
   })
-  
-  // 2. Teks naik ke atas dengan efek unblur (Cinematic Reveal)
-  .to(titleRef.value, {
-    y: 0,
-    filter: 'blur(0px)',
-    duration: 1.2,
-    ease: 'expo.out'
-  }, '-=0.3')
 
-  // 3. Progress bar berjalan tipis & elegan
-  .to(progressRef.value, {
-    width: '100%',
-    duration: 1.8,
-    ease: 'power3.inOut'
-  }, '-=0.8')
+    // 2. Teks naik ke atas dengan efek unblur (Cinematic Reveal)
+    .to(titleRef.value, {
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 1.2,
+      ease: 'expo.out'
+    }, '-=0.3')
 
-  // 4. Efek Keluar Premium: Konten mengecil + Splash memudar (Fade Out)
-  .to(contentRef.value, {
-    scale: 0.95,
-    opacity: 0,
-    duration: 0.6,
-    ease: 'power2.in'
-  }, '+=0.2') // beri sedikit jeda sebelum screen hilang
-  
-  .to(splashRef.value, {
-    opacity: 0,
-    duration: 0.8,
-    ease: 'power2.out'
-  }, '-=0.3')
+    // 3. Progress bar berjalan tipis & elegan
+    .to(progressRef.value, {
+      width: '100%',
+      duration: 1.8,
+      ease: 'power3.inOut'
+    }, '-=0.8')
+
+    // 4. Efek Keluar Premium: Konten mengecil + Splash memudar (Fade Out)
+    .to(contentRef.value, {
+      scale: 1.05,
+      filter: 'blur(4px)',
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power2.inOut'
+    }, '+=0.3')
+
+    .to(splashRef.value, {
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power2.inOut'
+    }, '-=0.4')
 })
 </script>
-
-<style scoped>
-/* Menghilangkan kedipan layout saat inisialisasi GSAP */
-.font-extralight {
-  font-weight: 200;
-}
-</style>

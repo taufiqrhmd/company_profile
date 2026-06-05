@@ -18,7 +18,7 @@
       </div>
 
       <button @click="$emit('update:isCollapsed', !isCollapsed)"
-        class="hidden lg:flex absolute -right-0 top-1/2 -translate-y-1/2 w-8 h-12 bg-transparent items-center justify-center text-slate-300 hover:text-primary transition-colors">
+        class="hidden lg:flex absolute -right-0 top-1/2 -translate-y-1/2 w-8 h-12 bg-transparent items-center justify-center text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
         <Icon :name="isCollapsed ? 'solar:alt-arrow-right-bold' : 'solar:alt-arrow-left-bold'" class="w-4 h-4" />
       </button>
     </div>
@@ -67,7 +67,8 @@
             <Icon name="solar:danger-triangle-bold-duotone" class="w-10 h-10" />
           </div>
           <h3 class="text-slate-900 dark:text-white font-bold text-xl mb-2">Confirm Exit</h3>
-          <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Are you sure you want to exit? Your session will end now.</p>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Are you sure you want to exit? Your session will
+            end now.</p>
 
           <div class="flex gap-3">
             <button @click="isLogoutModalOpen = false"
@@ -75,7 +76,7 @@
               Cancel
             </button>
             <button @click="handleLogout"
-              class="flex-1 px-4 py-3 rounded-2xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-shadow hover:shadow-lg hover:shadow-red-200">
+              class="flex-1 px-4 py-3 rounded-2xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-shadow hover:shadow-lg hover:shadow-red-200 dark:hover:shadow-red-900/30">
               Yes, Exit
             </button>
           </div>
@@ -87,6 +88,7 @@
 
 <script lang="ts" setup>
 import { toast } from 'vue-sonner';
+
 // 1. Definisikan interface untuk tipe data Admin
 interface AdminUser {
   role: string;
@@ -105,17 +107,44 @@ defineEmits(['close', 'update:isCollapsed'])
 
 const adminUser = useState<AdminUser | null>('adminUser')
 
+// 2. Tambahkan /admin/accounts ke dalam list menu item
 const menuItems = [
-  { name: 'Dashboard', path: '/admin', icon: 'solar:widget-5-linear', roles: ['super_admin'] },
-  { name: 'Projects', path: '/admin/projects', icon: 'solar:folder-linear', roles: ['editor'] },
-  { name: 'Services', path: '/admin/services', icon: 'solar:clapperboard-edit-linear', roles: ['editor'] },
-  { name: 'Messages', path: '/admin/messages', icon: 'solar:letter-linear', roles: ['super_admin'] },
+  {
+    name: 'Dashboard',
+    path: '/admin',
+    icon: 'solar:widget-5-linear',
+    roles: ['super_admin']
+  },
+  {
+    name: 'Projects',
+    path: '/admin/projects',
+    icon: 'solar:folder-linear',
+    roles: ['editor'] // super_admin juga dapat memantau atau mengontrol portofolio jika diperlukan
+  },
+  {
+    name: 'Services',
+    path: '/admin/services',
+    icon: 'solar:clapperboard-edit-linear',
+    roles: ['editor']
+  },
+  {
+    name: 'Messages',
+    path: '/admin/messages',
+    icon: 'solar:letter-linear',
+    roles: ['super_admin']
+  },
+  {
+    name: 'Manage Accounts',
+    path: '/admin/accounts',
+    icon: 'solar:users-group-rounded-bold-duotone', // Menggunakan ikon Solar yang serasi untuk manajemen tim/user
+    roles: ['super_admin'] // Proteksi ketat: Hanya super_admin yang dapat melihat item menu ini
+  },
 ]
 
 const filteredMenu = computed(() => {
   const user = adminUser.value
   if (!user || !user.role) return []
-  
+
   return menuItems.filter(item => item.roles.includes(user.role))
 })
 

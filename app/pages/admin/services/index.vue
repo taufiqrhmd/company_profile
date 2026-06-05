@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-8 transition-colors duration-300">
+  <div class="max-w-7xl mx-auto space-y-8 transition-colors duration-300">
     <div class="flex justify-between items-center">
       <div>
         <h2 class="text-3xl font-black uppercase tracking-tighter dark:text-white">
@@ -14,12 +14,12 @@
 
     <div v-if="services.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div v-for="(service, index) in services" :key="service.id"
-        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-8 relative group hover:border-primary/50 transition-all shadow-sm">
+        class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl p-8 relative group hover:border-primary/50 transition-all shadow-sm">
 
         <div class="flex justify-between items-start mb-8">
           <span class="text-xs font-black text-primary italic">0{{ index + 1 }} //</span>
           <div
-            class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-black transition-all shadow-inner border border-transparent dark:border-slate-700">
+            class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-black transition-all shadow-inner border border-transparent dark:border-white/10">
             <Icon :name="service.icon" class="w-6 h-6" />
           </div>
         </div>
@@ -33,7 +33,7 @@
           </p>
         </div>
 
-        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-white/10 flex justify-between items-center">
           <button @click="openEditModal(service)"
             class="group/btn flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary transition-all">
             <span>Edit Service</span>
@@ -46,7 +46,7 @@
     </div>
 
     <div v-else-if="isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-8 animate-pulse">
-      <div v-for="i in 3" :key="i" class="h-64 bg-slate-100 dark:bg-slate-800 rounded-[2.5rem]"></div>
+      <div v-for="i in 3" :key="i" class="h-64 bg-slate-100 dark:bg-[#16191E] rounded-[2.5rem]"></div>
     </div>
 
     <Teleport to="body">
@@ -72,7 +72,7 @@
                   class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Service
                   Title</label>
                 <input v-model="editForm.title"
-                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+                  class="w-full bg-slate-50 dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
               </div>
 
               <div class="space-y-3">
@@ -82,7 +82,7 @@
 
                 <!-- Preview & Current Selection -->
                 <div
-                  class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-[#16191E] rounded-2xl border border-slate-200 dark:border-white/10">
                   <div
                     class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-black shadow-lg shadow-primary/20">
                     <Icon :name="editForm.icon || 'solar:Settings-linear'" class="w-6 h-6" />
@@ -111,13 +111,13 @@
                 <label
                   class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Description</label>
                 <textarea v-model="editForm.description" rows="4"
-                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 text-sm text-slate-600 dark:text-slate-400 focus:ring-2 focus:ring-primary/50 outline-none resize-none transition-all"></textarea>
+                  class="w-full bg-slate-50 dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm text-slate-600 dark:text-slate-400 focus:ring-2 focus:ring-primary/50 outline-none resize-none transition-all"></textarea>
               </div>
             </div>
 
             <div class="flex gap-4 mt-10">
               <button @click="isEditModalOpen = false"
-                class="flex-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black uppercase hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                class="flex-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-[#16191E] text-slate-600 dark:text-slate-400 text-xs font-black uppercase hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                 Cancel
               </button>
               <button @click="handleUpdate" :disabled="isUpdating"

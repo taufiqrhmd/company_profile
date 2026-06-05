@@ -10,7 +10,7 @@
         <h1 class="text-3xl font-black uppercase tracking-tight text-slate-900">
           Admin Login
         </h1>
-        <p class="text-sm text-slate-500">Silakan masukkan akun Anda untuk masuk ke dashboard</p>
+        <p class="text-sm text-slate-500">Please enter your account to log in to the dashboard</p>
       </div>
 
       <div class="p-8 bg-white border border-slate-200 rounded-3xl shadow-sm">
@@ -21,7 +21,7 @@
             </label>
             <input v-model="form.username" type="text"
               class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-400"
-              placeholder="Masukkan username" />
+              placeholder="Enter username" />
           </div>
 
           <div class="space-y-1.5">
@@ -36,7 +36,7 @@
           <button type="submit" :disabled="isLoading"
             class="w-full p-4 bg-primary text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-all flex justify-center items-center gap-2 shadow-md mt-2">
             <span v-if="isLoading" class="animate-spin">◌</span>
-            {{ isLoading ? 'Sedang memproses...' : 'Masuk ke Dashboard' }}
+            {{ isLoading ? 'Processing...' : 'Enter Dashboard' }}
           </button>
         </form>
       </div>

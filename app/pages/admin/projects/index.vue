@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-8 transition-colors duration-300">
+  <div class="max-w-7xl mx-auto space-y-8 transition-colors duration-300">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
@@ -17,7 +17,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div v-for="stat in ['Total', 'High Impact', 'Archived']" :key="stat"
-        class="p-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm transition-colors">
+        class="p-8 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl shadow-sm transition-colors">
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{{ stat }}
           Projects</p>
         <p class="text-4xl font-black italic dark:text-white">
@@ -29,13 +29,13 @@
 
     <!-- Table Section -->
     <div
-      class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm transition-colors">
+      class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors">
       <div class="overflow-x-auto">
         <table class="w-full border-separate border-spacing-0">
           <thead>
             <tr class="bg-slate-50/50 dark:bg-slate-900/50">
               <th class="th-style text-center w-16">No</th>
-              <th class="th-style">Asset & Porject Name</th>
+              <th class="th-style">Asset & Project Name</th>
               <th class="th-style text-center">Category</th>
               <th class="th-style text-center">Impact Metric</th>
               <th class="th-style text-right">Action</th>
@@ -55,7 +55,7 @@
               <td class="p-6">
                 <div class="flex items-center gap-5">
                   <div
-                    class="relative w-24 h-16 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 shadow-sm shrink-0">
+                    class="relative w-24 h-16 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 shadow-sm shrink-0">
                     <img :src="project.image" :alt="project.title"
                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                   </div>
@@ -118,8 +118,8 @@
           <div
             class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
             <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-50 dark:border-slate-800">
-              <h3 class="text-2xl font-black italic uppercase tracking-tighter dark:text-white">
-                {{ isEditMode ? 'Edit' : 'Create' }} <span class="text-primary">Project</span>
+              <h3 class="text-2xl font-black uppercase tracking-tighter dark:text-white">
+                {{ isEditMode ? 'Edit Project' : 'Create Project' }}
               </h3>
               <button @click="isModalOpen = false" class="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <Icon name="solar:close-circle-bold" class="w-8 h-8" />
@@ -151,7 +151,7 @@
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Project Thumbnail</label>
                   <div
-                    class="flex items-center gap-6 p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[2rem] bg-slate-50/50 dark:bg-slate-800/50">
+                    class="flex items-center gap-6 p-6 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-[2rem] bg-slate-50/50 dark:bg-[#16191E]/50">
                     <div
                       class="w-32 h-20 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 shrink-0">
                       <img v-if="imagePreview || formData.image" :src="imagePreview || formData.image"
@@ -219,6 +219,7 @@
 
 <script lang="ts" setup>
 import { toast } from 'vue-sonner'
+import { h, resolveComponent } from 'vue'
 
 definePageMeta({ layout: 'admin' })
 const { formData, isModalOpen, isEditMode, selectedFile, imagePreview, resetForm, populateForm } = useProjectForm()
@@ -366,28 +367,74 @@ const saveProject = async () => {
 }
 
 const handleDelete = (id: string | number | undefined) => {
-  console.log("Handle Delete Muncul")
+  console.log("The Delete Handle Appears")
   if (!id) {
-    console.error("ID tidak ditemukan");
+    console.error("ID Not Found");
     return;
   }
 
-  toast.warning('Hapus project ini?', {
-    description: 'Tindakan ini tidak dapat dibatalkan.',
-    duration: 5000,
-    action: {
-      label: 'Hapus Sekarang',
-      onClick: () => {
-        executeDelete(id);
-      }
-    },
+  // 1. Ambil/panggil komponen Icon yang terdaftar di proyek Anda (misal: Nuxt Icon / Heroicons)
+  const IconComponent = resolveComponent('Icon')
+
+  const toastId = toast.custom(() => {
+    return h(
+      'div',
+      { 
+        class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' 
+      },
+      [
+        // Bagian Atas: Ikon dari Component + Konten Teks
+        h('div', { class: 'flex items-start gap-3' }, [
+          
+          // 2. Menggunakan komponen Icon Anda sendiri
+          h(IconComponent, {
+            name: 'heroicons:exclamation-triangle-20-solid', // Sesuaikan dengan nama ikon di project Anda
+            class: 'w-5 h-5 text-amber-500 shrink-0 mt-0.5'
+          }),
+
+          // Wadah Teks
+          h('div', { class: 'flex flex-col gap-1' }, [
+            h('h3', { class: 'text-sm font-semibold text-zinc-950 dark:text-zinc-50' }, 'Are you sure you want to delete this project?'),
+            h('p', { class: 'text-xs text-zinc-500 dark:text-zinc-400 leading-normal' }, 'This action will permanently delete the data and cannot be undone.')
+          ])
+        ]),
+        
+        // Bagian Bawah: Tombol Aksi
+        h('div', { class: 'flex justify-end gap-2' }, [
+          h(
+            'button',
+            {
+              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-zinc-700 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors',
+              onClick: () => {
+                console.log('Deletion cancelled');
+                toast.dismiss(toastId);
+              }
+            },
+            'Cancel'
+          ),
+          h(
+            'button',
+            {
+              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm',
+              onClick: () => {
+                executeDelete(id);
+                toast.dismiss(toastId);
+              }
+            },
+            'Delete Now'
+          )
+        ])
+      ]
+    )
+  }, {
+    duration: 5000
   })
 }
 
 // Gunakan async function agar hoisting lebih aman
 const executeDelete = async (id: string | number) => {
-  console.log('Memulai proses eksekusi hapus untuk ID:', id);
-  const deleteToast = toast.loading('Sedang menghapus...');
+  console.log('Starting the delete execution process for ID:', id);
+  const deleteToast = toast.loading('Currently deleting...');
 
   try {
     const projectToDelete = projects.value.find(p => p.id === id);
@@ -408,11 +455,11 @@ const executeDelete = async (id: string | number) => {
       method: 'DELETE'
     });
 
-    toast.success('Project berhasil dihapus', { id: deleteToast });
+    toast.success('Project successfully deleted', { id: deleteToast });
     await fetchProjects();
   } catch (e: any) {
     console.error('Error detail:', e);
-    toast.error('Gagal: ' + (e.data?.message || e.message), { id: deleteToast });
+    toast.error('Failed: ' + (e.data?.message || e.message), { id: deleteToast });
   }
 }
 
@@ -433,11 +480,11 @@ onMounted(fetchProjects)
 }
 
 .form-input {
-  @apply w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm font-medium dark:text-white dark:placeholder:text-slate-600;
+  @apply w-full bg-slate-50 dark:bg-[#16191E]/50 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm font-medium dark:text-white dark:placeholder:text-slate-600;
 }
 
 .icon-btn {
-  @apply p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-400 transition-all hover:scale-110 hover:border-primary/50;
+  @apply p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#16191E] text-slate-400 transition-all hover:scale-110 hover:border-primary/50;
 }
 
 .icon-btn.active {
@@ -449,11 +496,11 @@ onMounted(fetchProjects)
 }
 
 .btn-secondary {
-  @apply flex-1 px-8 py-4 rounded-xl border border-slate-200 dark:border-slate-700 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors;
+  @apply flex-1 px-8 py-4 rounded-xl border border-slate-200 dark:border-white/10 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 dark:hover:bg-[#16191E] dark:text-slate-400 transition-colors;
 }
 
 .th-style {
-  @apply p-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 align-middle;
+  @apply p-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/10 align-middle;
 }
 
 .action-btn {
