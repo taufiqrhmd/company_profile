@@ -12,10 +12,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
       return
     }
 
-    // 2. Proses Rehydration (Ambil data user dari token)
+    // 2. Proses Rehydration (Ambil data user dari token jika belum ada di state)
     if (token.value && !adminUser.value) {
       try {
-        // Gunakan $fetch dengan header agar cookie terkirim (jika SSR)
         const user = await $fetch('/api/auth/me', {
           headers: useRequestHeaders(['cookie']) as Record<string, string>
         })
@@ -23,17 +22,29 @@ export default defineNuxtRouteMiddleware(async (to) => {
         if (user) {
           adminUser.value = user
         } else {
-          // Token ada tapi user tidak ditemukan di DB
           token.value = null
           if (to.path !== loginPath) return navigateTo(loginPath)
+          return
         }
-      } catch (e) {
-        // ERROR KRUSIAL: Jika fetch gagal, JANGAN hapus token dulu.
-        // Bisa jadi karena masalah koneksi. Cukup log saja.
+      } catch (e: any) {
         console.error("Gagal validasi token:", e)
-        
-        // Opsional: Jika error adalah 401 (Unauthorized), baru hapus
-        // token.value = null 
+        // Jika server mengembalikan 401/403, bersihkan token karena sudah expired/invalid
+        if (e.statusCode === 401 || e.statusCode === 403) {
+          token.value = null
+          if (to.path !== loginPath) return navigateTo(loginPath)
+          return
+        }
+      }
+    }
+
+    // ─── 2.5 TAMBAHKAN PROTEKSI ROLE DI SINI ───
+    // Pastikan pengecekan ini berjalan SETELAH proses rehydration di atas selesai
+    if (to.path === '/admin/accounts') {
+      const userRole = adminUser.value?.role
+      
+      if (userRole !== 'super_admin') {
+        // Jika bukan super_admin (misal 'editor'), kunci akses dan lempar ke dashboard utama
+        return navigateTo('/admin')
       }
     }
   }

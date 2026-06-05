@@ -118,8 +118,8 @@
           <div
             class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
             <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-50 dark:border-slate-800">
-              <h3 class="text-2xl font-black italic uppercase tracking-tighter dark:text-white">
-                {{ isEditMode ? 'Edit' : 'Create' }} <span class="text-primary">Project</span>
+              <h3 class="text-2xl font-black uppercase tracking-tighter dark:text-white">
+                {{ isEditMode ? 'Edit Project' : 'Create Project' }}
               </h3>
               <button @click="isModalOpen = false" class="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <Icon name="solar:close-circle-bold" class="w-8 h-8" />

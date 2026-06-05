@@ -37,6 +37,7 @@ Sila gunakan skrip di bawah ini untuk melakukan instalasi database secara menyel
 -- 1. AKTIFKAN EKSTENSI YANG DIBUTUHKAN (Jika Belum)
 -- ========================================================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto"; 
 
 -- ========================================================================
 -- 2. INEP-UP STRUKTUR TABEL UTAMA
@@ -51,6 +52,16 @@ CREATE TABLE IF NOT EXISTS public.admin_accounts (
     full_name TEXT NOT NULL,
     role TEXT DEFAULT 'staff'
 );
+
+-- Example Data Admin (role must super_admin or editor)
+INSERT INTO public.admin_accounts (username, password, full_name, role)
+VALUES (
+    'admin', 
+    crypt('password123', gen_salt('bf')), -- Menghasilkan hash Bcrypt aman langsung di database
+    'Main Superadmin', 
+    'super_admin'
+)
+ON CONFLICT (username) DO NOTHING;
 
 -- [TABEL: inquiries]
 CREATE TABLE IF NOT EXISTS public.inquiries (
@@ -139,9 +150,47 @@ ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 -- ========================================================================
 
 -- [TABEL: admin_accounts]
-CREATE POLICY "Admins can update their own data" 
+CREATE POLICY "Superadmin can view all, Editor can view self" 
+ON public.admin_accounts FOR SELECT TO public
+USING (
+    -- Kondisi 1: Jika yang login adalah super_admin
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
+    OR 
+    -- Kondisi 2: Jika yang login adalah pemilik akun itu sendiri
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'username') = username
+);
+
+-- 3. POLICY: INSERT (Menambahkan Akun Baru)
+-- Hanya akun dengan role 'super_admin' di dalam JWT-nya yang boleh menambah akun baru.
+CREATE POLICY "Only Superadmin can create new accounts" 
+ON public.admin_accounts FOR INSERT TO public
+WITH CHECK (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
+);
+
+-- 4. POLICY: UPDATE (Mengubah Data Akun)
+-- Superadmin bisa mengubah data siapa saja (misal mereset password staf).
+-- Editor hanya boleh mengubah datanya sendiri (misal ganti nama atau ganti password sendiri).
+CREATE POLICY "Superadmin can update all, Editor can update self" 
 ON public.admin_accounts FOR UPDATE TO public
-USING ((username = ((current_setting('request.jwt.claims'::text, true))::json ->> 'username'::text)));
+USING (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
+    OR 
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'username') = username
+)
+WITH CHECK (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
+    OR 
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'username') = username
+);
+
+-- 5. POLICY: DELETE (Menghapus Akun)
+-- Hanya Superadmin yang memiliki hak total untuk menghapus akun staf dari sistem.
+CREATE POLICY "Only Superadmin can delete accounts" 
+ON public.admin_accounts FOR DELETE TO public
+USING (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
+);
 
 -- [TABEL: inquiries]
 CREATE POLICY "Public Insert Only" 
