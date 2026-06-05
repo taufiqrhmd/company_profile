@@ -18,8 +18,7 @@
       </button>
     </div>
 
-    <div
-      class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
+    <div class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
       <div class="overflow-x-auto">
         <table class="w-full border-separate border-spacing-0 text-left table-auto">
           <thead>
@@ -139,7 +138,7 @@
                 <label
                   class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider pl-1">Full
                   Name</label>
-                <input v-model="form.full_name" type="text" placeholder="Contoh: Alex Chandra"
+                <input v-model="form.full_name" type="text" placeholder="Example: Alex Chandra"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 placeholder:text-slate-400/70"
                   required />
               </div>
@@ -148,7 +147,7 @@
                 <label
                   class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider pl-1">Username
                   (For Login)</label>
-                <input v-model="form.username" type="text" placeholder="Contoh: alexchandra"
+                <input v-model="form.username" type="text" placeholder="Example: alexchandra"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 font-mono placeholder:text-slate-400/70"
                   required />
               </div>
@@ -209,6 +208,10 @@ definePageMeta({
   middleware: ['auth']
 })
 
+useHead({
+  title: 'Accounts Management',
+})
+
 // Interfaces
 interface Account {
   id: string
@@ -230,6 +233,7 @@ const targetAccountId = ref<string | null>(null)
 // Tarik data Admin Aktif dari state global Nuxt untuk mencegah hapus diri sendiri
 const adminUser = useState<any>('adminUser')
 const currentAdminId = computed(() => adminUser.value?.id || '')
+const IconComponent = resolveComponent('Icon')
 
 // Form State
 const form = reactive({
@@ -283,7 +287,7 @@ const fetchAccounts = async () => {
     }
   } catch (error: any) {
     console.error('Fetch accounts failed:', error)
-    toast.error('Gagal memuat list akun admin.')
+    toast.error('Failed to fetch accounts.')
   } finally {
     isLoading.value = false
   }
@@ -293,12 +297,12 @@ const fetchAccounts = async () => {
 const handleSubmit = async () => {
   // Jika registrasi baru, password wajib diisi
   if (!form.full_name || !form.username || (!isEditMode.value && !form.password)) {
-    toast.warning('Mohon lengkapi field formulir yang diwajibkan.')
+    toast.warning('Please complete the required form fields.')
     return
   }
 
   isSubmitting.value = true
-  const processingMsg = isEditMode.value ? 'Sedang memperbarui data akun...' : 'Sedang memproses pendaftaran akun...'
+  const processingMsg = isEditMode.value ? 'Updating account data...' : 'Processing account registration...'
   const toastId = toast.loading(processingMsg)
 
   try {
@@ -313,14 +317,14 @@ const handleSubmit = async () => {
     })
 
     if (response?.success) {
-      const successMsg = isEditMode.value ? 'Data akun berhasil diperbarui!' : 'Akun baru berhasil didaftarkan!'
+      const successMsg = isEditMode.value ? 'Account updated successfully!' : 'New account registered successfully!'
       toast.success(successMsg, { id: toastId })
       closeModal()
       await fetchAccounts() // Refresh data grid tabel
     }
   } catch (error: any) {
     console.error('Operation failed:', error)
-    const msg = error.data?.message || 'Terjadi kesalahan pada server.'
+    const msg = error.data?.message || 'An error occurred on the server.'
     toast.error(msg, { id: toastId })
   } finally {
     isSubmitting.value = false
@@ -328,18 +332,72 @@ const handleSubmit = async () => {
 }
 
 // DELETE DATA: Menghapus akses akun tertentu
-const handleDelete = async (id: string, name: string) => {
+const handleDelete = (id: string, name: string) => {
   if (id === currentAdminId.value) {
-    toast.error('Anda tidak diizinkan menghapus akun aktif Anda sendiri!')
+    toast.error('You are not allowed to delete your own active account!')
     return
   }
 
-  if (!confirm(`Apakah Anda yakin ingin menghapus hak akses akun "${name}"? Tindakan ini bersifat permanen.`)) {
-    return
-  }
+  // Panggil custom toast, tangkap parameter 't' bawaan Vue Sonner untuk menutup dirinya sendiri
+  const toastId = toast.custom(() => {
+    return h(
+      'div',
+      { 
+        class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' 
+      },
+      [
+        // Bagian Atas: Ikon dari Component + Konten Teks
+        h('div', { class: 'flex items-start gap-3' }, [
+          
+          // 2. Menggunakan komponen Icon Anda sendiri
+          h(IconComponent, {
+            name: 'heroicons:exclamation-triangle-20-solid', // Sesuaikan dengan nama ikon di project Anda
+            class: 'w-5 h-5 text-amber-500 shrink-0 mt-0.5'
+          }),
 
-  const toastId = toast.loading(`Menghapus akun ${name}...`)
+          // Wadah Teks
+          h('div', { class: 'flex flex-col gap-1' }, [
+            h('h3', { class: 'text-sm font-semibold text-zinc-950 dark:text-zinc-50' }, 'Confirm Account Deletion'),
+            h('p', { class: 'text-xs text-slate-500 dark:text-slate-400 leading-normal' }, `Are you sure you want to permanently delete "${name}"?`)
+          ])
+        ]),
+        
+        // Bagian Bawah: Tombol Aksi
+        h('div', { class: 'flex justify-end gap-2' }, [
+          h(
+            'button',
+            {
+              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-zinc-700 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors',
+              onClick: () => {
+                console.log('Deletion cancelled');
+                toast.dismiss(toastId);
+              }
+            },
+            'Cancel'
+          ),
+          h(
+            'button',
+            {
+              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm',
+              onClick: () => {
+                executeDelete(id, name);
+                toast.dismiss(toastId);
+              }
+            },
+            'Delete Now'
+          )
+        ])
+      ]
+    )
+  }, {
+    duration: Infinity // Wajib Infinity agar dialog konfirmasi tidak hilang mendadak dalam 5 detik
+  })
+}
 
+// Fungsi terpisah untuk mengeksekusi aksi ke API Server
+const executeDelete = async (id: string, name: string) => {
+  const toastId = toast.loading(`Deleting account ${name}...`)
+  
   try {
     const response = await $fetch<any>(`/api/admin_accounts?id=${id}`, {
       method: 'DELETE',
@@ -347,12 +405,13 @@ const handleDelete = async (id: string, name: string) => {
     })
 
     if (response?.success) {
-      toast.success('Akun berhasil dihapus dari sistem.', { id: toastId })
-      await fetchAccounts() // Refresh data tabel
+      toast.success('Account deleted successfully from the system.', { id: toastId })
+      await fetchAccounts() // Refresh data grid tabel kamu
     }
   } catch (error: any) {
     console.error('Delete account failed:', error)
-    toast.error('Gagal menghapus akun tersebut.', { id: toastId })
+    const msg = error.data?.message || 'Failed to delete the account.'
+    toast.error(msg, { id: toastId })
   }
 }
 

@@ -46,7 +46,7 @@
               <h3
                 class="text-3xl md:text-4xl font-black text-dark dark:text-soft group-hover:text-dark transition-colors leading-[0.9] tracking-tighter uppercase mb-4 md:mb-6">
                 {{ service.title?.split(' ')[0] }}<br />
-                <span class="text-primary group-hover:text-soft">
+                <span class="text-primary group-hover:text-soft transition-colors">
                   {{ service.title?.split(' ').slice(1).join(' ') }}
                 </span>
               </h3>

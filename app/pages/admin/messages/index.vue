@@ -115,6 +115,7 @@
 
 <script lang="ts" setup>
 import { toast } from 'vue-sonner'
+import { useRoute } from 'vue-router'
 // Definisikan ulang interface di sini atau import jika dipisah
 interface Inquiry {
   id: string
@@ -126,6 +127,8 @@ interface Inquiry {
   created_at: string
 }
 
+const route = useRoute()
+
 const supabase = useSupabaseClient()
 const isModalOpen = ref(false)
 
@@ -134,8 +137,12 @@ definePageMeta({
   middleware: ['auth']
 })
 
+useHead({
+  title: 'Client Inquiries',
+})
+
 const { messages, loading, fetchMessages, updateStatus, deleteMessage } = useInquiries()
-const currentFilter = ref<string>('All')
+const currentFilter = ref<string>((route.query.filter as string) || 'All')
 const selectedMessage = ref<Inquiry | null>(null)
 
 const formatDate = (dateStr: string): string => {
@@ -177,6 +184,7 @@ onUnmounted(() => {
 })
 
 onMounted(async () => {
+  // Jika ada query filter dari dashboard, biarkan currentFilter mengikutinya
   await fetchMessages(currentFilter.value)
   subscribeRealtime()
 })

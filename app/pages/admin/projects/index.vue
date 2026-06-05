@@ -222,6 +222,10 @@ import { toast } from 'vue-sonner'
 import { h, resolveComponent } from 'vue'
 
 definePageMeta({ layout: 'admin' })
+
+useHead({
+  title: 'Project Vault',
+})
 const { formData, isModalOpen, isEditMode, selectedFile, imagePreview, resetForm, populateForm } = useProjectForm()
 
 const supabase = useSupabaseClient<any>()
@@ -230,6 +234,7 @@ const projects = ref<any[]>([])
 const isLoading = ref<boolean>(true)
 const isSubmitting = ref<boolean>(false)
 const techStackInput = ref('')
+const IconComponent = resolveComponent('Icon')
 
 const iconPresets = [
   { name: 'Retail', value: 'heroicons:shopping-bag' },
@@ -373,9 +378,6 @@ const handleDelete = (id: string | number | undefined) => {
     return;
   }
 
-  // 1. Ambil/panggil komponen Icon yang terdaftar di proyek Anda (misal: Nuxt Icon / Heroicons)
-  const IconComponent = resolveComponent('Icon')
-
   const toastId = toast.custom(() => {
     return h(
       'div',
@@ -427,7 +429,7 @@ const handleDelete = (id: string | number | undefined) => {
       ]
     )
   }, {
-    duration: 5000
+    duration: Infinity
   })
 }
 

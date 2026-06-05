@@ -88,7 +88,7 @@ const toggleColorMode = () => {
 const adminUser = useState<AdminUser | null>('adminUser', () => null)
 
 const handleProfileUpdate = async (formData: { full_name: string; password?: string }) => {
-  const toastId = toast.loading('Memperbarui profil...')
+  const toastId = toast.loading('Updating profile...')
 
   try {
     // Tembak endpoint API update profile

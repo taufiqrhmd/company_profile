@@ -141,6 +141,10 @@ definePageMeta({
   middleware: 'auth'
 })
 
+useHead({
+  title: 'Services Management',
+})
+
 const services = ref<any[]>([])
 const isLoading = ref(true)
 const isUpdating = ref(false)

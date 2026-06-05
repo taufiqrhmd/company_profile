@@ -54,7 +54,12 @@ import 'vue-sonner/style.css'
 
 definePageMeta({
   layout: false,
-  middleware: ['auth']
+  middleware: ['auth'],
+  isLoginPage: true
+})
+
+useHead({
+  title: 'Admin Login',
 })
 
 const isLoading = ref<boolean>(false)

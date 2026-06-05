@@ -1,8 +1,23 @@
 <template>
   <section
     class="relative min-h-[100dvh] -mt-px pt-24 pb-12 md:pt-32 md:pb-20 px-4 md:px-6 overflow-hidden flex items-center transition-colors duration-700 bg-white dark:bg-[#050505]">
-    
-    <div class="hero-glow absolute top-0 left-1/2 -translate-x-1/2 md:left-1/4 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none">
+
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+
+      <div
+        class="absolute -top-[30%] -left-[10%] w-[600px] md:w-[1000px] h-[600px] md:h-[1000px] bg-gradient-to-br from-primary/10 via-amber-500/[0.02] to-transparent dark:from-primary/5 dark:via-transparent dark:to-transparent blur-[130px] rounded-full">
+      </div>
+      <div
+        class="absolute -bottom-[20%] -right-[10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-gradient-to-tl from-blue-500/[0.05] via-transparent to-transparent dark:from-emerald-500/[0.02] dark:to-transparent blur-[130px] rounded-full">
+      </div>
+
+      <svg
+        class="absolute inset-y-0 right-0 w-full h-full text-slate-900 dark:text-white stroke-current fill-none hidden md:block opacity-60 dark:opacity-40"
+        viewBox="0 0 1440 900" preserveAspectRatio="none">
+        <path d="M-100,250 C300,500 700,50 1100,450 C1300,600 1400,300 1600,200" stroke-width="1.5" />
+        <path d="M-100,300 C300,550 700,100 1100,500 C1300,650 1400,350 1600,250" stroke-width="1"
+          stroke-dasharray="12 6" />
+      </svg>
     </div>
 
     <div class="container max-w-7xl mx-auto relative z-10">
@@ -10,17 +25,22 @@
 
         <div class="lg:col-span-6 space-y-6 md:space-y-8 text-center lg:text-left">
           <div class="space-y-4">
+
             <div class="reveal-up inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
               <span class="w-2 h-2 rounded-full bg-primary"></span>
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Exclusive Digital Partner</span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Exclusive Digital
+                Partner</span>
             </div>
 
-            <h1 class="reveal-up text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-dark dark:text-white leading-[0.9] tracking-tighter" style="--delay: 100ms">
+            <h1
+              class="reveal-up text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white leading-[0.9] tracking-tighter"
+              style="--delay: 100ms">
               DEFINING <br />
-              <span class="text-primary">DIGITAL ELEGANCE.</span>
+              <span class="text-primary tracking-tight">DIGITAL ELEGANCE.</span>
             </h1>
 
-            <p class="reveal-left max-w-md mx-auto lg:mx-0 text-base md:text-lg text-dark/60 dark:text-white/50 leading-relaxed italic border-l-4 border-primary pl-6" style="--delay: 200ms">
+            <p class="reveal-left max-w-md mx-auto lg:mx-0 text-base md:text-lg text-slate-500 dark:text-neutral-400 leading-relaxed italic border-l-2 border-primary/50 pl-6"
+              style="--delay: 200ms">
               "Digital Excellent presents the perfect blend of technological innovation and design precision to realize
               prestigious business visions."
             </p>
@@ -29,40 +49,58 @@
           <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-4">
             <div class="reveal-up" style="--delay: 300ms">
               <BaseButton variant="dark" size="lg" icon="solar:arrow-right-up-bold"
-                class="w-full sm:w-auto shadow-xl shadow-primary/10" @click="handleExplore('#portfolio', true)">
+                class="w-full sm:w-auto shadow-lg shadow-slate-200 dark:shadow-none"
+                @click="handleExplore('#portfolio', true)">
                 VIEW OUR PORTFOLIO
               </BaseButton>
             </div>
 
             <div class="reveal-right flex -space-x-3 md:-space-x-4" style="--delay: 400ms">
               <div v-for="i in 3" :key="i"
-                class="w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-white dark:border-[#050505] bg-gray-300 overflow-hidden">
+                class="w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-slate-50 dark:border-[#050505] bg-slate-200 overflow-hidden shadow-sm">
                 <img :src="`https://i.pravatar.cc/150?img=${i + 15}`" alt="client" class="w-full h-full object-cover" />
               </div>
-              <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-white dark:border-[#050505] bg-primary flex items-center justify-center text-[10px] font-bold text-dark">
+              <div
+                class="w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-slate-50 dark:border-[#050505] bg-primary flex items-center justify-center text-[10px] font-bold text-dark shadow-sm">
                 40+
               </div>
             </div>
           </div>
         </div>
 
-        <div class="reveal-right lg:col-span-6 relative flex justify-center items-center h-[400px] sm:h-[500px] md:h-[600px] mt-10 lg:mt-0" style="--delay: 500ms">
+        <div
+          class="reveal-right lg:col-span-6 relative flex justify-center items-center h-[400px] sm:h-[500px] md:h-[600px] mt-10 lg:mt-0"
+          style="--delay: 500ms">
           <div class="relative w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px] aspect-[4/5]">
+
             <div v-for="(image, index) in heroImages" :key="index"
-              class="absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer"
-              :style="getCardStyle(index)" @click="activeIndex = index">
-              <div class="relative w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-primary/20 shadow-2xl">
-                <img :src="image.url" class="w-full h-full object-cover transition-all duration-1000"
-                  :class="activeIndex === index ? 'grayscale-0 scale-100' : 'grayscale scale-110 opacity-50'" />
-                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-transparent to-transparent opacity-80"></div>
+              class="absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] cursor-pointer"
+              :class="[
+                activeIndex === index ? 'z-30 translate-x-0 translate-y-0 scale-100 rotate-0 opacity-100' : '',
+                (activeIndex + 1) % heroImages.length === index ? 'z-20 translate-x-6 md:translate-x-10 translate-y-3 md:translate-y-5 scale-95 rotate-2 opacity-80' : '',
+                (activeIndex + 2) % heroImages.length === index ? 'z-10 translate-x-12 md:translate-x-20 translate-y-6 md:translate-y-10 scale-90 rotate-4 opacity-40' : ''
+              ]" @click="activeIndex = index">
+
+              <div
+                class="relative w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-slate-200/80 dark:border-neutral-800 shadow-2xl transition-all duration-500">
+                <img :src="image.url" class="w-full h-full object-cover transition-transform duration-700"
+                  :class="activeIndex === index ? 'grayscale-0 scale-100' : 'grayscale opacity-40 dark:opacity-30'" />
+
                 <div
-                  class="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 transition-all duration-700"
-                  :class="activeIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'">
-                  <p class="text-primary font-black text-3xl md:text-5xl tracking-tighter">{{ image.stat }}</p>
-                  <p class="text-white/70 text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold">{{ image.title }}</p>
+                  class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90">
+                </div>
+
+                <div
+                  class="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 transition-all duration-500"
+                  :class="activeIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'">
+                  <p class="text-primary font-black text-3xl md:text-5xl tracking-tighter mb-0.5">{{ image.stat }}</p>
+                  <p class="text-white/60 text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold">{{ image.title
+                    }}</p>
                 </div>
               </div>
+
             </div>
+
           </div>
         </div>
 
@@ -90,7 +128,7 @@ let timer: any = null;
 onMounted(() => {
   timer = setInterval(() => {
     activeIndex.value = (activeIndex.value + 1) % heroImages.length;
-  }, 3500);
+  }, 4500); // Ritme pergantian kartu lebih tenang
 
   if (import.meta.client) {
     const observer = new IntersectionObserver((entries) => {
@@ -108,16 +146,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (timer) clearInterval(timer);
 });
-
-const getCardStyle = (index: number) => {
-  const diff = (index - activeIndex.value + heroImages.length) % heroImages.length;
-  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 768;
-  const offsetBase = isSmallScreen ? 20 : 40;
-
-  if (diff === 0) return { zIndex: 30, transform: 'translateX(0) translateY(0) scale(1) rotate(0deg)', opacity: 1 };
-  if (diff === 1) return { zIndex: 20, transform: `translateX(${offsetBase}px) translateY(${offsetBase / 2}px) scale(0.9) rotate(4deg)`, opacity: 0.8 };
-  return { zIndex: 10, transform: `translateX(${offsetBase * 2}px) translateY(${offsetBase}px) scale(0.8) rotate(8deg)`, opacity: 0.4 };
-};
 
 const handleExplore = async (path: string, isAnchor: boolean) => {
   if (isAnchor && path.startsWith('#')) {
@@ -139,32 +167,32 @@ const scrollToSection = (id: string) => {
 </script>
 
 <style scoped>
-.reveal-up, .reveal-left, .reveal-right {
+/* Transisi Kemunculan Elemen Utama Awal */
+.reveal-up,
+.reveal-left,
+.reveal-right {
   opacity: 0;
-  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
   transition-delay: var(--delay, 0ms);
   will-change: transform, opacity;
 }
 
-.reveal-up { transform: translateY(40px); }
-.reveal-left { transform: translateX(-30px); }
-.reveal-right { transform: translateX(30px); }
+.reveal-up {
+  transform: translateY(30px);
+}
 
-.active.reveal-up, .active.reveal-left, .active.reveal-right {
+.reveal-left {
+  transform: translateX(-20px);
+}
+
+.reveal-right {
+  transform: translateX(20px);
+}
+
+.active.reveal-up,
+.active.reveal-left,
+.active.reveal-right {
   opacity: 1;
   transform: translate(0, 0);
-}
-
-.hero-glow {
-  animation: glow-pulse 10s infinite ease-in-out;
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.4; transform: translate(-50%, 0) scale(1); }
-  50% { opacity: 0.7; transform: translate(-50%, -10%) scale(1.15); }
-}
-
-.hero-cards {
-  perspective: 1000px;
 }
 </style>
