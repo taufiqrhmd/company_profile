@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     const { data: accounts, error } = await client
       .from("admin_accounts")
       .select("id, created_at, username, full_name, role")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     if (error) throw error;
 

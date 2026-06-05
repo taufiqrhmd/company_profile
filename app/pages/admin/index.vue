@@ -21,17 +21,42 @@
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div v-for="(stat, index) in stats" :key="index"
-        class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl shadow-sm hover:border-primary/50 transition-all group overflow-hidden relative">
 
-        <!-- Decoration Icon Background -->
-        <Icon :name="stat.icon"
-          class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-100 dark:text-white/5 group-hover:text-primary/10 transition-colors" />
+      <div @click="rawStats.unreadMessages > 0 ? navigateTo('/admin/messages?filter=Unread') : null" :class="[
+        'p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl shadow-sm overflow-hidden relative group transition-all',
+        rawStats.unreadMessages > 0 ? 'cursor-pointer hover:border-primary/50' : 'cursor-default'
+      ]">
+
+        <Icon name="solar:letter-unread-bold-duotone"
+          class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-100 dark:text-white/5 transition-colors"
+          :class="rawStats.unreadMessages > 0 ? 'group-hover:text-primary/10' : ''" />
 
         <div class="relative z-10">
           <div class="flex justify-between items-start mb-4">
-            <div class="p-2 bg-slate-50 dark:bg-white/5 rounded-lg group-hover:bg-primary/20 transition-colors">
-              <Icon :name="stat.icon" class="w-5 h-5 text-slate-400 group-hover:text-primary transition-colors" />
+            <div class="p-2 bg-slate-50 dark:bg-white/5 rounded-lg transition-colors"
+              :class="rawStats.unreadMessages > 0 ? 'group-hover:bg-primary/20' : ''">
+              <Icon name="solar:letter-unread-bold-duotone" class="w-5 h-5 text-slate-400 transition-colors"
+                :class="rawStats.unreadMessages > 0 ? 'group-hover:text-primary' : ''" />
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-tighter"
+              :class="rawStats.unreadMessages > 0 ? 'text-primary' : 'text-green-500'">
+              {{ rawStats.unreadMessages > 0 ? 'Review Needed' : 'Clear' }}
+            </span>
+          </div>
+          <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">New Messages</p>
+          <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ rawStats.unreadMessages }}</h3>
+        </div>
+      </div>
+
+      <div v-for="(stat, index) in filteredStats" :key="index"
+        class="p-6 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl shadow-sm overflow-hidden relative group hover:border-primary/50">
+
+        <Icon :name="stat.icon" class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-100 dark:text-white/5 group-hover:text-primary/10" />
+
+        <div class="relative z-10">
+          <div class="flex justify-between items-start mb-4">
+            <div class="p-2 bg-slate-50 dark:bg-white/5 rounded-lg">
+              <Icon :name="stat.icon" class="w-5 h-5 text-slate-400 group-hover:text-primary" />
             </div>
             <span class="text-[9px] font-black uppercase tracking-tighter" :class="stat.trendColor">
               {{ stat.trend }}
@@ -42,6 +67,7 @@
           <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ stat.value }}</h3>
         </div>
       </div>
+
     </div>
 
     <!-- Bottom Section: Full Width Analytics Chart -->
@@ -98,6 +124,9 @@ import { Line } from 'vue-chartjs'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
 definePageMeta({ layout: 'admin', middleware: ['auth'] })
+useHead({
+  title: 'Dashboard',
+})
 
 const supabase = useSupabaseClient()
 const { rawStats, fetchDashboardData } = useAdminDashboard()
@@ -106,14 +135,8 @@ const loaded = ref(false)
 
 let dashboardChannel: RealtimeChannel | null = null
 
-const stats = computed(() => [
-  {
-    title: 'New Messages',
-    value: rawStats.value.unreadMessages,
-    icon: 'solar:letter-unread-bold-duotone',
-    trend: rawStats.value.unreadMessages > 0 ? 'Review Needed' : 'Clear',
-    trendColor: rawStats.value.unreadMessages > 0 ? 'text-primary' : 'text-green-500'
-  },
+// Ambil sisa stats di luar pesan
+const filteredStats = computed(() => [
   {
     title: 'Total Projects',
     value: rawStats.value.totalProjects,
@@ -128,13 +151,12 @@ const stats = computed(() => [
     trend: '+12% Growth',
     trendColor: 'text-green-500'
   },
-  // MENGGANTI MENJADI PENDAPATAN PERUSAHAAN (REVENUE)
   {
     title: 'Estimated Revenue',
-    value: 'Rp 48.500.000', // Format statik rupiah atau bisa diikat dari rawStats jika ada
+    value: 'Rp 48.500.000',
     icon: 'solar:wad-of-money-bold-duotone',
     trend: 'Target 85%',
-    trendColor: 'text-amber-500 font-mono'
+    trendColor: 'text-amber-500'
   },
 ])
 

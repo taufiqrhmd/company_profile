@@ -47,14 +47,34 @@ useHead({
   }
 });
 
-useSeoMeta({
-  titleTemplate: (title) => title ? `${title} | Digital Excellent` : 'Digital Excellent Studio - Premium Web Engineer',
-  ogTitle: 'Digital Excellent Studio',
-  description: 'Freelance fullstack developer & frontend engineer spesialisasi Vue, Nuxt, dan High-Fidelity UI/UX.',
-  ogDescription: 'Premium Web Development & Interactive Design Studio.',
-  ogImage: '/og-image.jpg',
-  twitterCard: 'summary_large_image',
-});
+watch(() => route.fullPath, () => {
+  if (isAdminPage.value) {
+    useSeoMeta({
+      // Cek apakah halaman yang dibuka adalah halaman login
+      titleTemplate: (title) => {
+        if (route.meta.isLoginPage) {
+          return title ? `${title} - Digital Excellent` : 'Admin Login - Digital Excellent'
+        }
+        return title ? `${title} - Digital Excellent` : 'Admin Dashboard - Digital Excellent'
+      },
+      robots: 'noindex, nofollow', // Tetap amankan area login dari Google
+      ogTitle: undefined,
+      ogDescription: undefined,
+      ogImage: undefined,
+      twitterCard: undefined
+    })
+  } else {
+    // Meta untuk halaman Landing Page publik
+    useSeoMeta({
+      titleTemplate: (title) => title ? `${title} - Digital Excellent` : 'Digital Excellent Studio - Premium Web Engineer',
+      ogTitle: 'Digital Excellent Studio',
+      description: 'Freelance fullstack developer & frontend engineer spesialisasi Vue, Nuxt, dan High-Fidelity UI/UX.',
+      ogDescription: 'Premium Web Development & Interactive Design Studio.',
+      ogImage: '/og-image.jpg',
+      twitterCard: 'summary_large_image',
+    })
+  }
+}, { immediate: true })
 
 // Fungsi inisialisasi Smoother agar bisa dipanggil berulang
 const initSmoother = () => {
