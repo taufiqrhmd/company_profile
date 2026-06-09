@@ -4,7 +4,7 @@
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="$emit('update:modelValue', false)"></div>
     
     <!-- Modal Content -->
-    <div class="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div class="relative bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
       <div class="p-8">
         <div class="flex justify-between items-center mb-8">
           <h3 class="text-xl font-black uppercase tracking-tighter text-slate-900">Account Settings</h3>

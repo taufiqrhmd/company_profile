@@ -60,7 +60,7 @@
     <div v-if="isLogoutModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="isLogoutModalOpen = false"></div>
       <div
-        class="relative bg-white dark:bg-[#16191E] p-8 rounded-3xl max-w-sm w-full shadow-2xl border border-slate-200 dark:border-white/5">
+        class="relative bg-white dark:bg-[#16191E] p-8 rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 dark:border-white/5">
         <div class="text-center">
           <div
             class="w-20 h-20 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
