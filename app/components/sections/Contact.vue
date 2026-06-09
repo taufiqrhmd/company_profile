@@ -10,6 +10,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 items-center">
 
         <div class="lg:col-span-7 space-y-6 md:space-y-8 text-center lg:text-left">
+          <!-- Let's Connect Subtitle -->
           <div class="reveal-left flex items-center justify-center lg:justify-start gap-4">
             <div class="w-8 md:w-12 h-px bg-primary"></div>
             <span
@@ -18,6 +19,7 @@
             </span>
           </div>
 
+          <!-- Main Giant Title -->
           <h2
             class="contact-title text-6xl md:text-[8rem] font-black leading-[0.9] md:leading-[0.85] tracking-tighter uppercase text-dark dark:text-soft">
             <div class="overflow-hidden">
@@ -27,6 +29,13 @@
               <span class="reveal-up block text-primary italic" style="--delay: 150ms">IDEA?</span>
             </div>
           </h2>
+
+          <!-- ELEMEN BARU: Paragraph Deskripsi Penyeimbang Ruang Kosong -->
+          <div class="reveal-up overflow-hidden max-w-xl mx-auto lg:mx-0" style="--delay: 250ms">
+            <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+              Let’s build high-performance platforms, apps, and interfaces. Drop your project brief and we’ll bring it to life.
+            </p>
+          </div>
         </div>
 
         <div class="lg:col-span-5">
@@ -84,11 +93,6 @@
                   :class="{ 'animate-spin': isSubmitting }" class="w-5 h-5" />
               </div>
             </button>
-            <!-- 
-            <p v-if="submitted"
-              class="text-[10px] text-center font-bold text-green-500 uppercase tracking-widest animate-pulse">
-              Message sent successfully!
-            </p> -->
           </form>
         </div>
 
@@ -135,7 +139,7 @@ const validateField = (field: keyof ContactFormData) => {
     [field]: form.value[field]
   });
 
-if (!result.success) {
+  if (!result.success) {
     // Tambahkan pengecekan result.error agar TS tenang
     result.error.issues.forEach((issue) => {
       const path = issue.path[0] as string;

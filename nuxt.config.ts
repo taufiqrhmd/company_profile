@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         'vue-chartjs',
         'chart.js',
         'zod',
+        'vue3-apexcharts'
       ]
     }
   },

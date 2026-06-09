@@ -6,7 +6,8 @@
         <h2 class="text-3xl font-black uppercase tracking-tighter text-slate-900 dark:text-white">
           Project Vault
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage digital works and system impact metrics with precision.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage digital works and system impact metrics with
+          precision.</p>
       </div>
       <button @click="openModal()"
         class="bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary/20">
@@ -181,7 +182,8 @@
                 </div>
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Description</label>
-                  <textarea v-model="formData.description" rows="3" class="form-input py-4"></textarea>
+                  <textarea v-model="formData.description" rows="3" class="form-input py-4"
+                    placeholder="Enter project description..."></textarea>
                 </div>
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Full Story - Part 1 (Challenge/Context)</label>
@@ -292,7 +294,7 @@ const uploadImage = async (file: File) => {
 
 const openModal = (project: any = null) => {
   isEditMode.value = !!project
-  
+
   if (project) {
     populateForm(project)
     const details = project.project_details || project;
@@ -301,7 +303,7 @@ const openModal = (project: any = null) => {
     resetForm()
     techStackInput.value = '';
   }
-  
+
   isModalOpen.value = true
 }
 
@@ -318,7 +320,7 @@ const saveProject = async () => {
     const techArray = techStackInput.value
       .split(',')
       .map(s => s.trim())
-      .filter(s => s !== ''); 
+      .filter(s => s !== '');
 
     // 1. Ekstrak field (pastikan tech_stack diperbarui dari techArray)
     const {
@@ -348,8 +350,8 @@ const saveProject = async () => {
     }
 
     const method = isEditMode.value ? 'PUT' : 'POST'
-    const endpoint = isEditMode.value 
-      ? `/api/projects/${formData.id}` 
+    const endpoint = isEditMode.value
+      ? `/api/projects/${formData.id}`
       : '/api/projects/create'
 
     await $fetch(endpoint, {
@@ -362,7 +364,7 @@ const saveProject = async () => {
 
     toast.success(isEditMode.value ? 'Project updated!' : 'Project created!', { id: toastId })
     isModalOpen.value = false
-    fetchProjects() 
+    fetchProjects()
   } catch (e: any) {
     const errorMsg = e.data?.message || e.message || 'Unknown error occurred'
     toast.error('Gagal: ' + errorMsg, { id: toastId })
@@ -381,13 +383,13 @@ const handleDelete = (id: string | number | undefined) => {
   const toastId = toast.custom(() => {
     return h(
       'div',
-      { 
-        class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' 
+      {
+        class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]'
       },
       [
         // Bagian Atas: Ikon dari Component + Konten Teks
         h('div', { class: 'flex items-start gap-3' }, [
-          
+
           // 2. Menggunakan komponen Icon Anda sendiri
           h(IconComponent, {
             name: 'heroicons:exclamation-triangle-20-solid', // Sesuaikan dengan nama ikon di project Anda
@@ -400,7 +402,7 @@ const handleDelete = (id: string | number | undefined) => {
             h('p', { class: 'text-xs text-zinc-500 dark:text-zinc-400 leading-normal' }, 'This action will permanently delete the data and cannot be undone.')
           ])
         ]),
-        
+
         // Bagian Bawah: Tombol Aksi
         h('div', { class: 'flex justify-end gap-2' }, [
           h(
