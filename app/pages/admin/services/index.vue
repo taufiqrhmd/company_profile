@@ -177,7 +177,7 @@ const fetchServices = async () => {
     const data = await $fetch('/api/services')
     services.value = data || []
   } catch (e: any) {
-    toast.error('Gagal memuat layanan', { description: e.message })
+    toast.error('Failed to load services', { description: e.message })
   } finally {
     isLoading.value = false
   }
@@ -190,12 +190,12 @@ const openEditModal = (service: any) => {
 
 const handleUpdate = async () => {
   if (!editForm.value.title || !editForm.value.description) {
-    toast.error('Judul dan deskripsi harus diisi')
+    toast.error('Title and description cannot be empty.')
     return
   }
 
   isUpdating.value = true
-  const toastId = toast.loading('Menyimpan perubahan...')
+  const toastId = toast.loading('Saving changes...')
 
   try {
     await $fetch('/api/services/update', {
@@ -203,11 +203,11 @@ const handleUpdate = async () => {
       body: editForm.value
     })
 
-    toast.success('Layanan berhasil diperbarui', { id: toastId })
+    toast.success('Service successfully updated', { id: toastId })
     isEditModalOpen.value = false
     await fetchServices()
   } catch (err: any) {
-    toast.error('Update gagal: ' + err.message, { id: toastId })
+    toast.error('Update failed: ' + err.message, { id: toastId })
   } finally {
     isUpdating.value = false
   }

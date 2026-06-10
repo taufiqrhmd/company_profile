@@ -83,8 +83,21 @@ const isProfileOpen = ref(false)
 const isSidebarCollapsed = ref(false) // State untuk dikirim ke sidebar
 
 const toggleColorMode = () => {
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+  // Hubungkan ke useColorMode() Nuxt Anda
+  const targetTheme = colorMode.value === 'dark' ? 'light' : 'dark'
+
+  // Jika browser tidak mendukung View Transitions, ganti secara standar
+  if (!document.startViewTransition) {
+    colorMode.preference = targetTheme
+    return
+  }
+
+  // Jalankan transisi visual yang smooth
+  document.startViewTransition(() => {
+    colorMode.preference = targetTheme
+  })
 };
+
 const adminUser = useState<AdminUser | null>('adminUser', () => null)
 
 const handleProfileUpdate = async (formData: { full_name: string; password?: string }) => {

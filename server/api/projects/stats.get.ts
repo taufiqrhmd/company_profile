@@ -12,26 +12,32 @@ export default defineEventHandler(async (event): Promise<ProjectStats> => {
   // Jika terjadi error pada database, tangkap di console server
   if (error) {
     console.error('Supabase Query Error:', error.message)
-    return { totalProjects: 0, totalViews: 0 }
+    return { totalProjects: 0, totalViews: 0, viewedProjectsCount: 0 }
   }
 
   if (!projects || projects.length === 0) {
-    return { totalProjects: 0, totalViews: 0 }
+    return { totalProjects: 0, totalViews: 0, viewedProjectsCount: 0 }
   }
 
-  // Lakukan perhitungan total baris (total projects)
+  // 1. Hitung total baris (total projects)
   const totalProjects = projects.length
 
-  // Lakukan penjumlahan (sum) dari kolom views secara aman
+  // 2. Hitung jumlah proyek yang benar-benar sudah pernah dilihat (views > 0)
+  const viewedProjectsCount = projects.filter(curr => {
+    const currentView = curr.views ? Number(curr.views) : 0
+    return currentView > 0
+  }).length
+
+  // 3. Lakukan penjumlahan (sum) dari kolom views secara aman
   const totalViews = projects.reduce((acc, curr) => {
-    // Pastikan nilai views yang dibaca dikonversi dengan aman (int4 ke number JavaScript)
     const currentView = curr.views ? Number(curr.views) : 0
     return acc + currentView
   }, 0)
 
-  // Kembalikan objek sesuai tipe data ProjectStats
+  // Kembalikan objek sesuai tipe data ProjectStats yang baru
   return {
     totalProjects,
-    totalViews
+    totalViews,
+    viewedProjectsCount // <-- Data ini siap dikonsumsi frontend
   }
 })

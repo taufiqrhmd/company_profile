@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto space-y-8 transition-colors duration-300">
 
     <div
-      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border-b border-slate-200/60 dark:border-white/5 pb-6">
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 ">
       <div class="space-y-1">
         <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 dark:text-white">
           Manage Accounts
