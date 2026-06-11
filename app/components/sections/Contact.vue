@@ -1,6 +1,6 @@
 <template>
   <section id="contact" ref="contactSection"
-    class="relative -mt-px py-24 md:py-40 bg-soft dark:bg-darkBg transition-colors duration-700 overflow-hidden">
+    class="relative -mt-px py-24 md:py-40 bg-soft dark:bg-[#050505] transition-colors duration-700 overflow-hidden">
 
     <div
       class="contact-glow absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 dark:bg-primary/15 rounded-full blur-[120px] pointer-events-none">
@@ -32,7 +32,7 @@
 
           <!-- ELEMEN BARU: Paragraph Deskripsi Penyeimbang Ruang Kosong -->
           <div class="reveal-up overflow-hidden max-w-xl mx-auto lg:mx-0" style="--delay: 250ms">
-            <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+            <p class="text-sm md:text-base text-dark/50 dark:text-soft/50 leading-relaxed font-medium">
               Let’s build high-performance platforms, apps, and interfaces. Drop your project brief and we’ll bring it to life.
             </p>
           </div>

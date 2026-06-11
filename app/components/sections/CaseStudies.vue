@@ -1,6 +1,6 @@
 <template>
   <section id="portfolio"
-    class="relative -mt-px py-16 md:py-24 px-4 md:px-6 bg-soft dark:bg-darkBg/[.98] transition-colors duration-500 overflow-hidden">
+    class="relative -mt-px py-16 md:py-24 px-4 md:px-6 bg-soft dark:bg-[#050505] transition-colors duration-500 overflow-hidden">
     
     <div class="container max-w-7xl mx-auto relative">
 
@@ -22,10 +22,10 @@
         </p>
       </div>
 
-      <div class="flex flex-col border-t border-dark/10 dark:border-soft/10">
+      <div class="flex flex-col border-t border-dark/20 dark:border-soft/20">
         <div v-for="(project, index) in projects" :key="index" @mouseenter="activeHover = index"
           @mouseleave="activeHover = null"
-          class="project-item reveal-up-stagger group relative py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between border-b border-dark/10 dark:border-soft/10 cursor-pointer transition-all duration-500 hover:md:px-8"
+          class="project-item reveal-up-stagger group relative py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between border-b border-dark/20 dark:border-soft/30 cursor-pointer transition-all duration-500 hover:md:px-8"
           :style="{ '--delay': `${(index + 1) * 150}ms` }" @click="handleProjectClick(project)">
 
           <div class="flex items-center gap-4 md:gap-6 relative z-10">
@@ -71,7 +71,7 @@
       <div class="portfolio-footer mt-12 md:mt-20 flex justify-center reveal-up" style="--delay: 600ms">
         <BaseButton variant="dark" size="lg" class="w-full sm:w-auto" rounded="full" icon="solar:gallery-bold"
           @click="handleSeeProjects">
-          See Full Portfolio
+          EXPLORE THE STUDIO
         </BaseButton>
       </div>
     </div>

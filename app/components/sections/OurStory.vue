@@ -1,6 +1,6 @@
 <template>
   <section id="about" ref="aboutSection"
-    class="py-20 md:py-28 bg-soft -mt-px dark:bg-darkBg/[.98] transition-colors duration-500 overflow-hidden">
+    class="py-20 md:py-28 bg-soft -mt-px dark:bg-[#050505] transition-colors duration-500 overflow-hidden">
     <div class="container max-w-7xl mx-auto px-4 md:px-6">
 
       <div
@@ -19,7 +19,7 @@
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-            <p class="text-base md:text-lg text-dark/60 dark:text-soft/40 leading-relaxed font-medium">
+            <p class="text-base md:text-md text-dark/60 dark:text-soft/40 leading-relaxed font-medium">
               We operate at the intersection of luxurious aesthetics and technical functionality. Each project is a
               commitment to exceeding industry standards.
             </p>

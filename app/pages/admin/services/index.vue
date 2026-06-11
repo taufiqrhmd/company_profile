@@ -5,7 +5,8 @@
         <h2 class="text-3xl font-black uppercase tracking-tighter dark:text-white">
           Studio Services
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage the main services displayed on the landing page.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Manage the main services displayed on the landing page.
+        </p>
       </div>
       <button @click="fetchServices" class="p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
         <Icon name="solar:refresh-linear" :class="{ 'animate-spin': isLoading }" class="w-6 h-6" />
@@ -80,7 +81,6 @@
                   Select Icon
                 </label>
 
-                <!-- Preview & Current Selection -->
                 <div
                   class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-[#16191E] rounded-2xl border border-slate-200 dark:border-white/10">
                   <div
@@ -93,7 +93,6 @@
                   </div>
                 </div>
 
-                <!-- Icon Grid Picker -->
                 <div class="grid grid-cols-5 gap-2 mt-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
                   <button v-for="iconName in availableIcons" :key="iconName" @click="editForm.icon = iconName"
                     type="button" :class="[
@@ -116,15 +115,14 @@
             </div>
 
             <div class="flex gap-4 mt-10">
-              <button @click="isEditModalOpen = false"
-                class="flex-1 px-6 py-4 rounded-2xl bg-slate-100 dark:bg-[#16191E] text-slate-600 dark:text-slate-400 text-xs font-black uppercase hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+              <BaseButton variant="outline" size="md" rounded="xl" class="flex-1" @click="isEditModalOpen = false">
                 Cancel
-              </button>
-              <button @click="handleUpdate" :disabled="isUpdating"
-                class="flex-3 px-8 py-4 rounded-2xl bg-primary text-black text-xs font-black uppercase hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                <Icon v-if="isUpdating" name="solar:refresh-bold" class="w-4 h-4 animate-spin" />
-                {{ isUpdating ? 'Saving...' : 'Save Changes' }}
-              </button>
+              </BaseButton>
+
+              <BaseButton variant="primary" size="md" rounded="xl" class="flex-3" :loading="isUpdating"
+                @click="handleUpdate">
+                Save Changes
+              </BaseButton>
             </div>
           </div>
         </div>
@@ -163,7 +161,6 @@ const availableIcons = [
   'solar:headphones-round-bold-duotone',
 ]
 
-// Form data temp
 const editForm = ref({
   id: '',
   title: '',
@@ -229,6 +226,7 @@ onMounted(() => {
   opacity: 0;
 }
 
+/* Mempertahankan pembagian rasio lebar tombol */
 .flex-3 {
   flex: 3 1 0%;
 }

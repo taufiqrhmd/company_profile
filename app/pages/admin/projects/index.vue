@@ -8,10 +8,10 @@
         <p class="text-slate-500 dark:text-slate-400 text-sm">Manage digital works and system impact metrics with
           precision.</p>
       </div>
-      <button @click="openModal()"
-        class="bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+      <BaseButton variant="primary" size="md" rounded="xl" icon="solar:add-circle-bold" iconPos="left"
+        @click="openModal()">
         Add New Project
-      </button>
+      </BaseButton>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -72,7 +72,7 @@
 
               <td class="p-6 text-center">
                 <span
-                  class="text-[11px] font-black text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors tabular-nums">
+                  class="text-[11px] font-black text-dark dark:text-slate-600 tabular-nums">
                   {{ formatIndex((currentPage - 1) * itemsPerPage + index) }}
                 </span>
               </td>
@@ -98,7 +98,7 @@
 
               <td class="p-6 text-center">
                 <span
-                  class="inline-flex px-4 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded-xl text-[9px] font-black uppercase tracking-[0.1em] group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  class="inline-flex px-4 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded-xl text-[9px] font-black uppercase tracking-[0.1em]">
                   {{ project.project_details?.category || 'General' }}
                 </span>
               </td>
@@ -119,13 +119,15 @@
 
               <td class="p-6 pr-4 text-right">
                 <div class="flex justify-end gap-1">
-                  <button @click="openModal(project)"
-                    class="action-btn group/btn hover:text-primary hover:bg-primary/5 dark:text-slate-500">
-                    <Icon name="solar:pen-new-square-bold" class="w-6 h-6" />
+                  <button @click="openModal(project)" class="action-btn group/btn hover:bg-primary/5">
+                    <Icon name="solar:pen-new-square-bold"
+                      class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-primary" />
                   </button>
+
                   <button @click="handleDelete(project.id)"
-                    class="action-btn group/btn hover:text-red-500 hover:bg-red-50 dark:text-slate-500 dark:hover:bg-red-500/10">
-                    <Icon name="solar:trash-bin-trash-bold" class="w-6 h-6" />
+                    class="action-btn group/btn hover:bg-red-50 dark:hover:bg-red-500/10">
+                    <Icon name="solar:trash-bin-trash-bold"
+                      class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-red-500" />
                   </button>
                 </div>
               </td>
@@ -163,6 +165,7 @@
           class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm p-4">
           <div
             class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
+
             <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-50 dark:border-slate-800">
               <h3 class="text-2xl font-black uppercase tracking-tighter dark:text-white">
                 {{ isEditMode ? 'Edit Project' : 'Create Project' }}
@@ -231,14 +234,12 @@
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Full Story - Part 1 (Challenge/Context)</label>
                   <textarea v-model="formData.full_story_1" rows="4" class="form-input py-4 custom-scrollbar"
-                    placeholder="Tell about the background or main challenges of this project...">
-                  </textarea>
+                    placeholder="Tell about the background or main challenges of this project..."></textarea>
                 </div>
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Full Story - Part 2 (Solution/Result)</label>
                   <textarea v-model="formData.full_story_2" rows="4" class="form-input py-4 custom-scrollbar"
-                    placeholder="Tell about the solution provided and the final results achieved...">
-                  </textarea>
+                    placeholder="Tell about the solution provided and the final results achieved..."></textarea>
                 </div>
                 <div class="space-y-2 col-span-2">
                   <label class="label-style">Tech Stack</label>
@@ -247,13 +248,19 @@
                 </div>
               </div>
             </div>
+
             <div
               class="p-8 pt-4 flex gap-4 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
-              <button @click="isModalOpen = false" class="btn-secondary">Cancel</button>
-              <button @click="saveProject" :disabled="isSubmitting" class="btn-primary">
-                {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Changes' : 'Publish Project') }}
-              </button>
+              <BaseButton variant="outline" size="md" rounded="xl" class="flex-1" @click="isModalOpen = false">
+                Cancel
+              </BaseButton>
+
+              <BaseButton type="submit" variant="primary" size="md" rounded="xl" class="flex-1" :loading="isSubmitting"
+                @click="saveProject">
+                {{ isEditMode ? 'Update Changes' : 'Publish Project' }}
+              </BaseButton>
             </div>
+
           </div>
         </div>
       </Transition>
@@ -280,9 +287,8 @@ const isSubmitting = ref<boolean>(false)
 const techStackInput = ref('')
 const IconComponent = resolveComponent('Icon')
 
-// STATE UNTUK PAGINATION CONTROL
 const currentPage = ref(1)
-const itemsPerPage = ref(5) // Merender maksimal 5 data per halaman
+const itemsPerPage = ref(5)
 const animatedTotal = ref(0)
 const animatedFeatured = ref(0)
 const animatedCategories = ref(0)
@@ -298,19 +304,16 @@ const iconPresets = [
   { name: 'User', value: 'heroicons:user-group' },
 ]
 
-// COMPUTED PROPERTY UNTUK PAGINATION
 const paginatedProjects = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
   const end = start + itemsPerPage.value
   return (projects.value || []).slice(start, end)
 })
 
-// MENGHITUNG TOTAL HALAMAN SECARA DINAMIS
 const totalPages = computed(() => {
   return Math.ceil(projects.value.length / itemsPerPage.value) || 1
 })
 
-// FUNGSI NAVIGASI HALAMAN
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--
 }
@@ -323,10 +326,8 @@ const fetchProjects = async () => {
   isLoading.value = true
   try {
     const data = await $fetch('/api/projects')
-    console.log('Data dari API:', data)
     projects.value = data || []
 
-    // Proteksi: reset halaman jika jumlah data berkurang drastis di bawah ambang batas halaman aktif
     if (currentPage.value > totalPages.value) {
       currentPage.value = totalPages.value
     }
@@ -444,11 +445,7 @@ const saveProject = async () => {
 }
 
 const handleDelete = (id: string | number | undefined) => {
-  console.log("The Delete Handle Appears")
-  if (!id) {
-    console.error("ID Not Found");
-    return;
-  }
+  if (!id) return;
 
   const toastId = toast.custom(() => {
     return h(
@@ -468,10 +465,7 @@ const handleDelete = (id: string | number | undefined) => {
         h('div', { class: 'flex justify-end gap-2' }, [
           h('button', {
             class: 'px-3 py-1.5 text-xs font-medium rounded-md text-zinc-700 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors',
-            onClick: () => {
-              console.log('Deletion cancelled');
-              toast.dismiss(toastId);
-            }
+            onClick: () => toast.dismiss(toastId)
           }, 'Cancel'),
           h('button', {
             class: 'px-3 py-1.5 text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm',
@@ -487,9 +481,7 @@ const handleDelete = (id: string | number | undefined) => {
 }
 
 const executeDelete = async (id: string | number) => {
-  console.log('Starting the delete execution process for ID:', id);
   const deleteToast = toast.loading('Currently deleting...');
-
   try {
     const projectToDelete = projects.value.find(p => p.id === id);
 
@@ -502,23 +494,11 @@ const executeDelete = async (id: string | number) => {
     }
 
     await $fetch(`/api/projects/${id}`, { method: 'DELETE' });
-
     toast.success('Project successfully deleted', { id: deleteToast });
     await fetchProjects();
   } catch (e: any) {
-    console.error('Error detail:', e);
     toast.error('Failed: ' + (e.data?.message || e.message), { id: deleteToast });
   }
-}
-
-const getFeaturedCount = () => {
-  return Math.min(projects.value.length, 4).toString().padStart(2, '0')
-}
-
-const getTotalCategories = () => {
-  if (!projects.value.length) return '00'
-  const categories = projects.value.map(p => (p.project_details?.category || 'General').trim().toLowerCase())
-  return new Set(categories).size.toString().padStart(2, '0')
 }
 
 const animateValue = (start: number, end: number, duration: number, callback: (val: number) => void) => {
@@ -526,45 +506,31 @@ const animateValue = (start: number, end: number, duration: number, callback: (v
     callback(end)
     return
   }
-
   const startTime = performance.now()
-
   const update = (currentTime: number) => {
     const elapsed = currentTime - startTime
     const progress = Math.min(elapsed / duration, 1)
-
-    // Easing function: easeOutQuad untuk efek melambat di akhir
     const easeProgress = progress * (2 - progress)
-
     const currentValue = Math.floor(start + (end - start) * easeProgress)
     callback(currentValue)
 
-    if (progress < 1) {
-      requestAnimationFrame(update)
-    } else {
-      callback(end)
-    }
+    if (progress < 1) requestAnimationFrame(update)
+    else callback(end)
   }
-
   requestAnimationFrame(update)
 }
 
-// WATCHER BARU: Memicu animasi setiap kali data projects berubah/berhasil di-fetch
 watch(projects, (newProjects) => {
   if (newProjects && newProjects.length > 0) {
-    // Ambil target asli dari masing-masing metrics
     const targetTotal = newProjects.length
     const targetFeatured = Math.min(newProjects.length, 4)
-
     const categories = newProjects.map(p => (p.project_details?.category || 'General').trim().toLowerCase())
     const targetCategories = new Set(categories).size
 
-    // Jalankan animasi (durasi 1000ms / 1 detik)
     animateValue(0, targetTotal, 1000, (val) => animatedTotal.value = val)
     animateValue(0, targetFeatured, 1000, (val) => animatedFeatured.value = val)
     animateValue(0, targetCategories, 1000, (val) => animatedCategories.value = val)
   } else {
-    // Reset ke 0 jika data kosong
     animatedTotal.value = 0
     animatedFeatured.value = 0
     animatedCategories.value = 0
@@ -591,14 +557,6 @@ onMounted(fetchProjects)
 
 .icon-btn.active {
   @apply bg-primary border-primary text-white shadow-lg shadow-primary/20;
-}
-
-.btn-primary {
-  @apply flex-1 px-8 py-4 rounded-xl bg-primary font-black text-white uppercase text-[10px] tracking-widest hover:scale-[1.02] transition-all disabled:opacity-50 shadow-lg shadow-primary/20;
-}
-
-.btn-secondary {
-  @apply flex-1 px-8 py-4 rounded-xl border border-slate-200 dark:border-white/10 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 dark:hover:bg-[#16191E] dark:text-slate-400 transition-colors;
 }
 
 .th-style {
