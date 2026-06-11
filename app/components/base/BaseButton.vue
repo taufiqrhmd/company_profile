@@ -4,7 +4,7 @@
     :disabled="loading || disabled"
     :class="[
       'relative group overflow-hidden transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed',
-      'font-black uppercase tracking-tighter flex items-center justify-center gap-2',
+      'font-black uppercase tracking-tight flex items-center justify-center gap-2',
       variantClasses[variant],
       sizeClasses[size],
       roundedClasses[rounded]
@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
 defineEmits(['click']);
 
 const variantClasses = {
-  primary: 'bg-primary text-dark hover:shadow-[0_0_20px_rgba(212,163,46,0.4)]',
+  primary: 'bg-primary text-white hover:bg-dark dark:hover:bg-primary',
   dark: 'bg-dark dark:bg-white text-soft dark:text-dark hover:bg-primary dark:hover:bg-primary hover:text-white',
   outline: 'border-2 border-dark/10 dark:border-white/20 text-dark dark:text-soft hover:border-primary hover:text-primary',
   ghost: 'bg-transparent text-dark dark:text-soft hover:bg-dark/5 dark:hover:bg-white/5',

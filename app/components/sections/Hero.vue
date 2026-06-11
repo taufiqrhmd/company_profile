@@ -1,32 +1,20 @@
 <template>
   <section
     class="relative min-h-[100dvh] -mt-px pt-24 pb-12 md:pt-32 md:pb-20 px-4 md:px-6 overflow-hidden flex items-center transition-colors duration-700 bg-white dark:bg-[#050505]">
-
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-
       <div
-        class="absolute -top-[30%] -left-[10%] w-[600px] md:w-[1000px] h-[600px] md:h-[1000px] bg-gradient-to-br from-primary/10 via-amber-500/[0.02] to-transparent dark:from-primary/5 dark:via-transparent dark:to-transparent blur-[130px] rounded-full">
+        class="aurora-bg-engine absolute -inset-[10px] opacity-40 dark:opacity-40 filter blur-[60px] invert dark:invert-0 will-change-transform">
       </div>
-      <div
-        class="absolute -bottom-[20%] -right-[10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-gradient-to-tl from-blue-500/[0.05] via-transparent to-transparent dark:from-emerald-500/[0.02] dark:to-transparent blur-[130px] rounded-full">
-      </div>
-
-      <svg
-        class="absolute inset-y-0 right-0 w-full h-full text-slate-900 dark:text-white stroke-current fill-none hidden md:block opacity-60 dark:opacity-40"
-        viewBox="0 0 1440 900" preserveAspectRatio="none">
-        <path d="M-100,250 C300,500 700,50 1100,450 C1300,600 1400,300 1600,200" stroke-width="1.5" />
-        <path d="M-100,300 C300,550 700,100 1100,500 C1300,650 1400,350 1600,250" stroke-width="1"
-          stroke-dasharray="12 6" />
-      </svg>
     </div>
-
+    
     <div class="container max-w-7xl mx-auto relative z-10">
       <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
         <div class="lg:col-span-6 space-y-6 md:space-y-8 text-center lg:text-left">
           <div class="space-y-4">
 
-            <div class="reveal-up inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+            <div
+              class="reveal-up inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
               <span class="w-2 h-2 rounded-full bg-primary"></span>
               <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Exclusive Digital
                 Partner</span>
@@ -95,7 +83,7 @@
                   :class="activeIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'">
                   <p class="text-primary font-black text-3xl md:text-5xl tracking-tighter mb-0.5">{{ image.stat }}</p>
                   <p class="text-white/60 text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold">{{ image.title
-                    }}</p>
+                  }}</p>
                 </div>
               </div>
 
@@ -194,5 +182,69 @@ const scrollToSection = (id: string) => {
 .active.reveal-right {
   opacity: 1;
   transform: translate(0, 0);
+}
+
+/* ================= SOFT & MUTED AURORA ENGINE ================= */
+.aurora-bg-engine {
+  --base-white: repeating-linear-gradient(100deg, #ffffff 0%, #ffffff 7%, transparent 10%, transparent 12%, #ffffff 16%);
+  --base-dark: repeating-linear-gradient(100deg, #000000 0%, #000000 7%, transparent 10%, transparent 12%, #000000 16%);
+
+  /* RACIKAN LIGHT MODE BARU: Menggunakan warna pastel redup (muted corporate) */
+  --aurora-gradient: repeating-linear-gradient(100deg,
+      #93c5fd 10%,
+      /* Blue sangat muda */
+      #c7d2fe 15%,
+      /* Indigo pastel */
+      #99f6e4 20%,
+      /* Mint/Teal pudar */
+      #e9d5ff 25%,
+      /* Lavender lembut */
+      #bae6fd 30%
+      /* Sky Blue muda */
+    );
+
+  background-image: var(--base-white), var(--aurora-gradient);
+  background-size: 300%, 200%;
+  background-position: 50% 50%, 50% 50%;
+
+  /* Masking diperketat lagi agar area tengah tidak terlalu menumpuk warnanya */
+  mask-image: radial-gradient(ellipse at 50% 50%, #000000 10%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000000 10%, transparent 90%);
+}
+
+/* RACIKAN DARK MODE */
+:deep(.dark) .aurora-bg-engine,
+.dark .aurora-bg-engine {
+  background-image: var(--base-dark), var(--aurora-gradient);
+  /* Kembalikan ke warna neon estetik khusus saat mode malam aktif */
+  --aurora-gradient: repeating-linear-gradient(100deg, #3b82f6 10%, #a5b4fc 15%, #7dd3fc 20%, #ddd6fe 25%, #60a5fa 30%);
+}
+
+/* Lapisan animasi pergeseran gelombang */
+.aurora-bg-engine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--base-white), var(--aurora-gradient);
+  background-size: 200%, 100%;
+  background-attachment: fixed;
+  mix-blend-mode: difference;
+  animation: move-aurora 40s linear infinite;
+  /* Gerakan diperlambat agar lebih rileks */
+}
+
+:deep(.dark) .aurora-bg-engine::after,
+.dark .aurora-bg-engine::after {
+  background-image: var(--base-dark), var(--aurora-gradient);
+}
+
+@keyframes move-aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <footer class="relative -mt-px bg-dark dark:bg-[#0A0A0A] pt-20 md:pt-24 pb-10 md:pb-12 overflow-hidden transition-colors duration-700">
+  <footer class="relative -mt-px bg-dark dark:bg-[#050505] pt-20 md:pt-24 pb-10 md:pb-12 overflow-hidden transition-colors duration-700">
     <div class="absolute bottom-[-2%] left-[-5%] md:bottom-[-5%] pointer-events-none select-none opacity-[0.03] md:opacity-[0.05] dark:opacity-[0.08]">
       <h2 class="text-[8rem] sm:text-[15rem] md:text-[25rem] font-black leading-none tracking-tighter text-white">
         EXCELLENT

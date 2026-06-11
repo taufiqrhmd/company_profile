@@ -1,8 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto space-y-8 transition-colors duration-300">
 
-    <div
-      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 ">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
       <div class="space-y-1">
         <h1 class="text-3xl font-black uppercase tracking-tighter text-slate-900 dark:text-white">
           Manage Accounts
@@ -12,13 +11,15 @@
           for your team.
         </p>
       </div>
-      <button @click="openAddModal"
-        class="bg-primary text-white px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+
+      <BaseButton variant="primary" size="md" rounded="xl"
+        class="text-[10px] tracking-widest shadow-lg shadow-primary/20" @click="openAddModal">
         Create New Account
-      </button>
+      </BaseButton>
     </div>
 
-    <div class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
+    <div
+      class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
       <div class="overflow-x-auto">
         <table class="w-full border-separate border-spacing-0 text-left table-auto">
           <thead>
@@ -31,6 +32,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+
             <tr v-if="isLoading">
               <td colspan="5"
                 class="px-4 py-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">
@@ -52,8 +54,7 @@
               class="hover:bg-slate-50/60 dark:hover:bg-slate-900/40 transition-all duration-300 group">
 
               <td class="px-4 py-3 text-center border-b border-slate-100/80 dark:border-white/5">
-                <span
-                  class="text-[11px] font-black text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors tabular-nums">
+                <span class="text-[11px] font-black text-dark dark:text-slate-600 tabular-nums">
                   {{ String(index + 1).padStart(2, '0') }}
                 </span>
               </td>
@@ -61,11 +62,11 @@
               <td class="px-4 py-3 text-left border-b border-slate-100/80 dark:border-white/5">
                 <div class="flex justify-start items-center gap-3">
                   <div
-                    class="w-8 h-8 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-primary flex items-center justify-center font-black text-xs border border-slate-200/60 dark:border-white/10 uppercase shadow-sm group-hover:border-primary/30 transition-colors duration-300">
+                    class="w-8 h-8 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-primary flex items-center justify-center font-black text-xs border border-slate-200/60 dark:border-white/10 uppercase shadow-sm group-hover:bg-primary transition-colors duration-300">
                     {{ user.full_name?.charAt(0) || 'A' }}
                   </div>
                   <span
-                    class="text-[13px] font-bold text-slate-800 dark:text-slate-200 tracking-tight uppercase group-hover:text-primary transition-colors duration-300 truncate">
+                    class="text-[13px] font-bold text-slate-800 dark:text-slate-200 tracking-tight uppercase truncate">
                     {{ user.full_name }}
                   </span>
                 </div>
@@ -90,7 +91,7 @@
                 <div class="flex justify-center gap-1.5">
                   <template v-if="user.id !== currentAdminId">
                     <button @click="openEditModal(user)"
-                      class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 border border-transparent hover:border-amber-100 dark:hover:border-amber-500/20 transition-all duration-300"
+                      class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-primary hover:bg-amber-50 dark:hover:bg-amber-500/10 border border-transparent hover:border-amber-100 dark:hover:border-amber-500/20 transition-all duration-300"
                       title="Edit Akun Anggota">
                       <Icon name="solar:pen-bold" class="w-4 h-4" />
                     </button>
@@ -158,7 +159,7 @@
                   {{ isEditMode ? 'Change Password (Leave blank if not changing)' : 'Temporary Password' }}
                 </label>
                 <input v-model="form.password" type="password"
-                  :placeholder="isEditMode ? 'Fill only if you want to reset the staff password' : 'At least 6 characters'"
+                  :placeholder="isEditMode ? 'Fill only if you want to reset the staff password' : 'At least 8 characters'"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 placeholder:text-slate-400/70"
                   :required="!isEditMode" />
               </div>
@@ -180,14 +181,15 @@
               </div>
 
               <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-white/5">
-                <button type="button" @click="closeModal"
-                  class="px-5 py-2.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-all duration-300">
+                <BaseButton variant="outline" size="md" rounded="xl"
+                  class="text-[10px] tracking-wider text-slate-400 dark:text-slate-500" @click="closeModal">
                   Cancel
-                </button>
-                <button type="submit" :disabled="isSubmitting"
-                  class="px-5 py-2.5 text-[10px] font-black uppercase tracking-wider text-black bg-primary hover:bg-slate-800 hover:text-white disabled:opacity-50 rounded-xl shadow-md transition-all duration-300">
-                  {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Register Account') }}
-                </button>
+                </BaseButton>
+
+                <BaseButton type="submit" variant="primary" size="md" rounded="xl" :loading="isSubmitting"
+                  class="text-[10px] tracking-wider shadow-md">
+                  {{ isEditMode ? 'Save Changes' : 'Register Account' }}
+                </BaseButton>
               </div>
             </form>
           </div>
@@ -199,10 +201,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed, resolveComponent, h } from 'vue'
 import { toast } from 'vue-sonner'
 
-// Set Meta Page (Gunakan global middleware auth yang terpusat)
+// Pendaftaran Komponen Tombol Kustom Anda
+// Jika nama filenya BaseButton.vue, Nuxt otomatis mendaftarkannya sebagai 'BaseButton'
+const BaseButtonComponent = resolveComponent('BaseButton')
+
 definePageMeta({
   layout: 'admin',
   middleware: ['auth']
@@ -212,7 +217,6 @@ useHead({
   title: 'Accounts Management',
 })
 
-// Interfaces
 interface Account {
   id: string
   created_at: string
@@ -221,21 +225,16 @@ interface Account {
   role: 'super_admin' | 'editor'
 }
 
-// State Management
 const accounts = ref<Account[]>([])
 const isLoading = ref<boolean>(false)
 const isSubmitting = ref<boolean>(false)
 const showModal = ref<boolean>(false)
-
 const isEditMode = ref<boolean>(false)
 const targetAccountId = ref<string | null>(null)
 
-// Tarik data Admin Aktif dari state global Nuxt untuk mencegah hapus diri sendiri
 const adminUser = useState<any>('adminUser')
 const currentAdminId = computed(() => adminUser.value?.id || '')
-const IconComponent = resolveComponent('Icon')
 
-// Form State
 const form = reactive({
   full_name: '',
   username: '',
@@ -243,7 +242,6 @@ const form = reactive({
   role: 'editor'
 })
 
-// Reset Form Data
 const resetForm = () => {
   form.full_name = ''
   form.username = ''
@@ -253,7 +251,6 @@ const resetForm = () => {
   targetAccountId.value = null
 }
 
-// Open & Close Modal Controller
 const openAddModal = () => {
   isEditMode.value = false
   showModal.value = true
@@ -270,11 +267,10 @@ const openEditModal = (account: Account) => {
   form.full_name = account.full_name
   form.username = account.username
   form.role = account.role
-  form.password = '' // Kosongkan password agar tidak terekspos, diisi jika mau ganti saja
+  form.password = ''
   showModal.value = true
 }
 
-// FETCH DATA: Mengambil list seluruh akun dari backend
 const fetchAccounts = async () => {
   isLoading.value = true
   try {
@@ -293,9 +289,7 @@ const fetchAccounts = async () => {
   }
 }
 
-// SUBMIT DATA: Mendaftarkan administrator/editor baru
 const handleSubmit = async () => {
-  // Jika registrasi baru, password wajib diisi
   if (!form.full_name || !form.username || (!isEditMode.value && !form.password)) {
     toast.warning('Please complete the required form fields.')
     return
@@ -306,7 +300,6 @@ const handleSubmit = async () => {
   const toastId = toast.loading(processingMsg)
 
   try {
-    // Tentukan metode HTTP dan URL endpoint
     const method = isEditMode.value ? 'PUT' : 'POST'
     const endpoint = isEditMode.value ? `/api/admin_accounts?id=${targetAccountId.value}` : '/api/admin_accounts'
 
@@ -320,7 +313,7 @@ const handleSubmit = async () => {
       const successMsg = isEditMode.value ? 'Account updated successfully!' : 'New account registered successfully!'
       toast.success(successMsg, { id: toastId })
       closeModal()
-      await fetchAccounts() // Refresh data grid tabel
+      await fetchAccounts()
     }
   } catch (error: any) {
     console.error('Operation failed:', error)
@@ -331,73 +324,64 @@ const handleSubmit = async () => {
   }
 }
 
-// DELETE DATA: Menghapus akses akun tertentu
+// Dialog Konfirmasi Hapus Menggunakan BaseButton Varian Programmatic `h()`
 const handleDelete = (id: string, name: string) => {
   if (id === currentAdminId.value) {
     toast.error('You are not allowed to delete your own active account!')
     return
   }
 
-  // Panggil custom toast, tangkap parameter 't' bawaan Vue Sonner untuk menutup dirinya sendiri
   const toastId = toast.custom(() => {
     return h(
       'div',
-      { 
-        class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' 
-      },
+      { class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' },
       [
-        // Bagian Atas: Ikon dari Component + Konten Teks
         h('div', { class: 'flex items-start gap-3' }, [
-          
-          // 2. Menggunakan komponen Icon Anda sendiri
-          h(IconComponent, {
-            name: 'heroicons:exclamation-triangle-20-solid', // Sesuaikan dengan nama ikon di project Anda
+          h(resolveComponent('Icon'), {
+            name: 'heroicons:exclamation-triangle-20-solid',
             class: 'w-5 h-5 text-amber-500 shrink-0 mt-0.5'
           }),
-
-          // Wadah Teks
           h('div', { class: 'flex flex-col gap-1' }, [
             h('h3', { class: 'text-sm font-semibold text-zinc-950 dark:text-zinc-50' }, 'Confirm Account Deletion'),
             h('p', { class: 'text-xs text-slate-500 dark:text-slate-400 leading-normal' }, `Are you sure you want to permanently delete "${name}"?`)
           ])
         ]),
-        
-        // Bagian Bawah: Tombol Aksi
+
+        // Bagian Tombol Konfirmasi dirubah ke BaseButtonComponent
         h('div', { class: 'flex justify-end gap-2' }, [
           h(
-            'button',
+            BaseButtonComponent,
             {
-              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-zinc-700 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors',
-              onClick: () => {
-                console.log('Deletion cancelled');
-                toast.dismiss(toastId);
-              }
+              variant: 'ghost',
+              size: 'sm',
+              class: '!px-3 !py-1.5 !text-xs text-zinc-700 dark:text-zinc-300',
+              onClick: () => toast.dismiss(toastId)
             },
-            'Cancel'
+            () => 'Cancel'
           ),
           h(
-            'button',
+            BaseButtonComponent,
             {
-              class: 'px-3 py-1.5 text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm',
+              variant: 'dark',
+              size: 'sm',
+              class: '!px-3 !py-1.5 !text-xs !bg-red-600 hover:!bg-red-700 !text-white shadow-sm border-none',
               onClick: () => {
                 executeDelete(id, name);
                 toast.dismiss(toastId);
               }
             },
-            'Delete Now'
+            () => 'Delete Now'
           )
         ])
       ]
     )
   }, {
-    duration: Infinity // Wajib Infinity agar dialog konfirmasi tidak hilang mendadak dalam 5 detik
+    duration: Infinity
   })
 }
 
-// Fungsi terpisah untuk mengeksekusi aksi ke API Server
 const executeDelete = async (id: string, name: string) => {
   const toastId = toast.loading(`Deleting account ${name}...`)
-  
   try {
     const response = await $fetch<any>(`/api/admin_accounts?id=${id}`, {
       method: 'DELETE',
@@ -406,7 +390,7 @@ const executeDelete = async (id: string, name: string) => {
 
     if (response?.success) {
       toast.success('Account deleted successfully from the system.', { id: toastId })
-      await fetchAccounts() // Refresh data grid tabel kamu
+      await fetchAccounts()
     }
   } catch (error: any) {
     console.error('Delete account failed:', error)
@@ -415,14 +399,12 @@ const executeDelete = async (id: string, name: string) => {
   }
 }
 
-// Lifecycle Hooks
 onMounted(async () => {
   await fetchAccounts()
 })
 </script>
 
 <style lang="postcss" scoped>
-/* Transisi Halus Efek Fade untuk Modal Teleport */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

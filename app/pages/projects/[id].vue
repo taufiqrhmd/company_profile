@@ -39,7 +39,7 @@
         </div>
 
         <div class="lg:col-span-4 space-y-10">
-          <div class="p-8 rounded-3xl bg-white dark:bg-soft/5 border border-dark/5 dark:border-soft/10">
+          <div class="p-8 rounded-3xl bg-white dark:text-soft dark:bg-soft/5 border border-dark/5 dark:border-soft/10">
             <h3 class="text-xs font-black uppercase tracking-widest mb-6">Tech Stack</h3>
             <div class="flex flex-wrap gap-2">
               <span v-for="tech in project.project_details?.tech_stack" :key="tech"

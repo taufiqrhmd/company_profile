@@ -1,6 +1,6 @@
 <template>
   <section ref="sectionRef"
-    class="relative -mt-px py-16 md:py-24 px-4 md:px-6 bg-soft dark:bg-darkBg/[.98] transition-colors duration-500 overflow-hidden">
+    class="relative -mt-px py-16 md:py-24 px-4 md:px-6 bg-soft dark:bg-[#050505] transition-colors duration-500 overflow-hidden">
     <div class="container max-w-7xl mx-auto">
 
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 md:mb-20 gap-8">
