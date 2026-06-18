@@ -20,11 +20,12 @@ Berikut adalah ringkasan struktur tabel yang akan dibuat oleh skrip ini:
 
 | Nama Tabel | Peruntukan Data | Mekanisme Keamanan (RLS) |
 | :--- | :--- | :--- |
-| `admin_accounts` | Akun staf dan administrator internal | 🔒 Diperketat (Hanya pemilik akun via JWT) |
-| `inquiries` | Data pesan masuk / formulir kontak | 📥 Anonim bisa input (send message via landing page), Admin bisa akses penuh |
+| `admin_accounts` | Akun staf dan administrator internal | 🔒 Diperketat (Hanya pemilik akun via JWT atau Superadmin) |
+| `inquiries` | Data pesan masuk / formulir kontak | 📥 Anonim bisa input (*send message*), Admin bisa akses penuh |
 | `projects` | Data utama proyek / portofolio | 🌐 Publik bisa baca, Admin bisa modifikasi |
 | `project_details`| Detail mendalam konten proyek (Relasi *1:1*) | 🌐 Publik bisa baca, Admin bisa modifikasi |
 | `services` | Daftar layanan atau jasa aplikasi | 🌐 Publik bisa baca, Admin bisa modifikasi |
+| `testimonials` | Data ulasan dan opini kepuasan klien | 🌐 Publik bisa baca, Hanya **Creator** & **Superadmin** yang bisa modifikasi |
 
 ---
 
@@ -40,7 +41,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto"; 
 
 -- ========================================================================
--- 2. INEP-UP STRUKTUR TABEL UTAMA
+-- 2. SETUP STRUKTUR TABEL UTAMA
 -- ========================================================================
 
 -- [TABEL: admin_accounts]
@@ -53,7 +54,7 @@ CREATE TABLE IF NOT EXISTS public.admin_accounts (
     role TEXT DEFAULT 'staff'
 );
 
--- Example Data Admin (role must super_admin or editor)
+-- Example Data Admin (role must super_admin or creator)
 INSERT INTO public.admin_accounts (username, password, full_name, role)
 VALUES (
     'admin', 
@@ -111,8 +112,24 @@ CREATE TABLE IF NOT EXISTS public.services (
     "order" INT DEFAULT 0
 );
 
+-- [TABEL: testimonials]
+CREATE TABLE IF NOT EXISTS public.testimonials (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    name TEXT NOT NULL,
+    position TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    avatar TEXT DEFAULT 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'::text,
+    row_placement INT DEFAULT 1 
+);
+
 -- ========================================================================
--- 3. STRUKTUR FUNGSI INTERNAL DATA (RPC)
+-- 3. DAFTARKAN REALTIME REPLICATION (BROADCAST)
+-- ========================================================================
+ALTER PUBLICATION supabase_realtime ADD TABLE public.testimonials;
+
+-- ========================================================================
+-- 4. STRUKTUR FUNGSI INTERNAL DATA (RPC)
 -- ========================================================================
 
 -- Fungsi untuk menambahkan jumlah tayangan (views) proyek
@@ -137,40 +154,34 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ========================================================================
--- 4. AKTIFKAN ROW LEVEL SECURITY (RLS)
+-- 5. AKTIFKAN ROW LEVEL SECURITY (RLS)
 -- ========================================================================
 ALTER TABLE public.admin_accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_details ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
 
 -- ========================================================================
--- 5. INJEKSI KEBIJAKAN KEAMANAN (RLS POLICIES)
+-- 6. INJEKSI KEBIJAKAN KEAMANAN (RLS POLICIES)
 -- ========================================================================
 
 -- [TABEL: admin_accounts]
 CREATE POLICY "Superadmin can view all, Editor can view self" 
 ON public.admin_accounts FOR SELECT TO public
 USING (
-    -- Kondisi 1: Jika yang login adalah super_admin
     ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
     OR 
-    -- Kondisi 2: Jika yang login adalah pemilik akun itu sendiri
     ((current_setting('request.jwt.claims'::text, true))::json ->> 'username') = username
 );
 
--- 3. POLICY: INSERT (Menambahkan Akun Baru)
--- Hanya akun dengan role 'super_admin' di dalam JWT-nya yang boleh menambah akun baru.
 CREATE POLICY "Only Superadmin can create new accounts" 
 ON public.admin_accounts FOR INSERT TO public
 WITH CHECK (
     ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') = 'super_admin'
 );
 
--- 4. POLICY: UPDATE (Mengubah Data Akun)
--- Superadmin bisa mengubah data siapa saja (misal mereset password staf).
--- Editor hanya boleh mengubah datanya sendiri (misal ganti nama atau ganti password sendiri).
 CREATE POLICY "Superadmin can update all, Editor can update self" 
 ON public.admin_accounts FOR UPDATE TO public
 USING (
@@ -184,8 +195,6 @@ WITH CHECK (
     ((current_setting('request.jwt.claims'::text, true))::json ->> 'username') = username
 );
 
--- 5. POLICY: DELETE (Menghapus Akun)
--- Hanya Superadmin yang memiliki hak total untuk menghapus akun staf dari sistem.
 CREATE POLICY "Only Superadmin can delete accounts" 
 ON public.admin_accounts FOR DELETE TO public
 USING (
@@ -229,3 +238,17 @@ CREATE POLICY "Authenticated Update Access"
 ON public.services FOR UPDATE TO authenticated
 USING ((auth.role() = 'authenticated'::text)) 
 WITH CHECK ((auth.role() = 'authenticated'::text));
+
+-- [TABEL: testimonials]
+CREATE POLICY "Allow public read access to all testimonials"
+ON public.testimonials FOR SELECT TO public
+USING (true);
+
+CREATE POLICY "Only Creator and Superadmin can manage testimonials"
+ON public.testimonials FOR ALL TO authenticated
+USING (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') IN ('creator', 'super_admin')
+)
+WITH CHECK (
+    ((current_setting('request.jwt.claims'::text, true))::json ->> 'role') IN ('creator', 'super_admin')
+);

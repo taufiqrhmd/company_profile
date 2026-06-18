@@ -12,8 +12,8 @@
         </p>
       </div>
 
-      <BaseButton variant="primary" size="md" rounded="xl"
-        class="text-[10px] tracking-widest shadow-lg shadow-primary/20" @click="openAddModal">
+      <BaseButton variant="primary" size="md" rounded="xl" icon="solar:add-circle-bold" iconPos="left"
+        @click="openAddModal()">
         Create New Account
       </BaseButton>
     </div>
@@ -62,7 +62,7 @@
               <td class="px-4 py-3 text-left border-b border-slate-100/80 dark:border-white/5">
                 <div class="flex justify-start items-center gap-3">
                   <div
-                    class="w-8 h-8 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-primary flex items-center justify-center font-black text-xs border border-slate-200/60 dark:border-white/10 uppercase shadow-sm group-hover:bg-primary transition-colors duration-300">
+                    class="w-8 h-8 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-soft flex items-center justify-center font-black text-xs border border-slate-200/60 dark:border-white/10 uppercase shadow-sm group-hover:bg-primary transition-colors duration-300">
                     {{ user.full_name?.charAt(0) || 'A' }}
                   </div>
                   <span
@@ -141,7 +141,11 @@
                   Name</label>
                 <input v-model="form.full_name" type="text" placeholder="Example: Alex Chandra"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 placeholder:text-slate-400/70"
-                  required />
+                  :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500 focus:border-red-500': errors.full_name }"
+                  @input="clearError('full_name')" />
+                <p v-if="errors.full_name" class="text-xs text-red-500 font-medium pl-1 animate-in fade-in duration-200">
+                  {{ errors.full_name }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -150,7 +154,11 @@
                   (For Login)</label>
                 <input v-model="form.username" type="text" placeholder="Example: alexchandra"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 font-mono placeholder:text-slate-400/70"
-                  required />
+                  :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500 focus:border-red-500': errors.username }"
+                  @input="clearError('username')" />
+                <p v-if="errors.username" class="text-xs text-red-500 font-medium pl-1 animate-in fade-in duration-200">
+                  {{ errors.username }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -161,7 +169,11 @@
                 <input v-model="form.password" type="password"
                   :placeholder="isEditMode ? 'Fill only if you want to reset the staff password' : 'At least 8 characters'"
                   class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition duration-300 placeholder:text-slate-400/70"
-                  :required="!isEditMode" />
+                  :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500 focus:border-red-500': errors.password }"
+                  @input="clearError('password')" />
+                <p v-if="errors.password" class="text-xs text-red-500 font-medium pl-1 animate-in fade-in duration-200">
+                  {{ errors.password }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -181,7 +193,7 @@
               </div>
 
               <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-white/5">
-                <BaseButton variant="outline" size="md" rounded="xl"
+                <BaseButton type="button" variant="outline" size="md" rounded="xl"
                   class="text-[10px] tracking-wider text-slate-400 dark:text-slate-500" @click="closeModal">
                   Cancel
                 </BaseButton>
@@ -204,8 +216,6 @@
 import { ref, reactive, onMounted, computed, resolveComponent, h } from 'vue'
 import { toast } from 'vue-sonner'
 
-// Pendaftaran Komponen Tombol Kustom Anda
-// Jika nama filenya BaseButton.vue, Nuxt otomatis mendaftarkannya sebagai 'BaseButton'
 const BaseButtonComponent = resolveComponent('BaseButton')
 
 definePageMeta({
@@ -242,6 +252,13 @@ const form = reactive({
   role: 'editor'
 })
 
+// State untuk memanage error message validasi lokal
+const errors = reactive({
+  full_name: '',
+  username: '',
+  password: ''
+})
+
 const resetForm = () => {
   form.full_name = ''
   form.username = ''
@@ -249,6 +266,61 @@ const resetForm = () => {
   form.role = 'editor'
   isEditMode.value = false
   targetAccountId.value = null
+  clearAllErrors()
+}
+
+const clearError = (field: keyof typeof errors) => {
+  errors[field] = ''
+}
+
+const clearAllErrors = () => {
+  errors.full_name = ''
+  errors.username = ''
+  errors.password = ''
+}
+
+const validateForm = (): boolean => {
+  clearAllErrors()
+  let isValid = true
+
+  // 1. Validasi Full Name
+  if (!form.full_name.trim()) {
+    errors.full_name = 'Full name is required.'
+    isValid = false
+  } else if (form.full_name.trim().length < 3) {
+    errors.full_name = 'Full name must be at least 3 characters long.'
+    isValid = false
+  }
+
+  // 2. Validasi Username (Hanya boleh huruf kecil, angka, underscore, dan titik)
+  const usernameRegex = /^[a-z0-9_.]+$/
+  if (!form.username.trim()) {
+    errors.username = 'Username is required.'
+    isValid = false
+  } else if (form.username.trim().length < 4) {
+    errors.username = 'Username must be at least 4 characters long.'
+    isValid = false
+  } else if (!usernameRegex.test(form.username)) {
+    errors.username = 'Username can only contain lowercase letters, numbers, underscores, or periods.'
+    isValid = false
+  }
+
+  // 3. Validasi Password
+  if (!isEditMode.value) {
+    if (!form.password) {
+      errors.password = 'Password is required for new registration.'
+      isValid = false
+    } else if (form.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long.'
+      isValid = false
+    }
+  } else if (form.password && form.password.length < 8) {
+    // Mode edit jika password diisi
+    errors.password = 'If updated, password must be at least 8 characters long.'
+    isValid = false
+  }
+
+  return isValid
 }
 
 const openAddModal = () => {
@@ -290,8 +362,9 @@ const fetchAccounts = async () => {
 }
 
 const handleSubmit = async () => {
-  if (!form.full_name || !form.username || (!isEditMode.value && !form.password)) {
-    toast.warning('Please complete the required form fields.')
+  // Jalankan validasi lokal sebelum memanggil network request
+  if (!validateForm()) {
+    toast.warning('Please resolve the invalid form fields.')
     return
   }
 
@@ -324,7 +397,6 @@ const handleSubmit = async () => {
   }
 }
 
-// Dialog Konfirmasi Hapus Menggunakan BaseButton Varian Programmatic `h()`
 const handleDelete = (id: string, name: string) => {
   if (id === currentAdminId.value) {
     toast.error('You are not allowed to delete your own active account!')
@@ -347,7 +419,6 @@ const handleDelete = (id: string, name: string) => {
           ])
         ]),
 
-        // Bagian Tombol Konfirmasi dirubah ke BaseButtonComponent
         h('div', { class: 'flex justify-end gap-2' }, [
           h(
             BaseButtonComponent,
@@ -358,7 +429,7 @@ const handleDelete = (id: string, name: string) => {
               onClick: () => toast.dismiss(toastId)
             },
             () => 'Cancel'
-          ),
+           ),
           h(
             BaseButtonComponent,
             {

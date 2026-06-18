@@ -108,7 +108,7 @@
         </div>
       </div>
     </div>
-    <LayoutAdminMessageModal :is-open="isModalOpen" :message="selectedMessage" @close="isModalOpen = false"
+    <LayoutAdminMessagesMessageModal :is-open="isModalOpen" :message="selectedMessage" @close="isModalOpen = false"
       @delete="handleDeleteFromModal" />
   </div>
 </template>

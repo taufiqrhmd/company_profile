@@ -6,11 +6,14 @@
       <SectionsExpertise />
     </section>
 
+    <SectionsValueProposition />
+    <SectionsOurStory />
+
     <section id="portfolio" class="relative">
       <SectionsCaseStudies />
     </section>
 
-    <SectionsOurStory />
+    <SectionsTestimonials />
     <SectionsContact />
     <LayoutFooter />
   </div>

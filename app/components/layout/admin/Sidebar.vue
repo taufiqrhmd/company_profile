@@ -139,6 +139,12 @@ const menuItems = [
     icon: 'solar:users-group-rounded-bold-duotone', // Menggunakan ikon Solar yang serasi untuk manajemen tim/user
     roles: ['super_admin'] // Proteksi ketat: Hanya super_admin yang dapat melihat item menu ini
   },
+  {
+    name: 'Manage Testimonials',
+    path: '/admin/testimonials',
+    icon: 'solar:chat-square-like-bold', // Menggunakan ikon Solar yang serasi untuk manajemen tim/user
+    roles: ['super_admin', 'editor'] // Proteksi ketat: Hanya super_admin yang dapat melihat item menu ini
+  },
 ]
 
 const filteredMenu = computed(() => {
