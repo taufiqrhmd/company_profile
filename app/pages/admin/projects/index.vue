@@ -18,7 +18,7 @@
       <div
         class="p-8 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl shadow-sm transition-colors">
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Works
-        </p>
+          </p>
         <p class="text-4xl font-black italic dark:text-white tabular-nums">
           <span v-if="isLoading">...</span>
           <span v-else>{{ animatedTotal.toString().padStart(2, '0') }}</span>
@@ -67,7 +67,22 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-            <tr v-for="(project, index) in paginatedProjects" :key="project.id"
+            <tr v-if="isLoading">
+              <td colspan="5" class="p-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">
+                <div class="flex items-center justify-center gap-2">
+                  <span class="animate-spin text-primary font-black text-base">◌</span>
+                  Loading vault assets...
+                </div>
+              </td>
+            </tr>
+
+            <tr v-else-if="projects.length === 0">
+              <td colspan="5" class="p-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600 italic">
+                No digital works currently vaulted.
+              </td>
+            </tr>
+
+            <tr v-else v-for="(project, index) in paginatedProjects" :key="project.id"
               class="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-all duration-300 group">
 
               <td class="p-6 text-center">
@@ -175,91 +190,125 @@
               </button>
             </div>
 
-            <div class="p-10 pt-4 overflow-y-auto custom-scrollbar">
-              <div class="grid grid-cols-2 gap-6 pb-4">
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Project Title</label>
-                  <input v-model="formData.title" type="text" class="form-input" placeholder="Lumina Retail">
-                </div>
-                <div class="space-y-2 col-span-2 sm:col-span-1">
-                  <label class="label-style">Category</label>
-                  <input v-model="formData.category" type="text" class="form-input" placeholder="E-commerce">
-                </div>
-                <div class="space-y-4 col-span-2">
-                  <label class="label-style">Icon Selection</label>
-                  <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
-                    <button v-for="icon in iconPresets" :key="icon.value" type="button"
-                      @click="formData.icon = icon.value"
-                      :class="['icon-btn', formData.icon === icon.value ? 'active' : '']">
-                      <Icon :name="icon.value" class="w-5 h-5" />
-                    </button>
+            <form @submit.prevent="saveProject" class="flex-1 flex flex-col overflow-hidden">
+              <div class="p-10 pt-4 overflow-y-auto flex-1 custom-scrollbar space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Project Title</label>
+                    <input v-model="formData.title" type="text" class="form-input" placeholder="Lumina Retail"
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.title }"
+                      @input="clearError('title')">
+                    <p v-if="errors.title" class="text-xs text-red-500 font-medium pl-1">{{ errors.title }}</p>
                   </div>
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Project Thumbnail</label>
-                  <div
-                    class="flex items-center gap-6 p-6 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-[2rem] bg-slate-50/50 dark:bg-[#16191E]/50">
-                    <div
-                      class="w-32 h-20 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 shrink-0">
-                      <img v-if="imagePreview || formData.image" :src="imagePreview || formData.image"
-                        class="w-full h-full object-cover" />
-                      <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
-                        <Icon name="solar:gallery-bold" class="w-8 h-8" />
-                      </div>
-                    </div>
-                    <div class="flex-1 space-y-2">
-                      <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Format: JPG, PNG, WEBP
-                      </p>
-                      <input ref="fileInput" type="file" @change="handleFileChange" accept="image/*" class="hidden" />
-                      <button @click="fileInput?.click()" type="button"
-                        class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-[10px] font-black uppercase dark:text-white">
-                        Choose Image
+
+                  <div class="space-y-2 col-span-2 sm:col-span-1">
+                    <label class="label-style">Category</label>
+                    <input v-model="formData.category" type="text" class="form-input" placeholder="E-commerce"
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.category }"
+                      @input="clearError('category')">
+                    <p v-if="errors.category" class="text-xs text-red-500 font-medium pl-1">{{ errors.category }}</p>
+                  </div>
+
+                  <div class="space-y-4 col-span-2">
+                    <label class="label-style">Icon Selection</label>
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
+                      <button v-for="icon in iconPresets" :key="icon.value" type="button"
+                        @click="formData.icon = icon.value"
+                        :class="['icon-btn', formData.icon === icon.value ? 'active' : '']">
+                        <Icon :name="icon.value" class="w-5 h-5" />
                       </button>
                     </div>
                   </div>
-                </div>
-                <div class="space-y-2">
-                  <label class="label-style">Impact Metric</label>
-                  <input v-model="formData.impact" type="text" class="form-input" placeholder="+140%">
-                </div>
-                <div class="space-y-2">
-                  <label class="label-style">Impact Label</label>
-                  <input v-model="formData.impact_label" type="text" class="form-input" placeholder="Growth">
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Description</label>
-                  <textarea v-model="formData.description" rows="3" class="form-input py-4"
-                    placeholder="Enter project description..."></textarea>
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Full Story - Part 1 (Challenge/Context)</label>
-                  <textarea v-model="formData.full_story_1" rows="4" class="form-input py-4 custom-scrollbar"
-                    placeholder="Tell about the background or main challenges of this project..."></textarea>
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Full Story - Part 2 (Solution/Result)</label>
-                  <textarea v-model="formData.full_story_2" rows="4" class="form-input py-4 custom-scrollbar"
-                    placeholder="Tell about the solution provided and the final results achieved..."></textarea>
-                </div>
-                <div class="space-y-2 col-span-2">
-                  <label class="label-style">Tech Stack</label>
-                  <input v-model="techStackInput" type="text" class="form-input"
-                    placeholder="Contoh: Nuxt 3, Tailwind CSS, Laravel">
+
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Project Thumbnail</label>
+                    <div
+                      class="flex items-center gap-6 p-6 border-2 border-dashed rounded-[2rem] bg-slate-50/50 dark:bg-[#16191E]/50"
+                      :class="errors.image ? 'border-red-500/60 dark:border-red-500/40' : 'border-slate-200 dark:border-white/10'">
+                      <div
+                        class="w-32 h-20 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 shrink-0">
+                        <img v-if="imagePreview || formData.image" :src="imagePreview || formData.image"
+                          class="w-full h-full object-cover" />
+                        <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
+                          <Icon name="solar:gallery-bold" class="w-8 h-8" />
+                        </div>
+                      </div>
+                      <div class="flex-1 space-y-2">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Format: JPG, PNG, WEBP</p>
+                        <input ref="fileInput" type="file" @change="handleFileChange" accept="image/*" class="hidden" />
+                        <button @click="fileInput?.click()" type="button"
+                          class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-[10px] font-black uppercase dark:text-white">
+                          Choose Image
+                        </button>
+                      </div>
+                    </div>
+                    <p v-if="errors.image" class="text-xs text-red-500 font-medium pl-1">{{ errors.image }}</p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="label-style">Impact Metric</label>
+                    <input v-model="formData.impact" type="text" class="form-input" placeholder="+140%"
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.impact }"
+                      @input="clearError('impact')">
+                    <p v-if="errors.impact" class="text-xs text-red-500 font-medium pl-1">{{ errors.impact }}</p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="label-style">Impact Label</label>
+                    <input v-model="formData.impact_label" type="text" class="form-input" placeholder="Growth"
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.impact_label }"
+                      @input="clearError('impact_label')">
+                    <p v-if="errors.impact_label" class="text-xs text-red-500 font-medium pl-1">{{ errors.impact_label }}</p>
+                  </div>
+
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Description</label>
+                    <textarea v-model="formData.description" rows="3" class="form-input py-4"
+                      placeholder="Enter project description..."
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.description }"
+                      @input="clearError('description')"></textarea>
+                    <p v-if="errors.description" class="text-xs text-red-500 font-medium pl-1">{{ errors.description }}</p>
+                  </div>
+
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Full Story - Part 1 (Challenge/Context)</label>
+                    <textarea v-model="formData.full_story_1" rows="4" class="form-input py-4 custom-scrollbar"
+                      placeholder="Tell about the background or main challenges of this project..."
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.full_story_1 }"
+                      @input="clearError('full_story_1')"></textarea>
+                    <p v-if="errors.full_story_1" class="text-xs text-red-500 font-medium pl-1">{{ errors.full_story_1 }}</p>
+                  </div>
+
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Full Story - Part 2 (Solution/Result)</label>
+                    <textarea v-model="formData.full_story_2" rows="4" class="form-input py-4 custom-scrollbar"
+                      placeholder="Tell about the solution provided and the final results achieved..."
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.full_story_2 }"
+                      @input="clearError('full_story_2')"></textarea>
+                    <p v-if="errors.full_story_2" class="text-xs text-red-500 font-medium pl-1">{{ errors.full_story_2 }}</p>
+                  </div>
+
+                  <div class="space-y-2 col-span-2">
+                    <label class="label-style">Tech Stack</label>
+                    <input v-model="techStackInput" type="text" class="form-input"
+                      placeholder="Contoh: Nuxt 3, Tailwind CSS, Laravel"
+                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.tech_stack }"
+                      @input="clearError('tech_stack')">
+                    <p v-if="errors.tech_stack" class="text-xs text-red-500 font-medium pl-1">{{ errors.tech_stack }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              class="p-8 pt-4 flex gap-4 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
-              <BaseButton variant="outline" size="md" rounded="xl" class="flex-1" @click="isModalOpen = false">
-                Cancel
-              </BaseButton>
+              <div class="p-8 pt-4 flex gap-4 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
+                <BaseButton type="button" variant="outline" size="md" rounded="xl" class="flex-1" @click="isModalOpen = false">
+                  Cancel
+                </BaseButton>
 
-              <BaseButton type="submit" variant="primary" size="md" rounded="xl" class="flex-1" :loading="isSubmitting"
-                @click="saveProject">
-                {{ isEditMode ? 'Update Changes' : 'Publish Project' }}
-              </BaseButton>
-            </div>
+                <BaseButton type="submit" variant="primary" size="md" rounded="xl" class="flex-1" :loading="isSubmitting">
+                  {{ isEditMode ? 'Update Changes' : 'Publish Project' }}
+                </BaseButton>
+              </div>
+            </form>
 
           </div>
         </div>
@@ -269,7 +318,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, h, resolveComponent, watch } from 'vue'
+import { ref, computed, onMounted, h, resolveComponent, watch, reactive } from 'vue'
 import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: 'admin' })
@@ -293,6 +342,19 @@ const animatedTotal = ref(0)
 const animatedFeatured = ref(0)
 const animatedCategories = ref(0)
 
+// Objek reactive penampung error validasi form
+const errors = reactive({
+  title: '',
+  category: '',
+  image: '',
+  impact: '',
+  impact_label: '',
+  description: '',
+  full_story_1: '',
+  full_story_2: '',
+  tech_stack: ''
+})
+
 const iconPresets = [
   { name: 'Retail', value: 'heroicons:shopping-bag' },
   { name: 'Finance', value: 'heroicons:banknotes' },
@@ -303,6 +365,72 @@ const iconPresets = [
   { name: 'Tech', value: 'heroicons:cpu-chip' },
   { name: 'User', value: 'heroicons:user-group' },
 ]
+
+const clearError = (field: keyof typeof errors) => {
+  errors[field] = ''
+}
+
+const clearAllErrors = () => {
+  Object.keys(errors).forEach((key) => {
+    errors[key as keyof typeof errors] = ''
+  })
+}
+
+// Handler validasi field sebelum disubmit ke backend
+const validateProjectForm = (): boolean => {
+  clearAllErrors()
+  let isValid = true
+
+  if (!formData.title?.trim()) {
+    errors.title = 'Project title is required.'
+    isValid = false
+  }
+  
+  if (!formData.category?.trim()) {
+    errors.category = 'Category is required.'
+    isValid = false
+  }
+
+  if (!isEditMode.value && !selectedFile.value) {
+    errors.image = 'Project thumbnail image is required.'
+    isValid = false
+  }
+
+  if (!formData.impact?.trim()) {
+    errors.impact = 'Impact metric dashboard value is required (e.g., +45%).'
+    isValid = false
+  }
+
+  if (!formData.impact_label?.trim()) {
+    errors.impact_label = 'Impact metrics context label is required (e.g., Conversion Rate).'
+    isValid = false
+  }
+
+  if (!formData.description?.trim()) {
+    errors.description = 'Brief description is required.'
+    isValid = false
+  } else if (formData.description.trim().length < 20) {
+    errors.description = 'Brief description should be at least 20 characters long.'
+    isValid = false
+  }
+
+  if (!formData.full_story_1?.trim()) {
+    errors.full_story_1 = 'Challenge context description is required.'
+    isValid = false
+  }
+
+  if (!formData.full_story_2?.trim()) {
+    errors.full_story_2 = 'Solution / final results description is required.'
+    isValid = false
+  }
+
+  if (!techStackInput.value?.trim()) {
+    errors.tech_stack = 'Please include at least one technology asset.'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const paginatedProjects = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
@@ -344,6 +472,7 @@ const handleFileChange = (e: Event) => {
     const file = target.files[0]
     selectedFile.value = file
     imagePreview.value = URL.createObjectURL(file)
+    clearError('image')
   }
 }
 
@@ -367,6 +496,7 @@ const uploadImage = async (file: File) => {
 
 const openModal = (project: any = null) => {
   isEditMode.value = !!project
+  clearAllErrors()
 
   if (project) {
     populateForm(project)
@@ -375,15 +505,21 @@ const openModal = (project: any = null) => {
   } else {
     resetForm()
     techStackInput.value = '';
+    formData.icon = 'heroicons:shopping-bag' // Default icon preset selector
   }
 
   isModalOpen.value = true
 }
 
 const saveProject = async () => {
-  if (!formData.title || !formData.category) return
+  // Cegah pemrosesan dan tampilkan peringatan jika validasi lokal mendeteksi field kosong / invalid
+  if (!validateProjectForm()) {
+    toast.warning('Please complete all fields with valid configurations.')
+    return
+  }
+
   isSubmitting.value = true
-  const toastId = toast.loading('Saving project...')
+  const toastId = toast.loading('Saving project to vault...')
 
   try {
     if (selectedFile.value) {
@@ -433,12 +569,12 @@ const saveProject = async () => {
       }
     })
 
-    toast.success(isEditMode.value ? 'Project updated!' : 'Project created!', { id: toastId })
+    toast.success(isEditMode.value ? 'Project updated within the vault!' : 'New project successfully published!', { id: toastId })
     isModalOpen.value = false
     await fetchProjects()
   } catch (e: any) {
     const errorMsg = e.data?.message || e.message || 'Unknown error occurred'
-    toast.error('Gagal: ' + errorMsg, { id: toastId })
+    toast.error('Failed: ' + errorMsg, { id: toastId })
   } finally {
     isSubmitting.value = false
   }

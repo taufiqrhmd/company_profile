@@ -30,6 +30,8 @@ Proyek ini menerapkan **Supabase RLS** secara ketat di tingkat database untuk me
 | `project_details`| 🔥 `ALL` | `public` (Auth Check) | **Admin Full Access Details:** Perubahan atau penghapusan teks detail cerita proyek dikunci rapat untuk admin terotentikasi. |
 | `services` | 👁️ `SELECT` | `public` | **Public Read Access:** Daftar layanan komersial perusahaan dapat dilihat oleh publik tanpa hambatan otentikasi (`USING (true)`). |
 | `services` | 🔄 `UPDATE` | `authenticated` | **Authenticated Update Access:** Perubahan isi data komponen layanan hanya bisa dieksekusi oleh admin/editor yang memiliki sesi login aktif. |
+| `Testimonials` | 👁️ `SELECT` | `public` | **Allow public read access to all testimonials:** Membuka akses baca secara transparan agar seluruh ulasan klien dapat berputar di Marquee Track halaman depan dan dilihat oleh semua pengunjung website (USING (true)). |
+| `Testimonials` | 🔥 `ALL` | `authenticated` | **Only Creator and Superadmin can manage testimonials:** Membatasi operasi modifikasi (Aksi INSERT, UPDATE, DELETE) secara ketat. Aksi hanya diizinkan jika klaim role di dalam token JWT pengguna bernilai 'creator' atau 'super_admin'.|
 
 ---
 
