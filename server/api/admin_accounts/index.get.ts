@@ -1,5 +1,5 @@
 import { defineEventHandler, createError, getCookie } from "h3";
-import { jwtVerify, JWTPayload } from "jose";
+import { jwtVerify, type JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
 
 interface AdminPayload extends JWTPayload {

@@ -18,7 +18,7 @@
       <div
         class="p-8 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl shadow-sm transition-colors">
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Works
-          </p>
+        </p>
         <p class="text-4xl font-black italic dark:text-white tabular-nums">
           <span v-if="isLoading">...</span>
           <span v-else>{{ animatedTotal.toString().padStart(2, '0') }}</span>
@@ -53,267 +53,14 @@
       </div>
     </div>
 
-    <div
-      class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors">
-      <div class="overflow-x-auto">
-        <table class="w-full border-separate border-spacing-0">
-          <thead>
-            <tr class="bg-slate-50/50 dark:bg-slate-900/50">
-              <th class="th-style text-center w-16">No</th>
-              <th class="th-style">Asset & Project Name</th>
-              <th class="th-style text-center">Category</th>
-              <th class="th-style text-center">Impact Metric</th>
-              <th class="th-style text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-            <tr v-if="isLoading">
-              <td colspan="5" class="p-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">
-                <div class="flex items-center justify-center gap-2">
-                  <span class="animate-spin text-primary font-black text-base">◌</span>
-                  Loading vault assets...
-                </div>
-              </td>
-            </tr>
+    <LayoutAdminProjectsProjectTable :items="paginatedProjects" :loading="isLoading" :current-page="currentPage"
+      :items-per-page="itemsPerPage" :total-pages="totalPages" :total-items="projects.length" @edit="openModal"
+      @delete="handleDelete" @prev-page="prevPage" @next-page="nextPage" />
 
-            <tr v-else-if="projects.length === 0">
-              <td colspan="5" class="p-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600 italic">
-                No digital works currently vaulted.
-              </td>
-            </tr>
-
-            <tr v-else v-for="(project, index) in paginatedProjects" :key="project.id"
-              class="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-all duration-300 group">
-
-              <td class="p-6 text-center">
-                <span
-                  class="text-[11px] font-black text-dark dark:text-slate-600 tabular-nums">
-                  {{ formatIndex((currentPage - 1) * itemsPerPage + index) }}
-                </span>
-              </td>
-
-              <td class="p-6">
-                <div class="flex items-center gap-5">
-                  <div
-                    class="relative w-24 h-16 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900 shadow-sm shrink-0">
-                    <img :src="project.image" :alt="project.title"
-                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                  </div>
-                  <div class="space-y-1.5">
-                    <div class="flex items-center gap-2">
-                      <Icon :name="project.icon || 'heroicons:cube'" class="w-4 h-4 text-primary" />
-                      <h3
-                        class="text-[13px] font-black uppercase italic tracking-tight text-slate-800 dark:text-slate-200">
-                        {{ project.title }}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              </td>
-
-              <td class="p-6 text-center">
-                <span
-                  class="inline-flex px-4 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 rounded-xl text-[9px] font-black uppercase tracking-[0.1em]">
-                  {{ project.project_details?.category || 'General' }}
-                </span>
-              </td>
-
-              <td class="p-6">
-                <div class="flex flex-col items-center">
-                  <div
-                    class="px-3 py-1 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 rounded-lg border border-green-100 dark:border-green-500/20 flex items-center gap-2 mb-1">
-                    <div class="w-1 h-1 bg-green-500 rounded-full"></div>
-                    <span class="text-[11px] font-black">{{ project.impact }}</span>
-                  </div>
-                  <span
-                    class="text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tighter italic">
-                    {{ project.impact_label }}
-                  </span>
-                </div>
-              </td>
-
-              <td class="p-6 pr-4 text-right">
-                <div class="flex justify-end gap-1">
-                  <button @click="openModal(project)" class="action-btn group/btn hover:bg-primary/5">
-                    <Icon name="solar:pen-new-square-bold"
-                      class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-primary" />
-                  </button>
-
-                  <button @click="handleDelete(project.id)"
-                    class="action-btn group/btn hover:bg-red-50 dark:hover:bg-red-500/10">
-                    <Icon name="solar:trash-bin-trash-bold"
-                      class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-red-500" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div
-        class="flex items-center justify-between p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50/30 dark:bg-slate-900/20">
-        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          Showing <span class="font-bold text-slate-800 dark:text-white">{{ projects.length === 0 ? 0 : (currentPage -
-            1) * itemsPerPage + 1 }}</span>
-          to <span class="font-bold text-slate-800 dark:text-white">{{ Math.min(currentPage * itemsPerPage,
-            projects.length) }}</span>
-          of <span class="font-bold text-slate-800 dark:text-white">{{ projects.length }}</span> entries
-        </p>
-
-        <div class="flex items-center gap-2">
-          <button @click="prevPage" :disabled="currentPage === 1"
-            class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 disabled:opacity-40 transition-colors">
-            Prev
-          </button>
-          <button @click="nextPage" :disabled="currentPage === totalPages"
-            class="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 disabled:opacity-40 transition-colors">
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <Teleport to="body">
-      <Transition name="fade">
-        <div v-if="isModalOpen"
-          class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm p-4">
-          <div
-            class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-transparent dark:border-slate-800">
-
-            <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-50 dark:border-slate-800">
-              <h3 class="text-2xl font-black uppercase tracking-tighter dark:text-white">
-                {{ isEditMode ? 'Edit Project' : 'Create Project' }}
-              </h3>
-              <button @click="isModalOpen = false" class="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <Icon name="solar:close-circle-bold" class="w-8 h-8" />
-              </button>
-            </div>
-
-            <form @submit.prevent="saveProject" class="flex-1 flex flex-col overflow-hidden">
-              <div class="p-10 pt-4 overflow-y-auto flex-1 custom-scrollbar space-y-6">
-                <div class="grid grid-cols-2 gap-6">
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Project Title</label>
-                    <input v-model="formData.title" type="text" class="form-input" placeholder="Lumina Retail"
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.title }"
-                      @input="clearError('title')">
-                    <p v-if="errors.title" class="text-xs text-red-500 font-medium pl-1">{{ errors.title }}</p>
-                  </div>
-
-                  <div class="space-y-2 col-span-2 sm:col-span-1">
-                    <label class="label-style">Category</label>
-                    <input v-model="formData.category" type="text" class="form-input" placeholder="E-commerce"
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.category }"
-                      @input="clearError('category')">
-                    <p v-if="errors.category" class="text-xs text-red-500 font-medium pl-1">{{ errors.category }}</p>
-                  </div>
-
-                  <div class="space-y-4 col-span-2">
-                    <label class="label-style">Icon Selection</label>
-                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
-                      <button v-for="icon in iconPresets" :key="icon.value" type="button"
-                        @click="formData.icon = icon.value"
-                        :class="['icon-btn', formData.icon === icon.value ? 'active' : '']">
-                        <Icon :name="icon.value" class="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Project Thumbnail</label>
-                    <div
-                      class="flex items-center gap-6 p-6 border-2 border-dashed rounded-[2rem] bg-slate-50/50 dark:bg-[#16191E]/50"
-                      :class="errors.image ? 'border-red-500/60 dark:border-red-500/40' : 'border-slate-200 dark:border-white/10'">
-                      <div
-                        class="w-32 h-20 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 shrink-0">
-                        <img v-if="imagePreview || formData.image" :src="imagePreview || formData.image"
-                          class="w-full h-full object-cover" />
-                        <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
-                          <Icon name="solar:gallery-bold" class="w-8 h-8" />
-                        </div>
-                      </div>
-                      <div class="flex-1 space-y-2">
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Format: JPG, PNG, WEBP</p>
-                        <input ref="fileInput" type="file" @change="handleFileChange" accept="image/*" class="hidden" />
-                        <button @click="fileInput?.click()" type="button"
-                          class="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-[10px] font-black uppercase dark:text-white">
-                          Choose Image
-                        </button>
-                      </div>
-                    </div>
-                    <p v-if="errors.image" class="text-xs text-red-500 font-medium pl-1">{{ errors.image }}</p>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="label-style">Impact Metric</label>
-                    <input v-model="formData.impact" type="text" class="form-input" placeholder="+140%"
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.impact }"
-                      @input="clearError('impact')">
-                    <p v-if="errors.impact" class="text-xs text-red-500 font-medium pl-1">{{ errors.impact }}</p>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="label-style">Impact Label</label>
-                    <input v-model="formData.impact_label" type="text" class="form-input" placeholder="Growth"
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.impact_label }"
-                      @input="clearError('impact_label')">
-                    <p v-if="errors.impact_label" class="text-xs text-red-500 font-medium pl-1">{{ errors.impact_label }}</p>
-                  </div>
-
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Description</label>
-                    <textarea v-model="formData.description" rows="3" class="form-input py-4"
-                      placeholder="Enter project description..."
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.description }"
-                      @input="clearError('description')"></textarea>
-                    <p v-if="errors.description" class="text-xs text-red-500 font-medium pl-1">{{ errors.description }}</p>
-                  </div>
-
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Full Story - Part 1 (Challenge/Context)</label>
-                    <textarea v-model="formData.full_story_1" rows="4" class="form-input py-4 custom-scrollbar"
-                      placeholder="Tell about the background or main challenges of this project..."
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.full_story_1 }"
-                      @input="clearError('full_story_1')"></textarea>
-                    <p v-if="errors.full_story_1" class="text-xs text-red-500 font-medium pl-1">{{ errors.full_story_1 }}</p>
-                  </div>
-
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Full Story - Part 2 (Solution/Result)</label>
-                    <textarea v-model="formData.full_story_2" rows="4" class="form-input py-4 custom-scrollbar"
-                      placeholder="Tell about the solution provided and the final results achieved..."
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.full_story_2 }"
-                      @input="clearError('full_story_2')"></textarea>
-                    <p v-if="errors.full_story_2" class="text-xs text-red-500 font-medium pl-1">{{ errors.full_story_2 }}</p>
-                  </div>
-
-                  <div class="space-y-2 col-span-2">
-                    <label class="label-style">Tech Stack</label>
-                    <input v-model="techStackInput" type="text" class="form-input"
-                      placeholder="Contoh: Nuxt 3, Tailwind CSS, Laravel"
-                      :class="{ 'border-red-500 dark:border-red-500/50 focus:ring-red-500/5' : errors.tech_stack }"
-                      @input="clearError('tech_stack')">
-                    <p v-if="errors.tech_stack" class="text-xs text-red-500 font-medium pl-1">{{ errors.tech_stack }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="p-8 pt-4 flex gap-4 bg-slate-50/50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
-                <BaseButton type="button" variant="outline" size="md" rounded="xl" class="flex-1" @click="isModalOpen = false">
-                  Cancel
-                </BaseButton>
-
-                <BaseButton type="submit" variant="primary" size="md" rounded="xl" class="flex-1" :loading="isSubmitting">
-                  {{ isEditMode ? 'Update Changes' : 'Publish Project' }}
-                </BaseButton>
-              </div>
-            </form>
-
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <LayoutAdminProjectsProjectModal :is-open="isModalOpen" :is-edit-mode="isEditMode" :is-submitting="isSubmitting"
+      :form="formData" :errors="errors" :image-preview="imagePreview" v-model:techStack="techStackInput"
+      :icon-presets="iconPresets" @close="isModalOpen = false" @submit="saveProject"
+      @update:formField="handleFormFieldUpdate" @file-change="handleFileChangeUpdate" @clear-error="clearError" />
   </div>
 </template>
 
@@ -322,14 +69,12 @@ import { ref, computed, onMounted, h, resolveComponent, watch, reactive } from '
 import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: 'admin' })
+useHead({ title: 'Project Vault' })
 
-useHead({
-  title: 'Project Vault',
-})
+// State & Utilities dari source awal Anda
 const { formData, isModalOpen, isEditMode, selectedFile, imagePreview, resetForm, populateForm } = useProjectForm()
 
 const supabase = useSupabaseClient<any>()
-const fileInput = ref<HTMLInputElement | null>(null)
 const projects = ref<any[]>([])
 const isLoading = ref<boolean>(true)
 const isSubmitting = ref<boolean>(false)
@@ -342,17 +87,9 @@ const animatedTotal = ref(0)
 const animatedFeatured = ref(0)
 const animatedCategories = ref(0)
 
-// Objek reactive penampung error validasi form
 const errors = reactive({
-  title: '',
-  category: '',
-  image: '',
-  impact: '',
-  impact_label: '',
-  description: '',
-  full_story_1: '',
-  full_story_2: '',
-  tech_stack: ''
+  title: '', category: '', image: '', impact: '',
+  impact_label: '', description: '', full_story_1: '', full_story_2: '', tech_stack: ''
 })
 
 const iconPresets = [
@@ -366,99 +103,50 @@ const iconPresets = [
   { name: 'User', value: 'heroicons:user-group' },
 ]
 
-const clearError = (field: keyof typeof errors) => {
-  errors[field] = ''
+// Sinkronisasi mutasi data dari Form Anak ke state Utama
+const handleFormFieldUpdate = ({ field, value }: { field: keyof typeof errors, value: any }) => {
+  formData[field] = value
 }
 
-const clearAllErrors = () => {
-  Object.keys(errors).forEach((key) => {
-    errors[key as keyof typeof errors] = ''
-  })
+const handleFileChangeUpdate = (file: File) => {
+  selectedFile.value = file
+  imagePreview.value = URL.createObjectURL(file)
+  clearError('image')
 }
 
-// Handler validasi field sebelum disubmit ke backend
+const clearError = (field: keyof typeof errors) => { errors[field] = '' }
+const clearAllErrors = () => { Object.keys(errors).forEach((key) => { errors[key as keyof typeof errors] = '' }) }
+
 const validateProjectForm = (): boolean => {
   clearAllErrors()
   let isValid = true
-
-  if (!formData.title?.trim()) {
-    errors.title = 'Project title is required.'
-    isValid = false
-  }
-  
-  if (!formData.category?.trim()) {
-    errors.category = 'Category is required.'
-    isValid = false
-  }
-
-  if (!isEditMode.value && !selectedFile.value) {
-    errors.image = 'Project thumbnail image is required.'
-    isValid = false
-  }
-
-  if (!formData.impact?.trim()) {
-    errors.impact = 'Impact metric dashboard value is required (e.g., +45%).'
-    isValid = false
-  }
-
-  if (!formData.impact_label?.trim()) {
-    errors.impact_label = 'Impact metrics context label is required (e.g., Conversion Rate).'
-    isValid = false
-  }
-
-  if (!formData.description?.trim()) {
-    errors.description = 'Brief description is required.'
-    isValid = false
-  } else if (formData.description.trim().length < 20) {
-    errors.description = 'Brief description should be at least 20 characters long.'
-    isValid = false
-  }
-
-  if (!formData.full_story_1?.trim()) {
-    errors.full_story_1 = 'Challenge context description is required.'
-    isValid = false
-  }
-
-  if (!formData.full_story_2?.trim()) {
-    errors.full_story_2 = 'Solution / final results description is required.'
-    isValid = false
-  }
-
-  if (!techStackInput.value?.trim()) {
-    errors.tech_stack = 'Please include at least one technology asset.'
-    isValid = false
-  }
-
+  if (!formData.title?.trim()) { errors.title = 'Project title is required.'; isValid = false }
+  if (!formData.category?.trim()) { errors.category = 'Category is required.'; isValid = false }
+  if (!isEditMode.value && !selectedFile.value) { errors.image = 'Project thumbnail image is required.'; isValid = false }
+  if (!formData.impact?.trim()) { errors.impact = 'Impact metric dashboard value is required (e.g., +45%).'; isValid = false }
+  if (!formData.impact_label?.trim()) { errors.impact_label = 'Impact metrics context label is required.'; isValid = false }
+  if (!formData.description?.trim() || formData.description.trim().length < 20) { errors.description = 'Brief description should be at least 20 characters long.'; isValid = false }
+  if (!formData.full_story_1?.trim()) { errors.full_story_1 = 'Challenge context description is required.'; isValid = false }
+  if (!formData.full_story_2?.trim()) { errors.full_story_2 = 'Solution / final results description is required.'; isValid = false }
+  if (!techStackInput.value?.trim()) { errors.tech_stack = 'Please include at least one technology asset.'; isValid = false }
   return isValid
 }
 
 const paginatedProjects = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return (projects.value || []).slice(start, end)
+  return (projects.value || []).slice(start, start + itemsPerPage.value)
 })
 
-const totalPages = computed(() => {
-  return Math.ceil(projects.value.length / itemsPerPage.value) || 1
-})
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
-}
+const totalPages = computed(() => Math.ceil(projects.value.length / itemsPerPage.value) || 1)
+const prevPage = () => { if (currentPage.value > 1) currentPage.value-- }
+const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++ }
 
 const fetchProjects = async () => {
   isLoading.value = true
   try {
     const data = await $fetch('/api/projects')
     projects.value = data || []
-
-    if (currentPage.value > totalPages.value) {
-      currentPage.value = totalPages.value
-    }
+    if (currentPage.value > totalPages.value) currentPage.value = totalPages.value
   } catch (e: any) {
     toast.error('Error fetching projects', { description: e.message })
   } finally {
@@ -466,190 +154,101 @@ const fetchProjects = async () => {
   }
 }
 
-const handleFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    const file = target.files[0]
-    selectedFile.value = file
-    imagePreview.value = URL.createObjectURL(file)
-    clearError('image')
-  }
-}
-
 const uploadImage = async (file: File) => {
   const fileExt = file.name.split('.').pop()
-  const fileName = `${Math.random()}.${fileExt}`
-  const filePath = `uploads/${fileName}`
-
-  const { data, error } = await supabase.storage
-    .from('project-assets')
-    .upload(filePath, file)
-
+  const filePath = `uploads/${Math.random()}.${fileExt}`
+  const { error } = await supabase.storage.from('project-assets').upload(filePath, file)
   if (error) throw error
-
-  const { data: publicUrl } = supabase.storage
-    .from('project-assets')
-    .getPublicUrl(filePath)
-
+  const { data: publicUrl } = supabase.storage.from('project-assets').getPublicUrl(filePath)
   return publicUrl.publicUrl
 }
 
 const openModal = (project: any = null) => {
   isEditMode.value = !!project
   clearAllErrors()
-
   if (project) {
     populateForm(project)
-    const details = project.project_details || project;
-    techStackInput.value = details.tech_stack ? details.tech_stack.join(', ') : '';
+    const details = project.project_details || project
+    techStackInput.value = details.tech_stack ? details.tech_stack.join(', ') : ''
   } else {
     resetForm()
-    techStackInput.value = '';
-    formData.icon = 'heroicons:shopping-bag' // Default icon preset selector
+    techStackInput.value = ''
+    formData.icon = 'heroicons:shopping-bag'
   }
-
   isModalOpen.value = true
 }
 
 const saveProject = async () => {
-  // Cegah pemrosesan dan tampilkan peringatan jika validasi lokal mendeteksi field kosong / invalid
   if (!validateProjectForm()) {
     toast.warning('Please complete all fields with valid configurations.')
     return
   }
-
   isSubmitting.value = true
   const toastId = toast.loading('Saving project to vault...')
-
   try {
-    if (selectedFile.value) {
-      formData.image = await uploadImage(selectedFile.value)
-    }
+    if (selectedFile.value) formData.image = await uploadImage(selectedFile.value)
+    const techArray = techStackInput.value.split(',').map(s => s.trim()).filter(s => s !== '')
 
-    const techArray = techStackInput.value
-      .split(',')
-      .map(s => s.trim())
-      .filter(s => s !== '');
-
-    const {
-      category,
-      description,
-      full_story_1,
-      full_story_2,
-      project_details,
-      ...mainFields
-    } = formData
-
-    const mainData = {
-      title: mainFields.title,
-      impact: mainFields.impact,
-      impact_label: mainFields.impact_label,
-      icon: mainFields.icon,
-      image: mainFields.image
-    }
-
-    const detailData = {
-      category,
-      description,
-      tech_stack: techArray,
-      full_story_1,
-      full_story_2
-    }
+    const { category, description, full_story_1, full_story_2, ...mainFields } = formData
+    const mainData = { title: mainFields.title, impact: mainFields.impact, impact_label: mainFields.impact_label, icon: mainFields.icon, image: mainFields.image }
+    const detailData = { category, description, tech_stack: techArray, full_story_1, full_story_2 }
 
     const method = isEditMode.value ? 'PUT' : 'POST'
-    const endpoint = isEditMode.value
-      ? `/api/projects/${formData.id}`
-      : '/api/projects/create'
+    const endpoint = isEditMode.value ? `/api/projects/${formData.id}` : '/api/projects/create'
 
-    await $fetch(endpoint, {
-      method,
-      body: {
-        mainData,
-        detailData
-      }
-    })
-
+    await $fetch(endpoint, { method, body: { mainData, detailData } })
     toast.success(isEditMode.value ? 'Project updated within the vault!' : 'New project successfully published!', { id: toastId })
     isModalOpen.value = false
     await fetchProjects()
   } catch (e: any) {
-    const errorMsg = e.data?.message || e.message || 'Unknown error occurred'
-    toast.error('Failed: ' + errorMsg, { id: toastId })
+    toast.error('Failed: ' + (e.data?.message || e.message), { id: toastId })
   } finally {
     isSubmitting.value = false
   }
 }
 
 const handleDelete = (id: string | number | undefined) => {
-  if (!id) return;
-
+  if (!id) return
   const toastId = toast.custom(() => {
-    return h(
-      'div',
-      { class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' },
-      [
-        h('div', { class: 'flex items-start gap-3' }, [
-          h(IconComponent, {
-            name: 'heroicons:exclamation-triangle-20-solid',
-            class: 'w-5 h-5 text-amber-500 shrink-0 mt-0.5'
-          }),
-          h('div', { class: 'flex flex-col gap-1' }, [
-            h('h3', { class: 'text-sm font-semibold text-zinc-950 dark:text-zinc-50' }, 'Are you sure you want to delete this project?'),
-            h('p', { class: 'text-xs text-zinc-500 dark:text-zinc-400 leading-normal' }, 'This action will permanently delete the data and cannot be undone.')
-          ])
-        ]),
-        h('div', { class: 'flex justify-end gap-2' }, [
-          h('button', {
-            class: 'px-3 py-1.5 text-xs font-medium rounded-md text-zinc-700 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors',
-            onClick: () => toast.dismiss(toastId)
-          }, 'Cancel'),
-          h('button', {
-            class: 'px-3 py-1.5 text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm',
-            onClick: () => {
-              executeDelete(id);
-              toast.dismiss(toastId);
-            }
-          }, 'Delete Now')
+    return h('div', { class: 'p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' }, [
+      h('div', { class: 'flex items-start gap-3' }, [
+        h(IconComponent, { name: 'heroicons:exclamation-triangle-20-solid', class: 'w-5 h-5 text-amber-500 shrink-0 mt-0.5' }),
+        h('div', { class: 'flex flex-col gap-1' }, [
+          h('h3', { class: 'text-sm font-semibold text-zinc-950 dark:text-zinc-50' }, 'Are you sure you want to delete this project?'),
+          h('p', { class: 'text-xs text-zinc-500 dark:text-zinc-400' }, 'This action will permanently delete the data.')
         ])
-      ]
-    )
+      ]),
+      h('div', { class: 'flex justify-end gap-2' }, [
+        h('button', { class: 'px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 dark:bg-zinc-800', onClick: () => toast.dismiss(toastId) }, 'Cancel'),
+        h('button', { class: 'px-3 py-1.5 text-xs font-white bg-red-600 rounded-md text-white', onClick: () => { executeDelete(id); toast.dismiss(toastId) } }, 'Delete Now')
+      ])
+    ])
   }, { duration: Infinity })
 }
 
 const executeDelete = async (id: string | number) => {
-  const deleteToast = toast.loading('Currently deleting...');
+  const deleteToast = toast.loading('Currently deleting...')
   try {
-    const projectToDelete = projects.value.find(p => p.id === id);
-
+    const projectToDelete = projects.value.find(p => p.id === id)
     if (projectToDelete?.image) {
-      const urlParts = projectToDelete.image.split('project-assets/');
-      if (urlParts.length > 1) {
-        const filePath = urlParts[1];
-        await supabase.storage.from('project-assets').remove([filePath]);
-      }
+      const urlParts = projectToDelete.image.split('project-assets/')
+      if (urlParts.length > 1) await supabase.storage.from('project-assets').remove([urlParts[1]])
     }
-
-    await $fetch(`/api/projects/${id}`, { method: 'DELETE' });
-    toast.success('Project successfully deleted', { id: deleteToast });
-    await fetchProjects();
+    await $fetch(`/api/projects/${id}`, { method: 'DELETE' })
+    toast.success('Project successfully deleted', { id: deleteToast })
+    await fetchProjects()
   } catch (e: any) {
-    toast.error('Failed: ' + (e.data?.message || e.message), { id: deleteToast });
+    toast.error('Failed: ' + (e.data?.message || e.message), { id: deleteToast })
   }
 }
 
 const animateValue = (start: number, end: number, duration: number, callback: (val: number) => void) => {
-  if (start === end) {
-    callback(end)
-    return
-  }
+  if (start === end) { callback(end); return }
   const startTime = performance.now()
   const update = (currentTime: number) => {
     const elapsed = currentTime - startTime
     const progress = Math.min(elapsed / duration, 1)
-    const easeProgress = progress * (2 - progress)
-    const currentValue = Math.floor(start + (end - start) * easeProgress)
-    callback(currentValue)
-
+    callback(Math.floor(start + (end - start) * (progress * (2 - progress))))
     if (progress < 1) requestAnimationFrame(update)
     else callback(end)
   }
@@ -657,64 +256,17 @@ const animateValue = (start: number, end: number, duration: number, callback: (v
 }
 
 watch(projects, (newProjects) => {
-  if (newProjects && newProjects.length > 0) {
+  if (newProjects?.length > 0) {
     const targetTotal = newProjects.length
     const targetFeatured = Math.min(newProjects.length, 4)
-    const categories = newProjects.map(p => (p.project_details?.category || 'General').trim().toLowerCase())
-    const targetCategories = new Set(categories).size
-
+    const targetCategories = new Set(newProjects.map(p => (p.project_details?.category || 'General').trim().toLowerCase())).size
     animateValue(0, targetTotal, 1000, (val) => animatedTotal.value = val)
     animateValue(0, targetFeatured, 1000, (val) => animatedFeatured.value = val)
     animateValue(0, targetCategories, 1000, (val) => animatedCategories.value = val)
   } else {
-    animatedTotal.value = 0
-    animatedFeatured.value = 0
-    animatedCategories.value = 0
+    animatedTotal.value = 0; animatedFeatured.value = 0; animatedCategories.value = 0
   }
 }, { deep: true })
 
-const formatIndex = (i: number) => (i + 1).toString().padStart(2, '0')
-
 onMounted(fetchProjects)
 </script>
-
-<style lang="postcss" scoped>
-.label-style {
-  @apply text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500;
-}
-
-.form-input {
-  @apply w-full bg-slate-50 dark:bg-[#16191E]/50 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm font-medium dark:text-white dark:placeholder:text-slate-600;
-}
-
-.icon-btn {
-  @apply p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#16191E] text-slate-400 transition-all hover:scale-110 hover:border-primary/50;
-}
-
-.icon-btn.active {
-  @apply bg-primary border-primary text-white shadow-lg shadow-primary/20;
-}
-
-.th-style {
-  @apply p-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/10 align-middle;
-}
-
-.action-btn {
-  @apply p-2.5 text-slate-300 dark:text-slate-600 rounded-xl transition-all duration-200;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 dark:bg-slate-700 rounded-full;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-</style>

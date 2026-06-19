@@ -32,14 +32,16 @@
         <LayoutAdminTestimonialsTestimonialTable :items="testimonials" :loading="isLoading" @edit="openEditModal"
             @delete="deleteItem" />
 
-        <LayoutAdminTestimonialsTestimonialModal :is-open="isAddModalOpen" :is-edit-mode="isEditMode" :is-submitting="isSubmitting"
-            :form="form" :errors="errors" @close="closeAddModal" @submit="handleCreateTestimonial" />
+        <LayoutAdminTestimonialsTestimonialModal :is-open="isAddModalOpen" :is-edit-mode="isEditMode"
+            :is-submitting="isSubmitting" :form="form" :errors="errors" @close="closeAddModal"
+            @submit="handleCreateTestimonial" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, resolveComponent, h } from 'vue';
 import { toast } from 'vue-sonner';
+import type { Testimonial, TestimonialInsert } from '~~/types';
 
 const BaseButtonComponent = resolveComponent('BaseButton');
 
@@ -52,22 +54,14 @@ useHead({
     title: 'Testimonials Management',
 });
 
-interface TestimonialDB {
-    id?: number;
-    name: string;
-    position: string;
-    comment: string;
-    avatar: string | null;
-    row_placement: number | null;
-}
-
 const isAddModalOpen = ref(false);
 const isSubmitting = ref(false);
 const isEditMode = ref(false);
 const editingId = ref<number | null>(null);
 const isLoading = ref<boolean>(false);
+const testimonials = ref<Testimonial[]>([]);
 
-const form = ref<TestimonialDB>({
+const form = ref<TestimonialInsert>({
     name: '',
     position: '',
     comment: '',
@@ -93,11 +87,15 @@ const openAddModal = () => {
     isAddModalOpen.value = true;
 };
 
-const openEditModal = (item: TestimonialDB) => {
+const openEditModal = (item: Testimonial) => {
     isEditMode.value = true;
     clearErrors();
-    editingId.value = item.id || null;
-    form.value = { ...item };
+    editingId.value = item.id;
+    const { id, created_at, ...rest } = item;
+    form.value = {
+        ...rest,
+        row_placement: item.row_placement ?? 1
+    };
     isAddModalOpen.value = true;
 };
 
@@ -107,22 +105,19 @@ const closeAddModal = () => {
 };
 
 const supabase = useSupabaseClient();
-const testimonials = ref<TestimonialDB[]>([]);
 let realtimeChannel: any = null;
 
 const loadData = async () => {
+    console.log("--- loadData dipanggil, waktu:", new Date().toLocaleTimeString(), "---");
+
+    // Deteksi jika dipanggil terlalu cepat (dalam hitungan milidetik)
+    // Jika dalam 1 detik dipanggil lebih dari 3 kali, hentikan!
     isLoading.value = true;
     try {
-        const { data, error } = await supabase
-            .from('testimonials')
-            .select('id, name, position, comment, avatar, row_placement')
-            .order('id', { ascending: false });
-
-        if (error) throw error;
-        if (data) testimonials.value = data;
+        const data = await $fetch<Testimonial[]>('/api/testimonials');
+        testimonials.value = data;
     } catch (error: any) {
-        console.error('Failed to load dashboard testimonials:', error.message);
-        toast.error('Failed to fetch testimonials data.');
+        toast.error('Failed to fetch testimonials.');
     } finally {
         isLoading.value = false;
     }
@@ -144,13 +139,6 @@ const validateForm = (): boolean => {
         errors.value.comment = 'Testimonial comment cannot be left blank.';
         isValid = false;
     }
-    if (form.value.avatar && form.value.avatar.trim() !== '') {
-        const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
-        if (!urlPattern.test(form.value.avatar)) {
-            errors.value.avatar = 'Please enter a valid URL structure (e.g., https://...)';
-            isValid = false;
-        }
-    }
 
     return isValid;
 };
@@ -162,38 +150,33 @@ const handleCreateTestimonial = async () => {
     }
 
     isSubmitting.value = true;
-    const processingMsg = isEditMode.value ? 'Updating testimonial...' : 'Adding new testimonial...';
-    const toastId = toast.loading(processingMsg);
-
-    const { id, ...payload } = form.value;
+    const toastId = toast.loading(isEditMode.value ? 'Updating...' : 'Adding...');
 
     try {
-        if (isEditMode.value && editingId.value) {
-            const { error } = await supabase
-                .from('testimonials')
-                .update({
-                    name: payload.name,
-                    position: payload.position,
-                    comment: payload.comment,
-                    avatar: payload.avatar || null,
-                    row_placement: payload.row_placement
-                })
-                .eq('id', editingId.value);
+        // Gunakan pola endpoint yang sama
+        const method = isEditMode.value ? 'PUT' : 'POST';
+        const endpoint = isEditMode.value ? `/api/testimonials/${editingId.value}` : '/api/testimonials';
 
-            if (error) throw error;
-            toast.success('Testimonial updated successfully!', { id: toastId });
+        const response = await $fetch<any>(endpoint, {
+            method: method,
+            body: form.value,
+            // PENTING: Kirim cookie agar server bisa validasi session Admin
+            headers: useRequestHeaders(['cookie']) as Record<string, string>
+        });
+
+        // Cek flag success dari server
+        if (response?.success) {
+            toast.success(isEditMode.value ? 'Updated!' : 'Added!', { id: toastId });
+            closeAddModal();
+            await loadData();
         } else {
-            const { error } = await supabase
-                .from('testimonials')
-                .insert([payload]);
-
-            if (error) throw error;
-            toast.success('New testimonial added successfully!', { id: toastId });
+            throw new Error('Failed to save data');
         }
-        closeAddModal();
-    } catch (e: any) {
-        console.error('Operation failed:', e);
-        toast.error(e.message || 'An error occurred while saving.', { id: toastId });
+
+    } catch (error: any) {
+        console.error('Operation failed:', error);
+        const msg = error.data?.statusMessage || 'An error occurred.';
+        toast.error(msg, { id: toastId });
     } finally {
         isSubmitting.value = false;
     }
@@ -242,14 +225,12 @@ const deleteItem = (id: number, name: string) => {
 };
 
 const executeDelete = async (id: number, name: string) => {
-    const toastId = toast.loading(`Deleting testimonial from ${name}...`);
     try {
-        const { error } = await supabase.from('testimonials').delete().eq('id', id);
-        if (error) throw error;
-        toast.success('Testimonial deleted successfully from the system.', { id: toastId });
-    } catch (error: any) {
-        console.error('Delete testimonial failed:', error);
-        toast.error(error.message || 'Failed to delete the testimonial.', { id: toastId });
+        await $fetch(`/api/testimonials/${id}`, { method: 'DELETE' });
+        toast.success('Deleted successfully');
+        loadData(); // Refresh data
+    } catch (error) {
+        toast.error('Delete failed');
     }
 };
 
@@ -258,7 +239,7 @@ onMounted(async () => {
     if (!import.meta.client) return;
     realtimeChannel = supabase
         .channel('dashboard:testimonials')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'testimonials' }, () => { loadData(); })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'testimonials' }, () => { loadData(); })
         .subscribe();
 });
 

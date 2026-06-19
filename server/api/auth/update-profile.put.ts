@@ -1,6 +1,6 @@
 // server/api/auth/update-profile.put.ts
 import { defineEventHandler, readBody, createError, getCookie } from "h3";
-import { jwtVerify, JWTPayload } from "jose";
+import { jwtVerify, type JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import bcrypt from "bcryptjs";
 

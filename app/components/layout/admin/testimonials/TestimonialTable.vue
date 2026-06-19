@@ -1,24 +1,3 @@
-<script setup lang="ts">
-interface TestimonialDB {
-  id?: number;
-  name: string;
-  position: string;
-  comment: string;
-  avatar: string | null;
-  row_placement: number | null;
-}
-
-defineProps<{
-  items: TestimonialDB[]
-  loading: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'edit', item: TestimonialDB): void
-  (e: 'delete', id: number, name: string): void
-}>()
-</script>
-
 <template>
   <div class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
     <div class="overflow-x-auto">
@@ -59,7 +38,7 @@ const emit = defineEmits<{
             <td class="px-4 py-3 pl-6 border-b border-slate-100/80 dark:border-white/5">
               <div class="flex justify-start items-center gap-3">
                 <div class="w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/60 dark:border-white/10 shadow-sm">
-                  <img :src="item.avatar ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'" class="w-full h-full object-cover" :alt="item.name" />
+                  <img :src="item.avatar ?? '/avatardefault_92824.webp'" class="w-full h-full object-cover" :alt="item.name" />
                 </div>
                 <div class="truncate">
                   <h4 class="text-[13px] font-bold text-slate-800 dark:text-slate-200 tracking-tight uppercase leading-tight truncate">
@@ -105,3 +84,13 @@ const emit = defineEmits<{
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { Testimonial } from '~~/types';
+
+defineProps<{
+  items: Testimonial[]
+  loading: boolean
+}>()
+const emit = defineEmits(['edit', 'delete'])
+</script>

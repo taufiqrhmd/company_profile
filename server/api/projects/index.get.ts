@@ -1,7 +1,7 @@
 // server/api/projects/index.get.ts
 import { useServerSupabase } from "~~/server/utils/supabase";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   const client = useServerSupabase();
   const { data, error } = await client
     .from("projects")
