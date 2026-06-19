@@ -1,5 +1,5 @@
 <template>
-  <section ref="sectionRef"
+  <section id="services" ref="sectionRef"
     class="relative py-16 md:py-24 px-4 md:px-6 bg-soft dark:bg-[#050505] transition-colors duration-500 overflow-hidden">
     <div class="container max-w-7xl mx-auto">
 

@@ -2,9 +2,7 @@
   <div class="relative overflow-visible">
     <SectionsHero />
 
-    <section id="services" class="relative">
-      <SectionsExpertise />
-    </section>
+    <SectionsExpertise />
 
     <SectionsValueProposition />
     <SectionsOurStory />
@@ -18,4 +16,3 @@
     <LayoutFooter />
   </div>
 </template>
-

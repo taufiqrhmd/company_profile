@@ -65,7 +65,8 @@ const currentAdminId = computed(() => adminUser.value?.id || '')
 const form = reactive({
   full_name: '',
   username: '',
-  role: 'editor'
+  role: 'editor',
+  password: '',
 })
 
 const openAddModal = () => {
@@ -74,6 +75,7 @@ const openAddModal = () => {
   form.full_name = ''
   form.username = ''
   form.role = 'editor'
+  form.password = ''
   showModal.value = true
 }
 
@@ -109,13 +111,21 @@ const handleSubmit = async (localFormPayload: any) => {
   const processingMsg = isEditMode.value ? 'Updating account data...' : 'Processing account registration...'
   const toastId = toast.loading(processingMsg)
 
+  // 1. Buat salinan payload agar bisa kita modifikasi
+  const payload = { ...localFormPayload };
+  
+  // 2. Jika edit mode dan password kosong, jangan kirim field password agar tidak di-update
+  if (isEditMode.value && (!payload.password || payload.password.trim() === '')) {
+    delete payload.password;
+  }
+
   try {
     const method = isEditMode.value ? 'PUT' : 'POST'
     const endpoint = isEditMode.value ? `/api/admin_accounts?id=${targetAccountId.value}` : '/api/admin_accounts'
 
     const response = await $fetch<any>(endpoint, {
       method: method,
-      body: localFormPayload,
+      body: payload, 
       headers: useRequestHeaders(['cookie']) as Record<string, string>
     })
 

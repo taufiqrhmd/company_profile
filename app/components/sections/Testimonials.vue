@@ -74,7 +74,7 @@
 
               <div class="flex items-center gap-4 mt-6 pt-4 border-t border-dark/5 dark:border-white/5">
                 <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden bg-dark shrink-0">
-                  <img :src="review.avatar ?? ''" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
+                  <img :src="review.avatar ?? '/avatardefault_92824.webp'" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
                 </div>
                 <div>
                   <h4 class="text-sm md:text-base font-black text-dark dark:text-soft uppercase tracking-tight">

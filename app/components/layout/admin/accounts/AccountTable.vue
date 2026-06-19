@@ -2,7 +2,7 @@
     <div
         class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
         <div class="overflow-x-auto">
-            <table class="w-full border-separate border-spacing-0 text-left table-auto">
+            <table class="w-full border-separate border-spacing-0">
                 <thead>
                     <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
                         <th class="th-style text-center w-12 px-4 py-3.5">No</th>
@@ -72,13 +72,13 @@
                                     <button @click="$emit('edit', user)"
                                         class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-primary hover:bg-amber-50 dark:hover:bg-amber-500/10 border border-transparent hover:border-amber-100 dark:hover:border-amber-500/20 transition-all duration-300"
                                         title="Edit Akun Anggota">
-                                        <Icon name="solar:pen-bold" class="w-4 h-4" />
+                                        <Icon name="solar:pen-new-square-bold" class="w-6 h-6" />
                                     </button>
 
                                     <button @click="$emit('delete', user)"
                                         class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 border border-transparent hover:border-red-100 dark:hover:border-red-500/20 transition-all duration-300"
                                         title="Hapus Akun">
-                                        <Icon name="solar:trash-bin-trash-bold" class="w-4 h-4" />
+                                        <Icon name="solar:trash-bin-trash-bold" class="w-6 h-6" />
                                     </button>
                                 </template>
 

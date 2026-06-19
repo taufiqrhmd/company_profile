@@ -1,7 +1,6 @@
 import { defineEventHandler, readBody, createError, getCookie } from "h3";
 import { jwtVerify, type JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
-import bcrypt from "bcryptjs";
 
 interface AdminPayload extends JWTPayload {
   id: string;
@@ -30,15 +29,11 @@ export default defineEventHandler(async (event) => {
 
     const client = serverSupabaseServiceRole(event);
 
-    // Enkripsi password menggunakan bcryptjs (menyamakan standar API update profile Anda)
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const { data: newAccount, error } = await client
       .from("admin_accounts")
       .insert({
         username,
-        password: hashedPassword,
+        password: password,
         full_name,
         role
       })
@@ -48,7 +43,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       // Handle jika username duplikat (Postgres Error Code 23505)
       if (error.code === "23505") {
-        throw createError({ statusCode: 400, statusMessage: "Username sudah digunakan." });
+        throw createError({ statusCode: 400, statusMessage: "Username already exists." });
       }
       throw error;
     }

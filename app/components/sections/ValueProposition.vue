@@ -16,7 +16,7 @@
           </h2>
           
           <p class="text-sm md:text-base text-slate-500 dark:text-neutral-400 leading-relaxed">
-            Kami tidak hanya membangun baris kode, kami menciptakan aset digital yang dirancang khusus untuk mendorong pertumbuhan efisiensi dan skalabilitas bisnis Anda dalam jangka panjang.
+            We don't just build lines of code, we create digital assets specifically designed to drive long-term growth in your business' efficiency and scalability.
           </p>
         </div>
 
@@ -58,22 +58,22 @@ const features = [
   {
     icon: 'solar:ticker-star-bold',
     title: 'High-Fidelity Engineering',
-    description: 'Setiap sistem dikembangkan dengan standard arsitektur clean-code menggunakan framework modern (Vue/Nuxt, TypeSafe) untuk performa super cepat, aman, dan mudah dikembangkan di masa depan.'
+    description: 'Every system is developed with a clean-code architecture using modern frameworks (Vue/Nuxt, TypeSafe) for super-fast performance, security, and ease of future development.'
   },
   {
     icon: 'solar:users-group-rounded-bold',
     title: 'User-Centric UI/UX Design',
-    description: 'Kami memastikan produk Anda tidak hanya canggih secara sistem, tetapi juga memiliki antarmuka yang intuitif, premium, dan memberikan kenyamanan maksimal bagi pengguna akhir.'
+    description: 'We ensure your product is not only technologically advanced but also features an intuitive, premium interface that provides maximum comfort for end users.'
   },
   {
     icon: 'solar:shield-check-bold',
-    title: 'Transparan & Tepat Waktu',
-    description: 'Manajemen proyek yang terstruktur dengan pelaporan berkala melalui platform tracking. Anda tahu persis progres baris fitur Anda tanpa ada biaya tersembunyi.'
+    title: 'Transparent & On-Time Delivery',
+    description: 'Structured project management with regular reporting through a tracking platform. You know exactly the progress of your feature development without any hidden costs.'
   },
   {
     icon: 'solar:chat-square-call-bold',
     title: 'Lifetime Support & Maintenance',
-    description: 'Kemitraan kami tidak selesai setelah serah terima aplikasi. Kami menyediakan jaminan monitoring performa, penanganan bug, hingga konsultasi kelanjutan sistem.'
+    description: 'Our partnership doesn\'t end after application handover. We provide performance monitoring guarantees, bug handling, and ongoing system consultation.'
   }
 ];
 

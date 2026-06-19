@@ -101,6 +101,8 @@ const handleLogin = async (): Promise<void> => {
         description: `Welcome back, ${response.user.full_name}!`
       })
 
+      await new Promise(resolve => setTimeout(resolve, 800))
+
       const userRole = response.user.role
       console.log(`Navigating based on role: ${userRole}`)
 

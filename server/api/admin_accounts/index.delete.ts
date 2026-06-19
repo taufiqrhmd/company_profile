@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
     // PROTEKSI EXTRA: Mencegah super_admin tidak sengaja menghapus dirinya sendiri
     if (payload.id === id) {
-      throw createError({ statusCode: 400, statusMessage: "Anda tidak bisa menghapus akun Anda sendiri!" });
+      throw createError({ statusCode: 400, statusMessage: "You cannot delete your own account." });
     }
 
     const client = serverSupabaseServiceRole(event);
