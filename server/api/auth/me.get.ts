@@ -1,5 +1,5 @@
 // server/api/auth/me.get.ts
-import { jwtVerify, JWTPayload } from "jose";
+import { jwtVerify, type JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
 
 interface AdminPayload extends JWTPayload {

@@ -3,24 +3,13 @@ import { createClient } from "@supabase/supabase-js";
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const body = await readBody(event);
-  const token = getCookie(event, "auth_token");
 
-  // 1. Validasi: Cek apakah user punya session/token admin
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized: No admin session found",
-    });
-  }
-
-  // 2. Inisialisasi Supabase Admin (Bypass RLS)
   const supabaseAdmin = createClient(
     config.public.supabaseUrl as string,
-    config.supabaseServiceKey as string, // Gunakan service key agar RLS di-bypass
+    config.supabaseServiceKey as string,
   );
 
   try {
-    // 3. Insert ke tabel testimonials
     const { data, error } = await supabaseAdmin
       .from("testimonials")
       .insert({
@@ -30,11 +19,14 @@ export default defineEventHandler(async (event) => {
         avatar: body.avatar || null,
         row_placement: body.row_placement || 1
       })
-      .select()
-      .single();
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase Error:", error);
+      throw error; // Lempar ke blok catch
+    }
 
+    console.log("Insert Sukses:", data);
     return { success: true, data };
     
   } catch (error: unknown) {

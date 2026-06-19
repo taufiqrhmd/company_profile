@@ -22,9 +22,10 @@
           </div>
 
           <div class="flex items-center gap-3 lg:gap-6">
-            <button @click="toggleColorMode()"
+            <button v-if="mounted" @click="toggleColorMode()"
               class="group relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-[#16191E]"
               aria-label="Toggle Color Mode">
+
               <div class="absolute inset-0 flex items-center justify-between px-1.5 text-slate-400/50">
                 <Icon name="heroicons:sun-20-solid" class="w-3 h-3" />
                 <Icon name="heroicons:moon-20-solid" class="w-3 h-3" />
@@ -60,7 +61,7 @@
         </div>
       </main>
 
-      <LayoutAdminProfileModal v-model="isProfileOpen" :user="adminUser" @submit="handleProfileUpdate"/>
+      <LayoutAdminProfileModal v-model="isProfileOpen" :user="adminUser" @submit="handleProfileUpdate" />
     </div>
   </div>
 </template>
@@ -71,6 +72,7 @@ import { Toaster, toast } from 'vue-sonner'
 const route = useRoute()
 const colorMode = useColorMode()
 const token = useCookie('auth_token')
+const mounted = ref(false)
 
 interface AdminUser {
   full_name: string;
@@ -139,6 +141,10 @@ await callOnce(async () => {
     }
   }
 })
+
+onMounted(() => {
+  mounted.value = true;
+});
 </script>
 
 <style scoped>
