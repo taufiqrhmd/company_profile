@@ -1,17 +1,17 @@
 <template>
   <div class="bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm transition-colors duration-300">
     <div class="overflow-x-auto">
-      <table class="w-full border-separate border-spacing-0 text-left table-auto">
+      <table class="w-full border-separate border-spacing-0">
         <thead>
-          <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-            <th class="px-4 py-3.5 text-center w-12">No</th>
-            <th class="px-4 py-3.5 pl-6">Client Info</th>
-            <th class="px-4 py-3.5">Comment</th>
-            <th class="px-4 py-3.5 text-center w-40">Track Row</th>
-            <th class="px-4 py-3.5 text-center w-44">Action Management</th>
+          <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
+            <th class="th-style text-center w-16">No</th>
+            <th class="th-style pl-6">Client Info</th>
+            <th class="th-style">Comment</th>
+            <th class="th-style text-center w-40">Track Row</th>
+            <th class="th-style text-center w-44">Action Management</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300 text-sm">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
           
           <tr v-if="loading">
             <td colspan="5" class="px-4 py-12 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">
@@ -68,12 +68,12 @@
 
             <td class="px-4 py-3 border-b border-slate-100/80 dark:border-white/5">
               <div class="flex justify-center gap-1.5">
-                <button @click="emit('edit', item)" class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-primary hover:bg-amber-50 dark:hover:bg-amber-500/10 border border-transparent hover:border-amber-100 dark:hover:border-amber-500/20 transition-all duration-300" title="Edit Testimonial">
-                  <Icon name="solar:pen-bold" class="w-4 h-4" />
+                <button @click="emit('edit', item)" class="action-btn group/btn hover:bg-primary/5" title="Edit Testimonial">
+                  <Icon name="solar:pen-new-square-bold" class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-primary" />
                 </button>
 
-                <button @click="emit('delete', item.id!, item.name)" class="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 border border-transparent hover:border-red-100 dark:hover:border-red-500/20 transition-all duration-300" title="Delete Testimonial">
-                  <Icon name="solar:trash-bin-trash-bold" class="w-4 h-4" />
+                <button @click="emit('delete', item.id!, item.name)" class="action-btn group/btn hover:bg-red-50 dark:hover:bg-red-500/10" title="Delete Testimonial">
+                  <Icon name="solar:trash-bin-trash-bold" class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-red-500" />
                 </button>
               </div>
             </td>
@@ -94,3 +94,13 @@ defineProps<{
 }>()
 const emit = defineEmits(['edit', 'delete'])
 </script>
+
+<style lang="postcss" scoped>
+.th-style {
+    @apply p-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-white/10 align-middle;
+}
+
+.action-btn {
+    @apply p-2.5 text-slate-300 dark:text-slate-600 rounded-xl transition-all duration-200;
+}
+</style>

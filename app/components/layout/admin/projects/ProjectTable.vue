@@ -4,15 +4,15 @@
         <div class="overflow-x-auto">
             <table class="w-full border-separate border-spacing-0">
                 <thead>
-                    <tr class="bg-slate-50/50 dark:bg-slate-900/50">
+                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
                         <th class="th-style text-center w-16">No</th>
                         <th class="th-style">Asset & Project Name</th>
                         <th class="th-style text-center">Category</th>
                         <th class="th-style text-center">Impact Metric</th>
-                        <th class="th-style text-right">Action</th>
+                        <th class="th-style text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
                     <tr v-if="loading">
                         <td colspan="5"
                             class="p-10 text-center text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-600">
@@ -79,8 +79,8 @@
                             </div>
                         </td>
 
-                        <td class="p-6 pr-4 text-right">
-                            <div class="flex justify-end gap-1">
+                        <td class="p-6 pr-4 text-center">
+                            <div class="flex justify-center gap-1">
                                 <button @click="$emit('edit', project)" class="action-btn group/btn hover:bg-primary/5">
                                     <Icon name="solar:pen-new-square-bold"
                                         class="w-6 h-6 transition-colors duration-200 group-hover/btn:text-primary" />

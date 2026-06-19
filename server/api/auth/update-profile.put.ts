@@ -2,7 +2,6 @@
 import { defineEventHandler, readBody, createError, getCookie } from "h3";
 import { jwtVerify, type JWTPayload } from "jose";
 import { serverSupabaseServiceRole } from "#supabase/server";
-import bcrypt from "bcryptjs";
 
 interface AdminPayload extends JWTPayload {
   id: string;
@@ -33,7 +32,7 @@ export default defineEventHandler(async (event) => {
     const { payload } = (await jwtVerify(token, secret)) as {
       payload: AdminPayload;
     };
-    
+
     adminId = payload.id;
   } catch (e) {
     throw createError({
@@ -53,9 +52,7 @@ export default defineEventHandler(async (event) => {
 
     // Jika user mengisi password baru, enkripsi dulu menggunakan bcryptjs
     if (password && password.trim() !== "") {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      updateData.password = hashedPassword;
+      updateData.password = password;
     }
 
     // 5. Eksekusi update data ke database Supabase berdasarkan id dari JWT payload
@@ -80,7 +77,6 @@ export default defineEventHandler(async (event) => {
       message: "Profile updated successfully",
       data: updatedUser,
     };
-
   } catch (error: any) {
     console.error("Server Internal Error:", error);
     throw createError({

@@ -1,7 +1,6 @@
 // server/api/auth/login.post.ts
 import { serverSupabaseServiceRole } from "#supabase/server";
 import { SignJWT } from "jose";
-import bcrypt from "bcryptjs";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -21,11 +20,24 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Gunakan bcryptjs untuk membandingkan password ter-hash
-  const isPasswordValid = await bcrypt.compare(body.password, user.password);
+  console.log("Input Password:", body.password);
+  console.log("Stored Hash:", user.password);
 
-  if (!isPasswordValid) {
-    throw createError({ statusCode: 401, statusMessage: "Invalid Password" });
+  // Gunakan bcryptjs untuk membandingkan password ter-hash
+  const { data: isPasswordValid, error: rpcError } = await client.rpc(
+    "verify_password",
+    {
+      p_username: body.username,
+      p_password: body.password,
+    },
+  );
+  console.log("Is Valid:", isPasswordValid);
+
+  if (rpcError || !isPasswordValid) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Invalid Password",
+    });
   }
 
   const jwtSecret = config.jwtSecret;

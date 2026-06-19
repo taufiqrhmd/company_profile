@@ -91,7 +91,8 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Expertise', path: '#services' },
   { name: 'Case Studies', path: '#portfolio' },
-  { name: 'Our Story', path: '#about' }
+  { name: 'Our Story', path: '#about' },
+  { name: 'Testimonials', path: '#testimonials'}
 ];
 
 onMounted(() => {

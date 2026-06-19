@@ -54,11 +54,36 @@ CREATE TABLE IF NOT EXISTS public.admin_accounts (
     role TEXT DEFAULT 'staff'
 );
 
+CREATE OR REPLACE FUNCTION hash_admin_password()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Enkripsi password secara otomatis saat INSERT atau UPDATE
+  IF (TG_OP = 'INSERT') OR (OLD.password IS DISTINCT FROM NEW.password) THEN
+    NEW.password := crypt(NEW.password, gen_salt('bf'));
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_hash_admin_password
+BEFORE INSERT OR UPDATE ON admin_accounts
+FOR EACH ROW EXECUTE FUNCTION hash_admin_password();
+
+CREATE OR REPLACE FUNCTION verify_password(p_username text, p_password text)
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM admin_accounts 
+    WHERE username = p_username AND password = crypt(p_password, password)
+  );
+END;
+$$ LANGUAGE plpgsql;
+
 -- Example Data Admin (role must super_admin or creator)
 INSERT INTO public.admin_accounts (username, password, full_name, role)
 VALUES (
     'admin', 
-    crypt('password123', gen_salt('bf')), -- Menghasilkan hash Bcrypt aman langsung di database
+    'password123', -- Kirim plaintext, Trigger akan otomatis men-hash-nya
     'Main Superadmin', 
     'super_admin'
 )
