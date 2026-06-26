@@ -16,7 +16,6 @@ export default defineEventHandler(async (event) => {
         name: body.name,
         position: body.position,
         comment: body.comment,
-        avatar: body.avatar || null,
         row_placement: body.row_placement || 1
       })
       .select();

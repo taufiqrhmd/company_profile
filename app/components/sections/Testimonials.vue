@@ -36,8 +36,8 @@
               </div>
 
               <div class="flex items-center gap-4 mt-6 pt-4 border-t border-dark/5 dark:border-white/5">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden bg-dark shrink-0">
-                  <img :src="review.avatar ?? ''" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden shrink-0">
+                  <img :src="'/avatardefault_92824.webp'" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
                 </div>
                 <div>
                   <h4 class="text-sm md:text-base font-black text-dark dark:text-soft uppercase tracking-tight">
@@ -74,7 +74,7 @@
 
               <div class="flex items-center gap-4 mt-6 pt-4 border-t border-dark/5 dark:border-white/5">
                 <div class="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden bg-dark shrink-0">
-                  <img :src="review.avatar ?? '/avatardefault_92824.webp'" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
+                  <img :src="'/avatardefault_92824.webp'" class="w-full h-full object-cover" loading="lazy" :alt="review.name" />
                 </div>
                 <div>
                   <h4 class="text-sm md:text-base font-black text-dark dark:text-soft uppercase tracking-tight">
@@ -103,7 +103,6 @@ interface Testimonial {
   name: string;
   position: string;
   comment: string;
-  avatar: string | null;
   row_placement: number | null;
 }
 
@@ -117,7 +116,7 @@ let testimonialChannel: any = null;
 const fetchTestimonials = async () => {
   const { data, error } = await supabase
     .from('testimonials')
-    .select('name, position, comment, avatar, row_placement') 
+    .select('name, position, comment, row_placement') 
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -187,15 +186,18 @@ onUnmounted(() => {
   overflow: hidden;
   width: 100%;
 }
+
 .marquee-track {
   display: flex;
   width: max-content;
 }
+
 .marquee-content {
-  animation-duration: 35s;
+  animation-duration: 60s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
+
 .marquee-left .marquee-content { animation-name: scrollLeft; }
 .marquee-right .marquee-content { animation-name: scrollRight; }
 .marquee-track:hover .marquee-content { animation-play-state: paused; }
