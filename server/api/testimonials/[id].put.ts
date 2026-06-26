@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
       name: body.name,
       position: body.position,
       comment: body.comment,
-      avatar: body.avatar || null, // Memastikan null jika string kosong
       row_placement: body.row_placement || 1
     })
     .eq('id', id);

@@ -65,7 +65,6 @@ const form = ref<TestimonialInsert>({
     name: '',
     position: '',
     comment: '',
-    avatar: '',
     row_placement: 1
 });
 
@@ -83,7 +82,7 @@ const clearErrors = () => {
 const openAddModal = () => {
     isEditMode.value = false;
     clearErrors();
-    form.value = { name: '', position: '', comment: '', avatar: '', row_placement: 1 };
+    form.value = { name: '', position: '', comment: '',  row_placement: 1 };
     isAddModalOpen.value = true;
 };
 

@@ -144,7 +144,6 @@ CREATE TABLE IF NOT EXISTS public.testimonials (
     name TEXT NOT NULL,
     position TEXT NOT NULL,
     comment TEXT NOT NULL,
-    avatar TEXT DEFAULT 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'::text,
     row_placement INT DEFAULT 1 
 );
 
