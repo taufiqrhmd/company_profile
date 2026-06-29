@@ -83,6 +83,7 @@ const IconComponent = resolveComponent('Icon')
 
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
+const { animateValue } = useAnimatedCounter()
 const animatedTotal = ref(0)
 const animatedFeatured = ref(0)
 const animatedCategories = ref(0)
@@ -242,29 +243,20 @@ const executeDelete = async (id: string | number) => {
   }
 }
 
-const animateValue = (start: number, end: number, duration: number, callback: (val: number) => void) => {
-  if (start === end) { callback(end); return }
-  const startTime = performance.now()
-  const update = (currentTime: number) => {
-    const elapsed = currentTime - startTime
-    const progress = Math.min(elapsed / duration, 1)
-    callback(Math.floor(start + (end - start) * (progress * (2 - progress))))
-    if (progress < 1) requestAnimationFrame(update)
-    else callback(end)
-  }
-  requestAnimationFrame(update)
-}
-
 watch(projects, (newProjects) => {
-  if (newProjects?.length > 0) {
+  if (newProjects && newProjects.length > 0) {
     const targetTotal = newProjects.length
-    const targetFeatured = Math.min(newProjects.length, 4)
+    const targetFeatured = Math.min(newProjects.length, 4) // Asumsi max 4 di dashboard
     const targetCategories = new Set(newProjects.map(p => (p.project_details?.category || 'General').trim().toLowerCase())).size
-    animateValue(0, targetTotal, 1000, (val) => animatedTotal.value = val)
-    animateValue(0, targetFeatured, 1000, (val) => animatedFeatured.value = val)
-    animateValue(0, targetCategories, 1000, (val) => animatedCategories.value = val)
+
+    // Jalankan animasi
+    animateValue(0, targetTotal, 1200, (val) => animatedTotal.value = val)
+    animateValue(0, targetFeatured, 1200, (val) => animatedFeatured.value = val)
+    animateValue(0, targetCategories, 1200, (val) => animatedCategories.value = val)
   } else {
-    animatedTotal.value = 0; animatedFeatured.value = 0; animatedCategories.value = 0
+    animatedTotal.value = 0
+    animatedFeatured.value = 0
+    animatedCategories.value = 0
   }
 }, { deep: true })
 

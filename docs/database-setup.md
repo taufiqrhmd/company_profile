@@ -100,6 +100,14 @@ CREATE TABLE IF NOT EXISTS public.inquiries (
     status TEXT DEFAULT 'pending'
 );
 
+-- [TABEL: daily_traffic_stats]
+CREATE TABLE public.daily_traffic_stats (
+  visit_date DATE DEFAULT current_date,
+  page_path TEXT NOT NULL,
+  visit_count BIGINT DEFAULT 0,
+  PRIMARY KEY(visit_date, page_path)
+);
+
 -- [TABEL: projects]
 CREATE TABLE IF NOT EXISTS public.projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -177,6 +185,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Fungsi untuk menambah hitungan (Increment)
+CREATE OR REPLACE FUNCTION public.increment_page_visit(path_to_log text)
+RETURNS void 
+LANGUAGE plpgsql
+SECURITY definer
+AS $$
+BEGIN
+  -- LOGIKA FILTER: Jika path dimulai dengan /admin, abaikan
+  IF path_to_log LIKE '/admin%' THEN
+    RETURN;
+  END IF;
+
+  INSERT INTO public.daily_traffic_stats (visit_date, page_path, visit_count)
+  VALUES (current_date, path_to_log, 1)
+  ON conflict (visit_date, page_path) 
+  do UPDATE SET visit_count = daily_traffic_stats.visit_count + 1;
+END;
+$$;
+
+-- Agar anonymous user bisa menjalankan fungsi
+GRANT EXECUTE ON FUNCTION public.increment_page_visit(text) TO anon;
+GRANT EXECUTE ON FUNCTION public.increment_page_visit(text) TO authenticated;
+
 -- ========================================================================
 -- 5. AKTIFKAN ROW LEVEL SECURITY (RLS)
 -- ========================================================================
@@ -186,6 +217,7 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_details ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.daily_traffic_stats ENABLE ROW LEVEL SECURITY;
 
 -- ========================================================================
 -- 6. INJEKSI KEBIJAKAN KEAMANAN (RLS POLICIES)

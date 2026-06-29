@@ -90,8 +90,8 @@ const route = useRoute();
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Expertise', path: '#services' },
-  { name: 'Case Studies', path: '#portfolio' },
   { name: 'Our Story', path: '#about' },
+  { name: 'Case Studies', path: '#portfolio' },
   { name: 'Testimonials', path: '#testimonials'}
 ];
 

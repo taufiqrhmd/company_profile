@@ -50,84 +50,8 @@
       <div v-for="i in 3" :key="i" class="h-64 bg-slate-100 dark:bg-[#16191E] rounded-[2.5rem]"></div>
     </div>
 
-    <Teleport to="body">
-      <Transition name="fade">
-        <div v-if="isEditModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-slate-900/60 dark:bg-black/90 backdrop-blur-md"
-            @click="isEditModalOpen = false"></div>
-
-          <div
-            class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-xl max-w-lg w-full shadow-2xl">
-            <div class="flex justify-between items-center mb-8">
-              <h3 class="text-slate-900 dark:text-white font-black uppercase italic text-2xl tracking-tighter">
-                Update <span class="text-primary">Service</span>
-              </h3>
-              <button @click="isEditModalOpen = false" class="text-black hover:text-slate-400">
-                <Icon name="solar:close-circle-linear" class="w-6 h-6" />
-              </button>
-            </div>
-
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <label
-                  class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Service
-                  Title</label>
-                <input v-model="editForm.title"
-                  class="w-full bg-slate-50 dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
-              </div>
-
-              <div class="space-y-3">
-                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">
-                  Select Icon
-                </label>
-
-                <div
-                  class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-[#16191E] rounded-2xl border border-slate-200 dark:border-white/10">
-                  <div
-                    class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-black shadow-lg shadow-primary/20">
-                    <Icon :name="editForm.icon || 'solar:Settings-linear'" class="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p class="text-xs font-bold text-slate-900 dark:text-white">{{ editForm.icon }}</p>
-                    <p class="text-[10px] text-slate-500">Ikon yang terpilih saat ini</p>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-5 gap-2 mt-2 max-h-40 overflow-y-auto p-1 custom-scrollbar">
-                  <button v-for="iconName in availableIcons" :key="iconName" @click="editForm.icon = iconName"
-                    type="button" :class="[
-                      'p-3 rounded-xl flex items-center justify-center transition-all border',
-                      editForm.icon === iconName
-                        ? 'bg-primary/10 border-primary text-primary'
-                        : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-400 hover:border-primary/50'
-                    ]">
-                    <Icon :name="iconName" class="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <label
-                  class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">Description</label>
-                <textarea v-model="editForm.description" rows="4"
-                  class="w-full bg-slate-50 dark:bg-[#16191E] border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm text-slate-600 dark:text-slate-400 focus:ring-2 focus:ring-primary/50 outline-none resize-none transition-all"></textarea>
-              </div>
-            </div>
-
-            <div class="flex gap-4 mt-10">
-              <BaseButton variant="outline" size="md" rounded="xl" class="flex-1" @click="isEditModalOpen = false">
-                Cancel
-              </BaseButton>
-
-              <BaseButton variant="primary" size="md" rounded="xl" class="flex-3" :loading="isUpdating"
-                @click="handleUpdate">
-                Save Changes
-              </BaseButton>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <LayoutAdminServicesEditServiceModal v-model="editForm" :is-open="isEditModalOpen" :available-icons="availableIcons"
+      :is-updating="isUpdating" @close="isEditModalOpen = false" @update="handleUpdate" />
   </div>
 </template>
 

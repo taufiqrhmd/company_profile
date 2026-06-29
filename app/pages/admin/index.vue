@@ -89,7 +89,7 @@
         </div>
 
         <div class="w-full overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-white/10">
-          <div class="h-[320px] min-w-[1000px] lg:min-w-full">
+          <div class="h-[320px] min-w-[1000px] lg:min-w-full relative">
             <ClientOnly v-if="loaded">
               <apexchart width="100%" height="100%" type="area" :options="chartOptions" :series="chartSeries" />
             </ClientOnly>
@@ -144,7 +144,7 @@
 
 <script lang="ts" setup>
 import { onUnmounted, onMounted, computed, ref } from 'vue'
-import { useTransition, TransitionPresets } from '@vueuse/core'
+import { useTransition, TransitionPresets, useDebounceFn } from '@vueuse/core'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { toast } from 'vue-sonner'
 
@@ -153,7 +153,7 @@ useHead({ title: 'Dashboard' })
 
 const supabase = useSupabaseClient()
 const { rawStats, fetchDashboardData } = useAdminDashboard()
-const { chartSeries, chartOptions } = useAdminChart()
+const { chartSeries, chartOptions, fetchChartData } = useAdminChart()
 const loaded = ref(false)
 const refreshing = ref(false)
 
@@ -232,8 +232,11 @@ const handleManualRefresh = async () => {
   try {
     const toastId = toast.loading('Saving changes...')
     // Panggil ulang repositori data dashboard
-    await fetchDashboardData()
-    
+    await Promise.all([
+      fetchDashboardData(),
+      fetchChartData()
+    ])
+
     // Sinkronkan ulang data historis mini sparkline ekor terakhir
     const targetSeries = miniChartSeries.value[0]
     if (targetSeries && baseEngagement.value > 0) {
@@ -241,7 +244,7 @@ const handleManualRefresh = async () => {
       currentData[currentData.length - 1] = Number(baseEngagement.value.toFixed(1))
       targetSeries.data = currentData
     }
-    
+
     toast.success('Metrics successfully updated', { id: toastId })
   } catch (error) {
     console.error('Manual refresh failed:', error)
@@ -251,6 +254,10 @@ const handleManualRefresh = async () => {
   }
 }
 
+const debouncedFetch = useDebounceFn(() => {
+  fetchDashboardData()
+}, 2000)
+
 // ================= SYSTEM LOGIC (REALTIME & FETCH) =================
 const subscribeRealtime = () => {
   if (dashboardChannel) {
@@ -258,10 +265,14 @@ const subscribeRealtime = () => {
   }
 
   dashboardChannel = supabase.channel('dashboard-realtime')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => fetchDashboardData())
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => fetchDashboardData())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => debouncedFetch())
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => debouncedFetch())
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'daily_traffic_stats' }, () => {
+      fetchChartData()
+    })
     .subscribe()
 }
+
 
 onUnmounted(() => {
   if (dashboardChannel) {
@@ -272,7 +283,10 @@ onUnmounted(() => {
 
 onMounted(async () => {
   try {
-    await fetchDashboardData()
+    await Promise.all([
+      fetchDashboardData(),
+      fetchChartData() // Tambahkan ini agar grafik langsung terisi
+    ])
     subscribeRealtime()
 
     // Gunakan optional chaining (?.) untuk mengamankan pembacaan array
