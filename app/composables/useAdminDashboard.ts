@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { DashboardStats, InquiryStats, ProjectStats } from '../../types/dashboard'
+import { toast } from 'vue-sonner'
 
 export const useAdminDashboard = () => {
   const rawStats = ref<DashboardStats>({
@@ -26,6 +27,7 @@ export const useAdminDashboard = () => {
       
       console.log('Stats Updated:', rawStats.value)
     } catch (e) {
+      toast.error('Failed to synchronize dashboard data')
       console.error('Dashboard Fetch Error:', e)
     }
   }

@@ -100,6 +100,18 @@ CREATE TABLE IF NOT EXISTS public.inquiries (
     status TEXT DEFAULT 'pending'
 );
 
+-- [TABEL: page_visits]
+CREATE TABLE IF NOT EXISTS public.page_visits (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid() ,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  page_path TEXT NOT NULL,
+  referrer TEXT,
+  user_agent TEXT -- Berguna untuk analisis perangkat (mobile/desktop)
+);
+
+--TAMBAHKAN INDEX
+CREATE INDEX idx_page_visits_created_at ON public.page_visits (created_at);
+
 -- [TABEL: projects]
 CREATE TABLE IF NOT EXISTS public.projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -177,6 +189,20 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Fungsi untuk mengambil statistik kunjungan per hari
+CREATE OR REPLACE FUNCTION public.get_daily_traffic(days_back int)
+RETURNS TABLE(visit_date date, visit_count bigint) 
+LANGUAGE SQL
+AS $$
+  SELECT 
+    created_at::date AS visit_date, 
+    count(*) AS visit_count
+  FROM public.page_visits
+  WHERE created_at > now() - (days_back || ' days')::interval
+  GROUP BY visit_date
+  ORDER BY visit_date ASC;
+$$;
+
 -- ========================================================================
 -- 5. AKTIFKAN ROW LEVEL SECURITY (RLS)
 -- ========================================================================
@@ -186,6 +212,7 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_details ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.page_visits ENABLE ROW LEVEL SECURITY;
 
 -- ========================================================================
 -- 6. INJEKSI KEBIJAKAN KEAMANAN (RLS POLICIES)
@@ -234,6 +261,11 @@ CREATE POLICY "Admin Full Access"
 ON public.inquiries FOR ALL TO authenticated
 USING ((auth.role() = 'authenticated'::text)) 
 WITH CHECK ((auth.role() = 'authenticated'::text));
+
+-- [TABEL: page_visits]
+CREATE POLICY "Allow inserts for all users" 
+ON public.page_visits FOR INSERT 
+WITH CHECK (true);
 
 -- [TABEL: projects]
 CREATE POLICY "Allow Public Select" 
