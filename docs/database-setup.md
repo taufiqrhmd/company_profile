@@ -100,17 +100,13 @@ CREATE TABLE IF NOT EXISTS public.inquiries (
     status TEXT DEFAULT 'pending'
 );
 
--- [TABEL: page_visits]
-CREATE TABLE IF NOT EXISTS public.page_visits (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid() ,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+-- [TABEL: daily_traffic_stats]
+CREATE TABLE public.daily_traffic_stats (
+  visit_date DATE DEFAULT current_date,
   page_path TEXT NOT NULL,
-  referrer TEXT,
-  user_agent TEXT -- Berguna untuk analisis perangkat (mobile/desktop)
+  visit_count BIGINT DEFAULT 0,
+  PRIMARY KEY(visit_date, page_path)
 );
-
---TAMBAHKAN INDEX
-CREATE INDEX idx_page_visits_created_at ON public.page_visits (created_at);
 
 -- [TABEL: projects]
 CREATE TABLE IF NOT EXISTS public.projects (
@@ -189,19 +185,28 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Fungsi untuk mengambil statistik kunjungan per hari
-CREATE OR REPLACE FUNCTION public.get_daily_traffic(days_back int)
-RETURNS TABLE(visit_date date, visit_count bigint) 
-LANGUAGE SQL
+-- Fungsi untuk menambah hitungan (Increment)
+CREATE OR REPLACE FUNCTION public.increment_page_visit(path_to_log text)
+RETURNS void 
+LANGUAGE plpgsql
+SECURITY definer
 AS $$
-  SELECT 
-    created_at::date AS visit_date, 
-    count(*) AS visit_count
-  FROM public.page_visits
-  WHERE created_at > now() - (days_back || ' days')::interval
-  GROUP BY visit_date
-  ORDER BY visit_date ASC;
+BEGIN
+  -- LOGIKA FILTER: Jika path dimulai dengan /admin, abaikan
+  IF path_to_log LIKE '/admin%' THEN
+    RETURN;
+  END IF;
+
+  INSERT INTO public.daily_traffic_stats (visit_date, page_path, visit_count)
+  VALUES (current_date, path_to_log, 1)
+  ON conflict (visit_date, page_path) 
+  do UPDATE SET visit_count = daily_traffic_stats.visit_count + 1;
+END;
 $$;
+
+-- Agar anonymous user bisa menjalankan fungsi
+GRANT EXECUTE ON FUNCTION public.increment_page_visit(text) TO anon;
+GRANT EXECUTE ON FUNCTION public.increment_page_visit(text) TO authenticated;
 
 -- ========================================================================
 -- 5. AKTIFKAN ROW LEVEL SECURITY (RLS)
@@ -212,7 +217,7 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_details ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.page_visits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.daily_traffic_stats ENABLE ROW LEVEL SECURITY;
 
 -- ========================================================================
 -- 6. INJEKSI KEBIJAKAN KEAMANAN (RLS POLICIES)
@@ -261,11 +266,6 @@ CREATE POLICY "Admin Full Access"
 ON public.inquiries FOR ALL TO authenticated
 USING ((auth.role() = 'authenticated'::text)) 
 WITH CHECK ((auth.role() = 'authenticated'::text));
-
--- [TABEL: page_visits]
-CREATE POLICY "Allow inserts for all users" 
-ON public.page_visits FOR INSERT 
-WITH CHECK (true);
 
 -- [TABEL: projects]
 CREATE POLICY "Allow Public Select" 

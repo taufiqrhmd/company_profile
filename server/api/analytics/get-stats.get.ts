@@ -1,21 +1,17 @@
-import { createClient } from "@supabase/supabase-js";
+// server/api/get-stats.get.ts
+import { createClient } from '@supabase/supabase-js'
 
 export default defineEventHandler(async (event) => {
-  const cookies = parseCookies(event);
-  if (!cookies.auth_token) {
-    // Ganti 'auth_token' dengan nama cookie Anda
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
-  }
-  const supabaseAdmin = createClient(
+  const supabase = createClient(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
 
-  // Gunakan RPC agar lebih cepat dan teragregasi
-  const { data, error } = await supabaseAdmin.rpc("get_daily_traffic", {
-    days_back: 30,
-  });
+  const { data } = await supabase
+    .from("daily_traffic_stats")
+    .select("visit_date, visit_count")
+    .not("page_path", "ilike", "/admin%")
+    .order("visit_date", { ascending: true })
 
-  if (error) throw error;
-  return data;
-});
+  return data // Data akan dikirim ke frontend dengan aman
+})

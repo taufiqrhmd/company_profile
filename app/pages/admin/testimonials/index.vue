@@ -1,10 +1,10 @@
 <template>
     <div class="max-w-7xl mx-auto space-y-8 transition-colors duration-300">
         <div
-            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Testimonials</h1>
-                <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                <p class="text-xs md:text-sm text-neutral-500 dark:text-neutral-400">
                     Manage client social proof displaying on the main landing page.
                 </p>
             </div>
@@ -17,15 +17,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="p-5 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl">
                 <span class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Total Reviews</span>
-                <h3 class="text-2xl font-black mt-1">{{ testimonials.length }}</h3>
+                <h3 class="text-2xl font-black mt-1">{{ animatedTotal.toString().padStart(2, '0') }}</h3>
             </div>
             <div class="p-5 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl">
                 <span class="text-[10px] font-bold uppercase tracking-widest text-primary">Row 1 (Left Track)</span>
-                <h3 class="text-2xl font-black mt-1 text-primary">{{ countRow(1) }}</h3>
+                <h3 class="text-2xl font-black mt-1 text-primary">{{ animatedRow1.toString().padStart(2, '0') }}</h3>
             </div>
             <div class="p-5 bg-white dark:bg-[#16191E] border border-slate-200 dark:border-white/5 rounded-xl">
                 <span class="text-[10px] font-bold uppercase tracking-widest text-blue-500">Row 2 (Right Track)</span>
-                <h3 class="text-2xl font-black mt-1 text-blue-500">{{ countRow(2) }}</h3>
+                <h3 class="text-2xl font-black mt-1 text-blue-500">{{ animatedRow2.toString().padStart(2, '0') }}</h3>
             </div>
         </div>
 
@@ -60,6 +60,11 @@ const isEditMode = ref(false);
 const editingId = ref<number | null>(null);
 const isLoading = ref<boolean>(false);
 const testimonials = ref<Testimonial[]>([]);
+const { animateValue } = useAnimatedCounter();
+
+const animatedTotal = ref(0);
+const animatedRow1 = ref(0);
+const animatedRow2 = ref(0);
 
 const form = ref<TestimonialInsert>({
     name: '',
@@ -245,4 +250,14 @@ onMounted(async () => {
 onUnmounted(() => {
     if (realtimeChannel) supabase.removeChannel(realtimeChannel);
 });
+
+watch(testimonials, (newVal) => {
+    const total = newVal.length;
+    const row1 = newVal.filter(i => i.row_placement === 1).length;
+    const row2 = newVal.filter(i => i.row_placement === 2).length;
+
+    animateValue(0, total, 1000, (val) => animatedTotal.value = val);
+    animateValue(0, row1, 1000, (val) => animatedRow1.value = val);
+    animateValue(0, row2, 1000, (val) => animatedRow2.value = val);
+}, { deep: true });
 </script>

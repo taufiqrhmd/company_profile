@@ -29,6 +29,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollSmoother } from 'gsap/ScrollSmoother'
 import { Toaster } from 'vue-sonner'
+const supabase = useSupabaseClient();
 
 // Tipe data untuk ScrollSmoother agar TS tidak komplain
 const smoother = ref<ScrollSmoother | null>(null)
@@ -150,6 +151,10 @@ onMounted(async () => {
       history.scrollRestoration = 'manual'
     }
   }
+  await $fetch('/api/analytics/increment', {
+    method: 'POST',
+    body: { path: route.path }
+  })
 })
 
 onUnmounted(() => {
@@ -157,7 +162,15 @@ onUnmounted(() => {
     smoother.value.kill()
       ; (window as any).smoother = null
   }
-})
+});
+
+watch(() => route.path, async (newPath) => {
+  // Panggil API internal Nuxt, bukan Supabase langsung
+  await $fetch('/api/analytics/increment', {
+    method: 'POST',
+    body: { path: newPath }
+  });
+});
 </script>
 
 <style>

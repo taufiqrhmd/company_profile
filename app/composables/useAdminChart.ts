@@ -5,28 +5,35 @@ export const useAdminChart = () => {
 
   // State untuk menyimpan data dinamis
   const chartData = ref<{ date: string; count: number }[]>([]);
-  interface DailyTraffic {
+  interface TrafficData {
     visit_date: string;
-    visit_count: number;
+    visit_count: number | string;
   }
 
   const fetchChartData = async () => {
     try {
-      const headers = useRequestHeaders(["cookie"]) as HeadersInit;
-      // Berikan tipe data ke $fetch
-      const data = await $fetch<DailyTraffic[]>("/api/analytics/get-stats", {
-        method: "GET",
-        headers,
-      });
+      // Mengambil dari API server kita sendiri, bukan langsung ke Supabase
+      const data = await $fetch<TrafficData[]>("/api/analytics/get-stats");
 
-      if (data && Array.isArray(data)) {
-        chartData.value = data.map((item): { date: string; count: number } => ({
-          date: item.visit_date,
-          count: Number(item.visit_count),
+      if (data) {
+        // (Logika agregasi tetap sama seperti sebelumnya)
+        const aggregated = data.reduce(
+          (acc: Record<string, number>, curr: TrafficData) => {
+            // Tipe di sini
+            const date = curr.visit_date;
+            acc[date] = (acc[date] || 0) + Number(curr.visit_count);
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
+
+        chartData.value = Object.entries(aggregated).map(([date, count]) => ({
+          date,
+          count,
         }));
       }
     } catch (error) {
-      console.error("Gagal mengambil data chart:", error);
+      console.error("Gagal mengambil data:", error);
     }
   };
 

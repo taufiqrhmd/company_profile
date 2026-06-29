@@ -267,6 +267,9 @@ const subscribeRealtime = () => {
   dashboardChannel = supabase.channel('dashboard-realtime')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'inquiries' }, () => debouncedFetch())
     .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => debouncedFetch())
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'daily_traffic_stats' }, () => {
+      fetchChartData()
+    })
     .subscribe()
 }
 
